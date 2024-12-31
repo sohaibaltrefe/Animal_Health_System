@@ -1,0 +1,137 @@
+﻿@model OwnerDetailsVM
+
+@section Header {
+    Owner
+}
+
+@section loc {
+    Details
+}
+
+@{
+    var successMessage = TempData["SuccessMessage"];
+    var errorMessage = TempData["ErrorMessage"];
+}
+
+<div class="col-md-12">
+    @if (successMessage != null)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Owner Details</h3>
+        </div>
+        <div class="card-body">
+            <!-- Full Name -->
+            <div class="form-group">
+                <label>Full Name</label>
+                <input value="@Model.FullName" class="form-control" readonly />
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input value="@Model.PhoneNumber" class="form-control" readonly />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label>Email</label>
+                <input value="@Model.Email" class="form-control" readonly />
+            </div>
+
+            <!-- Status -->
+            <div class="form-group">
+                <label>Status</label>
+                <span class="form-control">
+                    @if (Model.IsDeleted)
+                    {
+                        <span class="text-danger">Deleted</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">Active</span>
+                    }
+                </span>
+            </div>
+
+            <!-- Farms -->
+            <div class="form-group">
+                <label>Farms</label>
+                <ul>
+                    @if (Model.Farms.Any())
+                    {<div class="row">
+                        @foreach (var farm in Model.Farms)
+                        {
+                            <div class="col-md-4 border-1">
+
+                            <li> the farm name: @farm.Name</li>
+                            <li>the farm count an animal :@farm.Animals.Count</li>
+                                </div>
+
+                        }     
+                        </div>
+
+                    }
+                    else
+                    {
+                        <li>No farms available</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Appointments -->
+            <div class="form-group">
+                <label>Appointments</label>
+                <ul>
+                    @if (Model.Appointments.Any())
+                    {
+                        @foreach (var appointment in Model.Appointments)
+                        {
+                            <li>@appointment.AppointmentDate.ToString("dd MMM yyyy")</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No appointments available</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Notifications -->
+            <div class="form-group">
+                <label>Notifications</label>
+                <ul>
+                    @if (Model.Notifications.Any())
+                    {
+                        @foreach (var notification in Model.Notifications)
+                        {
+                            <li>@notification.Message</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No notifications available</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-group mt-4">
+                <a asp-controller="Owner" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Index
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

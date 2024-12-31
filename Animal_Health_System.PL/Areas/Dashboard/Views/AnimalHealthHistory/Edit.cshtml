@@ -1,0 +1,102 @@
+﻿@model AnimalHealthHistoryFormVM
+
+@section Header {
+    Animal Health History
+}
+
+@section loc {
+    Edit
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">@ViewData["Title"]</h3>
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body">
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label asp-for="Name">Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter Name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Event Type Dropdown -->
+                <div class="form-group">
+                    <label for="EventType">Event Type</label>
+                    <select asp-for="EventType" class="form-control" id="EventType">
+                        <option value="">Select Event Type</option>
+                        @if (Model.EventTypes != null && Model.EventTypes.Any())
+                        {
+                            @foreach (var eventType in Model.EventTypes)
+                            {
+                                <option value="@eventType.Value"
+                                        selected="@(eventType.Value == Model.EventType.ToString() ? "selected" : "")">
+                                    @eventType.Text
+                                </option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="">No Event Types Available</option>
+                        }
+                    </select>
+                    <span asp-validation-for="EventType" class="text-danger"></span>
+                </div>
+
+                <!-- Description Field -->
+                <div class="form-group">
+                    <label for="Description">Description</label>
+                    <textarea asp-for="Description" class="form-control" id="Description" placeholder="Enter Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Event Date Field -->
+                <div class="form-group">
+                    <label for="EventDate">Event Date</label>
+                    <input asp-for="EventDate" class="form-control" type="date" />
+                    <span asp-validation-for="EventDate" class="text-danger"></span>
+                </div>
+
+                <!-- Animal Dropdown -->
+                <div class="form-group">
+                    <label for="AnimalId">Animal</label>
+                    <select asp-for="AnimalId" class="form-control" asp-items="Model.Animals">
+                        <option value="">Select Animal</option>
+                    </select>
+                    <span asp-validation-for="AnimalId" class="text-danger"></span>
+                </div>
+
+                <!-- IsDeleted Checkbox -->
+                <div class="form-group form-check">
+                    <input asp-for="IsDeleted" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" for="IsDeleted">Is Deleted</label>
+                </div>
+
+                <!-- Submit and Cancel Buttons -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Create Animal Health History</button>
+                    <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿@model VaccineFormVM
+
+@section Header {
+    Vaccine
+}
+
+@section loc {
+    create
+}
+
+@{
+    var successMessage = TempData["SuccessMessage"];
+    var errorMessage = TempData["ErrorMessage"];
+}
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Create Vaccine</h3>
+        </div>
+        <form asp-controller="Vaccine" asp-action="Create" method="post">
+            <div class="card-body">
+                <div class="form-group">
+                    <label asp-for="Name">Vaccine Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter Vaccine Name" />
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label asp-for="Dose">Dose</label>
+                    <input asp-for="Dose" class="form-control" placeholder="Enter Dose" />
+                    @Html.ValidationMessageFor(model => model.Dose, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label for="MedicalRecordId">Medical Record</label>
+                    <select asp-for="MedicalRecordId" class="form-control" asp-items="Model.MedicalRecords"></select>
+                    @Html.ValidationMessageFor(model => model.MedicalRecordId, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label for="VeterinarianId">Veterinarian</label>
+                    <select asp-for="VeterinarianId" class="form-control" asp-items="Model.Veterinarians"></select>
+                    @Html.ValidationMessageFor(model => model.VeterinarianId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-block">Create Vaccine</button>
+                <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+﻿@model AppointmentHistoryFormVM
+
+
+@section Header {
+    Appointment History
+}
+
+@section loc {
+    create
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Create Appointment History</h3>
+        </div>
+        <form asp-controller="AppointmentHistory" asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body">
+                <!-- Display TempData messages -->
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="Name">Name</label>
+                    <input asp-for="Name" class="form-control" id="Name" placeholder="Enter name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="Status">Status</label>
+                    <input asp-for="Status" class="form-control" id="Status" placeholder="Enter status" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <!-- Appointment -->
+                <div class="form-group">
+                    <label for="AppointmentId">Appointment</label>
+                    <select asp-for="AppointmentId" class="form-control" asp-items="Model.Appointment">
+                        <option value="">Select an Appointment</option>
+                    </select>
+                    <span asp-validation-for="AppointmentId" class="text-danger"></span>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group">
+                    <label for="Notes">Notes</label>
+                    <textarea asp-for="Notes" class="form-control" id="Notes" placeholder="Enter notes"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <!-- IsDeleted -->
+                <div class="form-group form-check">
+                    <input asp-for="IsDeleted" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" for="IsDeleted">Is Deleted</label>
+                </div>
+
+                <!-- Submit and Cancel Buttons -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Create Appointment History</button>
+                    <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

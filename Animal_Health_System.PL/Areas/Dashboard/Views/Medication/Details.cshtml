@@ -1,0 +1,64 @@
+﻿@model MedicationDetailsVM
+@section Header {
+    Medication
+}
+@section loc {
+    Details
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Medication Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="Dosage">Dosage</label>
+                <input asp-for="Dosage" class="form-control" id="Dosage" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <input asp-for="Description" class="form-control" id="Description" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="Quantity">Quantity</label>
+                <input asp-for="Quantity" class="form-control" id="Quantity" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="ExpiryDate">Expiry Date</label>
+                <input asp-for="ExpiryDate" class="form-control" id="ExpiryDate" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="ProductionDate">Production Date</label>
+                <input asp-for="ProductionDate" class="form-control" id="ProductionDate" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="Status">Status</label>
+                <span class="form-control">
+                    @if (Model.IsDeleted)
+                    {
+                        <span class="text-danger">Deleted</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">Active</span>
+                    }
+                </span>
+            </div>
+            <div class="form-group mt-4">
+                <a asp-controller="Medication" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Index
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
