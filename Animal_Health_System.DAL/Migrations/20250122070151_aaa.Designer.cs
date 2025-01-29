@@ -4,6 +4,7 @@ using Animal_Health_System.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Animal_Health_System.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250122070151_aaa")]
+    partial class aaa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,10 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Age")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Breed")
                         .IsRequired()
@@ -69,9 +76,6 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -405,6 +409,9 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("FarmHealthSummaryId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FarmId")
                         .HasColumnType("int");
 
@@ -431,6 +438,8 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FarmHealthSummaryId");
 
                     b.HasIndex("FarmId")
                         .IsUnique()
@@ -788,10 +797,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("FarmStaffId")
@@ -811,19 +820,13 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PregnancyId")
                         .HasColumnType("int");
 
                     b.Property<int?>("RecipientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RecipientType")
+                    b.Property<int>("Recipients")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
@@ -837,16 +840,12 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimalId");
-
                     b.HasIndex("FarmStaffId");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("PregnancyId");
 
                     b.HasIndex("VeterinarianId");
 
@@ -940,6 +939,46 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasFilter("[AnimalId] IS NOT NULL");
 
                     b.ToTable("pregnancies", "dbo");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.PregnancyNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalId", "NotificationDate")
+                        .IsUnique()
+                        .HasFilter("[AnimalId] IS NOT NULL");
+
+                    b.ToTable("pregnancyNotifications", "dbo");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Prescription", b =>
@@ -1569,6 +1608,10 @@ namespace Animal_Health_System.DAL.Migrations
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmHealthSummary", b =>
                 {
+                    b.HasOne("Animal_Health_System.DAL.Models.FarmHealthSummary", null)
+                        .WithMany("FarmHealthSummaries")
+                        .HasForeignKey("FarmHealthSummaryId");
+
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farms")
                         .WithMany("FarmHealthSummaries")
                         .HasForeignKey("FarmId");
@@ -1678,41 +1721,38 @@ namespace Animal_Health_System.DAL.Migrations
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Notification", b =>
                 {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany("PregnancyNotifications")
-                        .HasForeignKey("AnimalId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
+                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaffs")
                         .WithMany("Notifications")
                         .HasForeignKey("FarmStaffId");
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Owner", "Owner")
+                    b.HasOne("Animal_Health_System.DAL.Models.Owner", "Owners")
                         .WithMany("Notifications")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Pregnancy", "Pregnancy")
-                        .WithMany()
-                        .HasForeignKey("PregnancyId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
+                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarians")
                         .WithMany("Notifications")
                         .HasForeignKey("VeterinarianId");
 
-                    b.Navigation("Animal");
+                    b.Navigation("FarmStaffs");
 
-                    b.Navigation("FarmStaff");
+                    b.Navigation("Owners");
 
-                    b.Navigation("Owner");
-
-                    b.Navigation("Pregnancy");
-
-                    b.Navigation("Veterinarian");
+                    b.Navigation("Veterinarians");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Pregnancy", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animals")
                         .WithMany("Pregnancies")
+                        .HasForeignKey("AnimalId");
+
+                    b.Navigation("Animals");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.PregnancyNotification", b =>
+                {
+                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animals")
+                        .WithMany("PregnancyNotifications")
                         .HasForeignKey("AnimalId");
 
                     b.Navigation("Animals");
@@ -1903,6 +1943,11 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("FarmHealthSummaries");
 
                     b.Navigation("FarmStaffs");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmHealthSummary", b =>
+                {
+                    b.Navigation("FarmHealthSummaries");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmStaff", b =>

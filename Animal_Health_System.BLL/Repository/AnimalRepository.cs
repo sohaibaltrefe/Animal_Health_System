@@ -40,7 +40,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.animals.Include(f => f.Farm).Where(a => !a.IsDeleted).ToListAsync();
+                return await context.animals.Include(f => f.Farms).Where(a => !a.IsDeleted).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.animals
-                    .Include(f => f.Farm)
+                    .Include(f => f.Farms)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)

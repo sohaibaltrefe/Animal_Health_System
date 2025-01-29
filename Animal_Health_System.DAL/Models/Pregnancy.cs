@@ -13,7 +13,7 @@ namespace Animal_Health_System.DAL.Models
         Complications
     }
 
-    public class Pregnancy
+    public class Pregnancy : EntityBase
     {
         public int Id { get; set; }
 
@@ -31,17 +31,32 @@ namespace Animal_Health_System.DAL.Models
 
         public string Notes { get; set; }
 
- public bool IsDeleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; } 
 
-        public DateTime? UpdatedAt { get; set; }
-        public ICollection<Birth> Births { get; set; } = new List<Birth>();
+        public virtual ICollection<Birth> Births { get; set; } = new List<Birth>();
 
        
 
  public int? AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public Animal Animals { get; set; }
+
+
+
+        public TimeSpan? PregnancyDuration
+        {
+            get
+            {
+                return ExpectedBirthDate - MatingDate;
+            }
+        }
+
+        public TimeSpan? TimeToBirth
+        {
+            get
+            {
+                return ExpectedBirthDate - DateTime.Today;
+            }
+        }
     }
 
 

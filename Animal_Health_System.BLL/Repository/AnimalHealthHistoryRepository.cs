@@ -41,8 +41,8 @@ namespace Animal_Health_System.BLL.Repository
                 return await context.animalHealthHistories
                                     .Where(a => !a.IsDeleted)
                                     .Include(a => a.Animal)
-                                    .ThenInclude(f => f.Farm)
-                                    .Include(m => m.medicalRecord)
+                                    .ThenInclude(f => f.Farms)
+                                    .Include(m => m.MedicalRecords)
                                     .ToListAsync();
             }
             catch (Exception ex)

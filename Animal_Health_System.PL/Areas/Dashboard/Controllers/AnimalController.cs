@@ -90,10 +90,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 // Mapping the view model to the animal entity
                 var animal = mapper.Map<Animal>(vm);
 
-                // Calculate and set age on creation
-                animal.CalculateAndSetAge();
 
-                // Set timestamps
                 animal.CreatedAt = DateTime.Now;
                 animal.UpdatedAt = DateTime.Now;
 

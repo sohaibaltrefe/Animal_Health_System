@@ -13,7 +13,7 @@ namespace Animal_Health_System.DAL.Models
         Canceled
     }
 
-    public class Appointment
+    public class Appointment : EntityBase
     {
         public int Id { get; set; }
 
@@ -21,31 +21,33 @@ namespace Animal_Health_System.DAL.Models
 
         public DateTime AppointmentDate { get; set; }
 
-        public AppointmentStatus Status { get; set; } 
+        public AppointmentStatus Status { get; set; }
 
-        public DateTime? CreatedAt { get; set; } 
 
-        public DateTime? UpdatedAt { get; set; }
 
-        public bool IsDeleted { get; set; }
-
-  
 
         public int? AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public Animal Animals { get; set; }
+
+        public int? FarmId { get; set; }
+        public Farm Farms { get; set; }
 
         public int? VeterinarianId { get; set; }
         public Veterinarian Veterinarian { get; set; }
 
-        public int? OwnerId { get; set; }
-        public Owner Owner { get; set; }
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaff { get; set; } 
-        public ICollection<AppointmentHistory> AppointmentHistories { get; set; } = new List<AppointmentHistory>();
+        public FarmStaff FarmStaffs { get; set; }
+        public virtual ICollection<AppointmentHistory> AppointmentHistories { get; set; } = new List<AppointmentHistory>();
 
 
-
+        public DateTime? EndDate { get; set; }  // Optional end date if the appointment is completed
+        public TimeSpan? AppointmentDuration
+        {
+            get
+            {
+                return EndDate.HasValue ? EndDate.Value - AppointmentDate : (TimeSpan?)null;
+            }
+        }
     }
-
 }

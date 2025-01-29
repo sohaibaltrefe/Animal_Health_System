@@ -17,7 +17,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO
 
         [Required(ErrorMessage = "Phone Number is required.")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
-        [StringLength(15, ErrorMessage = "Phone Number cannot exceed 15 characters.")]
+        [StringLength(10, ErrorMessage = "Phone Number cannot exceed 10 characters.")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]

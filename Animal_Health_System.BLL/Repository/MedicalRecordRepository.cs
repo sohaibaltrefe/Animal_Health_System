@@ -53,8 +53,8 @@ namespace Animal_Health_System.BLL.Repository
         public async Task<IEnumerable<MedicalRecord>> GetAllAsync()
         {
             return await context.medicalRecords
-                .Include(m => m.Animal)      // تضمين الكائن Animal
-                .ThenInclude(a => a.Farm)    // تضمين الكائن Farm داخل Animal
+                .Include(m => m.Animals)      // تضمين الكائن Animal
+                .ThenInclude(a => a.Farms)    // تضمين الكائن Farm داخل Animal
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -62,7 +62,7 @@ namespace Animal_Health_System.BLL.Repository
         public async Task<MedicalRecord> GetAsync(int id)
         {
             return await context.medicalRecords
-        .Include(m => m.Animal).ThenInclude(a => a.Farm)
+        .Include(m => m.Animals).ThenInclude(a => a.Farms)
         .Include(m => m.Vaccines)
         .Include(m=>m.Examinations)
         .ThenInclude(m=>m.Medications)// Ensure this includes the Vaccines

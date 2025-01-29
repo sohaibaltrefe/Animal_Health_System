@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    internal class PregnancyNotificationRepository : IPregnancyNotificationRepository
+    public class FarmVeterinarianRepository : IFarmVeterinarianRepository
     {
-        public Task<int> AddAsync(PregnancyNotification pregnancyNotification)
+        public Task<int> AddAsync(FarmVeterinarian farmVeterinarian)
         {
             throw new NotImplementedException();
         }
@@ -20,12 +20,17 @@ namespace Animal_Health_System.BLL.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<PregnancyNotification>> GetAllAsync()
+        public Task<IEnumerable<FarmVeterinarian>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<PregnancyNotification> GetAsync(int id)
+        public Task<FarmVeterinarian> GetAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FarmVeterinarian> GetByAnimalIdAsync(int animalId)
         {
             throw new NotImplementedException();
         }
@@ -35,7 +40,7 @@ namespace Animal_Health_System.BLL.Repository
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(PregnancyNotification pregnancyNotification)
+        public Task<int> UpdateAsync(FarmVeterinarian farmVeterinarian)
         {
             throw new NotImplementedException();
         }

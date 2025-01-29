@@ -130,7 +130,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
                 vm.Animal = new SelectList(animals, "Id", "Name", appointment.AnimalId);
                 vm.Veterinarian = new SelectList(veterinarians, "Id", "FullName", appointment.VeterinarianId);
-                vm.Owner = new SelectList(owners, "Id", "FullName", appointment.OwnerId);
                 vm.StatusList = new SelectList(statusList, "Value", "Text", vm.Status);
 
                 return View(vm);

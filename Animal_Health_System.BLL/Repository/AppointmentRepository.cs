@@ -42,8 +42,7 @@ namespace Animal_Health_System.BLL.Repository
             {
                 return await context.appointments
                     .Include(a => a.Veterinarian)
-                    .Include(a => a.Animal)
-                    .Include(a => a.Owner)
+                    .Include(a => a.Animals)
                     .Where(a => !a.IsDeleted)  // Make sure not to fetch deleted appointments
                     .ToListAsync();
             }
@@ -60,8 +59,7 @@ namespace Animal_Health_System.BLL.Repository
             {
                 return await context.appointments
                     .Include(a => a.Veterinarian)
-                    .Include(a => a.Animal)
-                    .Include(a => a.Owner)
+                    .Include(a => a.Animals)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted); // Make sure not to fetch deleted appointments
             }
             catch (Exception ex)

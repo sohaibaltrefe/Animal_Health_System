@@ -24,13 +24,13 @@ namespace Animal_Health_System.BLL.Repository
 
         public async Task<IEnumerable<Farm>> GetAllAsync()
         {
-            return await context.farms.Include(f => f.Owner).AsNoTracking().ToListAsync();
+            return await context.farms.Include(f => f.Owners).AsNoTracking().ToListAsync();
         }
 
         public async Task<Farm> GetAsync(int id)
         {
             return await context.farms
-                .Include(f => f.Owner)
+                .Include(f => f.Owners)
                 .Include(f => f.Animals)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == id);
@@ -47,7 +47,7 @@ namespace Animal_Health_System.BLL.Repository
             var farm = await context.farms.FindAsync(id);
             if (farm != null)
             {
-                farm.isDeleted = true; // Soft delete
+                farm.IsDeleted = true; // Soft delete
                 await context.SaveChangesAsync();
             }
         }

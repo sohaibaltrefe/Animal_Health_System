@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class MedicalExamination
+    public class MedicalExamination : EntityBase
     {
         public int Id { get; set; }
 
@@ -18,31 +18,30 @@ namespace Animal_Health_System.DAL.Models
 
         public string Treatment { get; set; }
 
-        public bool IsDeleted { get; set; }
 
         public string ExaminationType { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
+      
 
         public int? AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public Animal Animals { get; set; }
 
         public int? MedicalRecordId { get; set; }
-        public MedicalRecord MedicalRecord { get; set; }
+        public MedicalRecord MedicalRecords { get; set; }
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaff { get; set; }
+        public FarmStaff FarmStaffs { get; set; }
 
         public int? VeterinarianId { get; set; }
-        public Veterinarian Veterinarian { get; set; }
+        public Veterinarian Veterinarians { get; set; }
 
-        public ICollection<Medication> Medications { get; set; } = new List<Medication>();
+        public virtual ICollection<Medication> Medications { get; set; } = new List<Medication>();
 
-        public TreatmentPlan TreatmentPlan { get; set; }
+        public virtual ICollection<TreatmentPlan> TreatmentPlans { get; set; } = new List<TreatmentPlan>();
 
-        public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+      
+
+        public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
 
        
     }

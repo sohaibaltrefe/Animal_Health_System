@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class Prescription
+    public class Prescription : EntityBase
     {
         public int Id { get; set; }
 
@@ -15,15 +15,12 @@ namespace Animal_Health_System.DAL.Models
 
         public string Instructions { get; set; }
 
-        public bool IsDeleted { get; set; }
 
         public int? MedicalExaminationId { get; set; }
-        public MedicalExamination MedicalExamination { get; set; }
+        public MedicalExamination MedicalExaminations { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set; }  
         
-        public ICollection<Medication> medications { get; set; } = new List<Medication>();
+        public virtual ICollection<Medication> medications { get; set; } = new List<Medication>();
 
     }
 }

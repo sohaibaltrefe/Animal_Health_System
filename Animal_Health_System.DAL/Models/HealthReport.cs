@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class HealthReport
+    public class HealthReport : EntityBase
     {
         public int Id { get; set; }
 
@@ -22,17 +22,12 @@ namespace Animal_Health_System.DAL.Models
 
         public string ReportSummary { get; set; }
 
-        public bool IsDeleted { get; set; }
-
-        public DateTime? CreatedAt { get; set; } 
-
-        public DateTime? UpdatedAt { get; set; }
 
         public int? FarmId { get; set; }
-        public Farm Farm { get; set; }
+        public Farm Farms { get; set; }
 
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaff { get; set; }
+        public FarmStaff FarmStaffs { get; set; }
     }
 }

@@ -6,32 +6,23 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class Owner 
+    public class Owner : EntityBase
     {
         public int Id { get; set; }
 
 
         public string FullName { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
-
-
-        public DateTime? UpdatedAt { get; set; }
 
         public string PhoneNumber { get; set; }
 
         public string Email { get; set; }
 
-        public bool IsDeleted { get; set; }
 
 
-        public ICollection<Farm> Farms { get; set; } = new List<Farm>();
+        public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
-       
-
-        public ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
 
 
     }

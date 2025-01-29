@@ -8,12 +8,11 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public class AnimalFormVM
         {
             public int Id { get; set; }
-
             [Required(ErrorMessage = "Animal name is required.")]
             public string Name { get; set; }
 
             [Required(ErrorMessage = "Species is required.")]
-            public string Species { get; set; }
+            public string Species { get; set; } 
 
             [Required(ErrorMessage = "Breed is required.")]
             public string Breed { get; set; }

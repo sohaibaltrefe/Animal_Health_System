@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class AppointmentHistory
+    public class AppointmentHistory : EntityBase
     {
         public int Id { get; set; }
 
@@ -17,14 +17,11 @@ namespace Animal_Health_System.DAL.Models
 
         public string Notes { get; set; }
 
-        public bool IsDeleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
 
  public int? AppointmentId { get; set; }
-        public Appointment Appointment { get; set; }
+        public Appointment Appointments { get; set; }
 
     }
 }

@@ -6,21 +6,16 @@
 
     namespace Animal_Health_System.DAL.Models
     {
-        public class MedicationStock
-        {
+        public class MedicationStock : EntityBase
+    {
             public int Id { get; set; }
 
         public string Name { get; set; }
 
          public int AvailableQuantity { get; set; }
 
-        public DateTime CreatedAt { get; set; } 
 
-        public DateTime UpdatedAt { get; set; }
-
-        public bool IsDeleted { get; set; }
-
-        public ICollection<Medication> Medications { get; set; }
+        public virtual ICollection<Medication> Medications { get; set; }
 
 
       

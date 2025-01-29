@@ -19,7 +19,7 @@ namespace Animal_Health_System.DAL.Models
     {
         Male,Female
     }
-    public class Animal
+    public class Animal: EntityBase
     {
         public int Id { get; set; }
 
@@ -28,50 +28,48 @@ namespace Animal_Health_System.DAL.Models
         public string Species { get; set; }
 
         public string Breed { get; set; }
-
+        public decimal Weight { get; set; }
         public Gender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        public string Age { get; private set; }
+        public string Age => CalculateAge();
 
-        public bool IsDeleted { get; set; }
+        private string CalculateAge()
+        {
+            int years = DateTime.UtcNow.Year - DateOfBirth.Year;
+            return years > 1 ? $"{years} years" : "Less than a year";
+        }
 
         public HealthStatus CurrentHealthStatus { get; set; }
 
         public DateTime RegistrationDate { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
 
         public int? FarmId { get; set; }
-        public Farm Farm { get; set; }
+        public Farm Farms { get; set; }
+
 
         public int? MedicalRecordId { get; set; }
-        public MedicalRecord MedicalRecord { get; set; }
+        public MedicalRecord MedicalRecords { get; set; }
 
-        public ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List<AnimalHealthHistory>();
+        public virtual ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List<AnimalHealthHistory>();
 
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
-        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
+        public virtual ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
 
-        public ICollection<MedicalExamination> MedicalExaminations { get; set; }
+        public virtual ICollection<MedicalExamination> MedicalExaminations { get; set; }
 
-        public ICollection<Pregnancy> Pregnancies { get; set; }
+        public virtual ICollection<Pregnancy> Pregnancies { get; set; }
 
-        public ICollection<Birth> Births { get; set; }
+        public virtual ICollection<Birth> Births { get; set; }
 
-        public ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
+        public virtual ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
+        public virtual ICollection<Notification>  PregnancyNotifications { get; set; } = new List< Notification>();
+        public virtual ICollection<ProductionRecord>  ProductionRecords { get; set; } = new List<ProductionRecord>();
 
-        public ICollection<FarmStaff> FarmStaffs { get; set; } 
-
-        public void CalculateAndSetAge()
-        {
-            var today = DateTime.Today;
-            var age = today - DateOfBirth;
-            Age = $"{age.Days / 365} years, {(age.Days % 365) / 30} months, {(age.Days % 365) % 30} days";
-        }
+        public virtual ICollection<FarmStaff> FarmStaffs { get; set; }
+       
     }
 
 

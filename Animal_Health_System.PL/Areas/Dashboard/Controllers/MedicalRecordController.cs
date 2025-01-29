@@ -31,9 +31,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
             foreach (var record in medicalRecords)
             {
-                if (record.Animal?.Farm != null)
+                if (record.Animals?.Farms != null)
                 {
-                    Console.WriteLine($"Farm Name: {record.Animal.Farm.Name}");
+                    Console.WriteLine($"Farm Name: {record.Animals.Farms.Name}");
                 }
                 else
                 {

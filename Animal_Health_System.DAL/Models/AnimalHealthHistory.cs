@@ -13,7 +13,7 @@ namespace Animal_Health_System.DAL.Models
         Vaccination,    
         HealthCheck   
     }
-    public class AnimalHealthHistory
+    public class AnimalHealthHistory : EntityBase
     {
         public int Id { get; set; }
         
@@ -26,18 +26,15 @@ namespace Animal_Health_System.DAL.Models
 
         public string Description { get; set; }
 
-        public bool IsDeleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; } 
 
-        public DateTime? UpdatedAt { get; set; }
 
         public int? AnimalId { get; set; }
         public Animal Animal { get; set; }
 
         
-        public int? MedicalRecordiD { get; set; }
-        public MedicalRecord  medicalRecord { get; set; }
+        public int? MedicalRecordId { get; set; }
+        public MedicalRecord MedicalRecords { get; set; }
 
        
 

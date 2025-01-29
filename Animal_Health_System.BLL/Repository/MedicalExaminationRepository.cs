@@ -29,9 +29,9 @@
 
             public async Task<MedicalExamination> GetAsync(int id)
             {
-            return await context.medicalExaminations.Include(me => me.Animal)
-            .Include(me => me.MedicalRecord)
-            .Include(me => me.Medications).Include(v => v.Veterinarian)
+            return await context.medicalExaminations.Include(me => me.Animals)
+            .Include(me => me.MedicalRecords)
+            .Include(me => me.Medications).Include(v => v.Veterinarians)
             .FirstOrDefaultAsync(me => me.Id == id);
             }
 

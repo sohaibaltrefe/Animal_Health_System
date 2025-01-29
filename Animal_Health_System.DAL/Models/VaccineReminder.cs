@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class VaccineReminder
+    public class VaccineReminder : EntityBase
     {
         public int Id { get; set; }
 
@@ -16,17 +16,14 @@ namespace Animal_Health_System.DAL.Models
 
         public bool IsNotified { get; set; }
 
-        public bool IsDeleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
 
         public int? AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public Animal Animals { get; set; }
 
         public int? VaccineId { get; set; }
-        public Vaccine Vaccine { get; set; }
+        public Vaccine Vaccines { get; set; }
 
 
     }

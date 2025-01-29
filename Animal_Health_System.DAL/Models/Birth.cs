@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class Birth
+    public class Birth : EntityBase
     {
         public int Id { get; set; }
 
@@ -15,7 +15,7 @@ namespace Animal_Health_System.DAL.Models
 
         public int? PregnancyId { get; set; } 
         
-        public Pregnancy Pregnancy { get; set; }
+        public Pregnancy Pregnancys { get; set; }
 
         public DateTime BirthDate { get; set; }  
 
@@ -23,18 +23,15 @@ namespace Animal_Health_System.DAL.Models
 
         public string BirthCondition { get; set; } 
 
-        public bool IsDeleted { get; set; }
 
- public DateTime? CreatedAt { get; set; } 
 
-        public DateTime? UpdatedAt { get; set; }
 
         public int? AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public Animal Animals { get; set; }
 
 
         public int? FarmId { get; set; }
-        public Farm Farm { get; set; }
+        public Farm Farms { get; set; }
        
 
     }
