@@ -21,7 +21,7 @@ namespace Animal_Health_System.DAL.Models
 
 
  public int? AppointmentId { get; set; }
-        public Appointment Appointments { get; set; }
+        public Appointment Appointment  { get; set; }
 
     }
 }

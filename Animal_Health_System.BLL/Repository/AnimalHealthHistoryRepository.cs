@@ -23,7 +23,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                animalHealthHistory.CreatedAt = DateTime.UtcNow;
                 await context.animalHealthHistories.AddAsync(animalHealthHistory);
                 return await context.SaveChangesAsync();
             }
@@ -41,8 +40,8 @@ namespace Animal_Health_System.BLL.Repository
                 return await context.animalHealthHistories
                                     .Where(a => !a.IsDeleted)
                                     .Include(a => a.Animal)
-                                    .ThenInclude(f => f.Farms)
-                                    .Include(m => m.MedicalRecords)
+                                    .ThenInclude(f => f.Farm )
+                                    .Include(m => m.MedicalRecord )
                                     .ToListAsync();
             }
             catch (Exception ex)
@@ -78,7 +77,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                animalHealthHistory.UpdatedAt = DateTime.UtcNow;
                 context.animalHealthHistories.Update(animalHealthHistory);
                 return await context.SaveChangesAsync();
             }
@@ -97,7 +95,6 @@ namespace Animal_Health_System.BLL.Repository
                 if (animalHealthHistory != null)
                 {
                     animalHealthHistory.IsDeleted = true;
-                    animalHealthHistory.UpdatedAt = DateTime.UtcNow;
                     await context.SaveChangesAsync();
                 }
                 else

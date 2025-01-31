@@ -41,253 +41,239 @@ namespace Animal_Health_System.DAL.Data
         public DbSet<FarmStaff>  farmStaff { get; set; }
 
 
-        public override int SaveChanges()
-        {
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is EntityBase &&
-                            (e.State == EntityState.Added || e.State == EntityState.Modified));
-
-            foreach (var entry in entries)
-            {
-                var entity = (EntityBase)entry.Entity;
-
-                if (entry.State == EntityState.Added)
-                {
-                    entity.SetCreatedAt(DateTime.UtcNow); // تعيين CreatedAt عند الإضافة
-                }
-
-                entity.SetUpdatedAt(DateTime.UtcNow); // تعيين UpdatedAt عند التحديث
-            }
-
-            return base.SaveChanges();
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasDefaultSchema("dbo");
 
             // Animal -> Farm (Many-to-One)
             modelBuilder.Entity<Animal>()
-                .HasOne(a => a.Farms)  // Animal has one Farm
+                .HasOne(a => a.Farm )  // Animal has one Farm
                 .WithMany(f => f.Animals) // Farm has many Animals
-                .HasForeignKey(a => a.FarmId); // Foreign key in Animal
+                .HasForeignKey(a => a.FarmId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Animal
 
-            // Animal -> MedicalRecord (One-to-One)
-            modelBuilder.Entity<Animal>()
-                .HasOne(a => a.MedicalRecords)  // Animal has one MedicalRecord
-                .WithOne(mr => mr.Animals) // MedicalRecord is related to one Animal
-                .HasForeignKey<MedicalRecord>(mr => mr.AnimalId); // Foreign key in MedicalRecord
+
 
             // AnimalHealthHistory -> Animal (Many-to-One)
             modelBuilder.Entity<AnimalHealthHistory>()
                 .HasOne(ahh => ahh.Animal)  // AnimalHealthHistory has one Animal
                 .WithMany(a => a.AnimalHealthHistories) // Animal has many AnimalHealthHistories
-                .HasForeignKey(ahh => ahh.AnimalId); // Foreign key in AnimalHealthHistory
+                .HasForeignKey(ahh => ahh.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in AnimalHealthHistory
 
             // Appointment -> Animal (Many-to-One)
             modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Animals)  // Appointment has one Animal
+                .HasOne(a => a.Animal )  // Appointment has one Animal
                 .WithMany(an => an.Appointments) // Animal has many Appointments
-                .HasForeignKey(a => a.AnimalId);// Foreign key in Appointment
+                .HasForeignKey(a => a.AnimalId).OnDelete(DeleteBehavior.Restrict);// Foreign key in Appointment
 
             // Appointment -> Farm (Many-to-One)
-           modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Farms) // Appointment has one Farm
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Farm ) // Appointment has one Farm
                 .WithMany(f => f.Appointments) // Farm has many Appointments
-                .HasForeignKey(a => a.FarmId); // Foreign key in Appointment
-          
+                .HasForeignKey(a => a.FarmId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
+
             // Appointment -> Veterinarian (Many-to-One)
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Veterinarian)  // Appointment has one Veterinarian
                 .WithMany(v => v.Appointments) // Veterinarian has many Appointments
-                .HasForeignKey(a => a.VeterinarianId); // Foreign key in Appointment
+                .HasForeignKey(a => a.VeterinarianId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
 
             // Appointment -> FarmStaff (Many-to-One)
             modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.FarmStaffs)  // Appointment has one FarmStaff
+                .HasOne(a => a.FarmStaff )  // Appointment has one FarmStaff
                 .WithMany(fs => fs.Appointments) // FarmStaff has many Appointments
-                .HasForeignKey(a => a.FarmStaffId); // Foreign key in Appointment
+                .HasForeignKey(a => a.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
 
             // Birth -> Pregnancy (Many-to-One)
             modelBuilder.Entity<Birth>()
-                .HasOne(b => b.Pregnancys)  // Birth has one Pregnancy
+                .HasOne(b => b.Pregnancy )  // Birth has one Pregnancy
                 .WithMany(p => p.Births) // Pregnancy has many Births
-                .HasForeignKey(b => b.PregnancyId); // Foreign key in Birth
+                .HasForeignKey(b => b.PregnancyId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Birth
 
             // Birth -> Animal (Many-to-One)
             modelBuilder.Entity<Birth>()
-                .HasOne(b => b.Animals)  // Birth has one Animal
+                .HasOne(b => b.Animal )  // Birth has one Animal
                 .WithMany(a => a.Births) // Animal has many Births
-                .HasForeignKey(b => b.AnimalId); // Foreign key in Birth
+                .HasForeignKey(b => b.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Birth
 
             // BreedingReport -> Animal (Many-to-One)
             modelBuilder.Entity<BreedingReport>()
-                .HasOne(br => br.Animals)  // BreedingReport has one Animal
+                .HasOne(br => br.Animal )  // BreedingReport has one Animal
                 .WithMany(a => a.BreedingReports) // Animal has many BreedingReports
-                .HasForeignKey(br => br.AnimalId); // Foreign key in BreedingReport
+                .HasForeignKey(br => br.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in BreedingReport
 
             // BreedingReport -> Mating (Many-to-One)
             modelBuilder.Entity<BreedingReport>()
-                .HasOne(br => br.Matings)  // BreedingReport has one Mating
+                .HasOne(br => br.Mating )  // BreedingReport has one Mating
                 .WithMany(m => m.BreedingReports) // Mating has many BreedingReports
-                .HasForeignKey(br => br.MatingId); // Foreign key in BreedingReport
+                .HasForeignKey(br => br.MatingId).OnDelete(DeleteBehavior.Restrict); // Foreign key in BreedingReport
 
             // FarmStaff -> Farm (Many-to-One)
             modelBuilder.Entity<FarmStaff>()
                 .HasOne(fs => fs.Farm)  // FarmStaff has one Farm
                 .WithMany(f => f.FarmStaffs) // Farm has many FarmStaffs
-                .HasForeignKey(fs => fs.FarmId); // Foreign key in FarmStaff
+                .HasForeignKey(fs => fs.FarmId).OnDelete(DeleteBehavior.Restrict); // Foreign key in FarmStaff
 
-            // HealthReport -> Farm (Many-to-One)
-           /* modelBuilder.Entity<HealthReport>()
-                .HasOne(hr => hr.Farms)  // HealthReport has one Farm
-                .WithMany(f => f.HealthReportss) // Farm has many HealthReports
-                .HasForeignKey(hr => hr.FarmId); // Foreign key in HealthReport
-           */
+
+
             // HealthReport -> FarmStaff (Many-to-One)
             modelBuilder.Entity<HealthReport>()
-                .HasOne(hr => hr.FarmStaffs)  // HealthReport has one FarmStaff
+                .HasOne(hr => hr.FarmStaff )  // HealthReport has one FarmStaff
                 .WithMany(fs => fs.HealthReports) // FarmStaff has many HealthReports
-                .HasForeignKey(hr => hr.FarmStaffId); // Foreign key in HealthReport
+                .HasForeignKey(hr => hr.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in HealthReport
 
             // MedicalExamination -> Animal (Many-to-One)
             modelBuilder.Entity<MedicalExamination>()
-                .HasOne(me => me.Animals)  // MedicalExamination has one Animal
+                .HasOne(me => me.Animal )  // MedicalExamination has one Animal
                 .WithMany(a => a.MedicalExaminations) // Animal has many MedicalExaminations
-                .HasForeignKey(me => me.AnimalId); // Foreign key in MedicalExamination
+                .HasForeignKey(me => me.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in MedicalExamination
 
             // MedicalExamination -> FarmStaff (Many-to-One)
             modelBuilder.Entity<MedicalExamination>()
-                .HasOne(me => me.FarmStaffs)  // MedicalExamination has one FarmStaff
+                .HasOne(me => me.FarmStaff )  // MedicalExamination has one FarmStaff
                 .WithMany(fs => fs.MedicalExaminations) // FarmStaff has many MedicalExaminations
-                .HasForeignKey(me => me.FarmStaffId); // Foreign key in MedicalExamination
+                .HasForeignKey(me => me.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in MedicalExamination
 
             // MedicalExamination -> Veterinarian (Many-to-One)
             modelBuilder.Entity<MedicalExamination>()
-                .HasOne(me => me.Veterinarians)  // MedicalExamination has one Veterinarian
+                .HasOne(me => me.Veterinarian )  // MedicalExamination has one Veterinarian
                 .WithMany(v => v.MedicalExaminations) // Veterinarian has many MedicalExaminations
-                .HasForeignKey(me => me.VeterinarianId); // Foreign key in MedicalExamination
+                .HasForeignKey(me => me.VeterinarianId).OnDelete(DeleteBehavior.Restrict); // Foreign key in MedicalExamination
 
             // MedicalRecord -> Animal (One-to-One)
             modelBuilder.Entity<MedicalRecord>()
-                .HasOne(mr => mr.Animals)  // MedicalRecord has one Animal
-                .WithOne(a => a.MedicalRecords) // Animal has one MedicalRecord
-                .HasForeignKey<MedicalRecord>(mr => mr.AnimalId); // Foreign key in MedicalRecord
+                .HasOne(mr => mr.Animal )  // MedicalRecord has one Animal
+                .WithOne(a => a.MedicalRecord ) // Animal has one MedicalRecord
+                .HasForeignKey<MedicalRecord>(mr => mr.AnimalId).OnDelete(DeleteBehavior.Restrict);// Foreign key in MedicalRecord
 
             // VaccineHistory -> Animal (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.Animals)  // VaccineHistory has one Animal
+                .HasOne(vh => vh.Animal )  // VaccineHistory has one Animal
                 .WithMany(a => a.VaccineHistories) // Animal has many VaccineHistories
-                .HasForeignKey(vh => vh.AnimalId); // Foreign key in VaccineHistory
+                .HasForeignKey(vh => vh.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
 
             // VaccineHistory -> Vaccine (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.Vaccines)  // VaccineHistory has one Vaccine
+                .HasOne(vh => vh.Vaccine )  // VaccineHistory has one Vaccine
                 .WithMany(v => v.VaccineHistories) // Vaccine has many VaccineHistories
-                .HasForeignKey(vh => vh.VaccineId); // Foreign key in VaccineHistory
+                .HasForeignKey(vh => vh.VaccineId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
 
             // VaccineHistory -> Veterinarian (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
                 .HasOne(vh => vh.Veterinarian)  // VaccineHistory has one Veterinarian
                 .WithMany(v => v.VaccineHistories) // Veterinarian has many VaccineHistories
-                .HasForeignKey(vh => vh.VeterinarianId); // Foreign key in VaccineHistory
+                .HasForeignKey(vh => vh.VeterinarianId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
 
             // VaccineHistory -> FarmStaff (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.FarmStaffs)  // VaccineHistory has one FarmStaff
+                .HasOne(vh => vh.FarmStaff )  // VaccineHistory has one FarmStaff
                 .WithMany(fs => fs.VaccineHistories) // FarmStaff has many VaccineHistories
-                .HasForeignKey(vh => vh.FarmStaffId); // Foreign key in VaccineHistory
+                .HasForeignKey(vh => vh.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
 
             // AppointmentHistory -> Appointment (Many-to-One)
             modelBuilder.Entity<AppointmentHistory>()
-                .HasOne(ah => ah.Appointments)
+                .HasOne(ah => ah.Appointment )
                 .WithMany(a => a.AppointmentHistories)
-                .HasForeignKey(ah => ah.AppointmentId);
+                .HasForeignKey(ah => ah.AppointmentId).OnDelete(DeleteBehavior.Restrict);
 
             // TreatmentPlan -> MedicalExamination (Many-to-One)
             modelBuilder.Entity<TreatmentPlan>()
-                .HasOne(tp => tp.MedicalExaminations)
+                .HasOne(tp => tp.MedicalExamination )
                 .WithMany(me => me.TreatmentPlans)
-                .HasForeignKey(tp => tp.MedicalExaminationId);
+                .HasForeignKey(tp => tp.MedicalExaminationId).OnDelete(DeleteBehavior.Restrict);
 
             // ProductionRecord -> Animal (Many-to-One)
             modelBuilder.Entity<ProductionRecord>()
-                .HasOne(pr => pr.Animals)
+                .HasOne(pr => pr.Animal )
                 .WithMany(a => a.ProductionRecords)
-                .HasForeignKey(pr => pr.AnimalId);
+                .HasForeignKey(pr => pr.AnimalId).OnDelete(DeleteBehavior.Restrict);
 
             // ProductionRecord -> FarmStaff (Many-to-One)
             modelBuilder.Entity<ProductionRecord>()
-                .HasOne(pr => pr.FarmStaffs)
+                .HasOne(pr => pr.FarmStaff )
                 .WithMany(fs => fs.ProductionRecords)
-                .HasForeignKey(pr => pr.FarmStaffId);
+                .HasForeignKey(pr => pr.FarmStaffId).OnDelete(DeleteBehavior.Restrict);
 
             // Prescription -> MedicalExamination (Many-to-One)
             modelBuilder.Entity<Prescription>()
                 .HasOne(p => p.MedicalExaminations)
                 .WithMany(me => me.Prescriptions)
-                .HasForeignKey(p => p.MedicalExaminationId);
+                .HasForeignKey(p => p.MedicalExaminationId).OnDelete(DeleteBehavior.Restrict);
 
             // Prescription -> Medication (One-to-Many)
             modelBuilder.Entity<Prescription>()
                 .HasMany(p => p.medications)
-                .WithOne(m => m.Prescriptions)
-                .HasForeignKey(m => m.PrescriptionId);
+                .WithOne(m => m.Prescription )
+                .HasForeignKey(m => m.PrescriptionId).OnDelete(DeleteBehavior.Restrict);
 
             // PregnancyNotification -> Animal (Many-to-One)
             modelBuilder.Entity<Notification>()
                 .HasOne(pn => pn.Animal)
                 .WithMany(a => a.PregnancyNotifications)
-                .HasForeignKey(pn => pn.AnimalId);
+                .HasForeignKey(pn => pn.AnimalId).OnDelete(DeleteBehavior.Restrict);
 
             // Owner -> Farm (One-to-Many)
             modelBuilder.Entity<Owner>()
                 .HasMany(o => o.Farms)
-                .WithOne(f => f.Owners)
-                .HasForeignKey(f => f.OwnerId);
+                .WithOne(f => f.Owner )
+                .HasForeignKey(f => f.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
             // Owner -> Notification (One-to-Many)
             modelBuilder.Entity<Owner>()
                 .HasMany(o => o.Notifications)
                 .WithOne(n => n.Owner)
-                .HasForeignKey(n => n.OwnerId);
+                .HasForeignKey(n => n.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
             // Notification -> FarmStaff (Many-to-One)
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.FarmStaff)
                 .WithMany(fs => fs.Notifications)
-                .HasForeignKey(n => n.FarmStaffId);
+                .HasForeignKey(n => n.FarmStaffId).OnDelete(DeleteBehavior.Restrict);
 
             // Notification -> Veterinarian (Many-to-One)
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Veterinarian)
                 .WithMany(v => v.Notifications)
-                .HasForeignKey(n => n.VeterinarianId);
+                .HasForeignKey(n => n.VeterinarianId).OnDelete(DeleteBehavior.Restrict);
 
             // Notification -> Owner (Many-to-One)
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Owner)
                 .WithMany(o => o.Notifications)
-                .HasForeignKey(n => n.OwnerId);
+                .HasForeignKey(n => n.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
             // MedicationStock -> Medication (One-to-Many)
             modelBuilder.Entity<MedicationStock>()
                 .HasMany(ms => ms.Medications)
-                .WithOne(m => m.MedicationStocks)
-                .HasForeignKey(m => m.MedicationStockId);
+                .WithOne(m => m.MedicationStock )
+                .HasForeignKey(m => m.MedicationStockId).OnDelete(DeleteBehavior.Restrict);
 
             // Medication -> MedicalExamination (Many-to-One)
             modelBuilder.Entity<Medication>()
-                .HasOne(m => m.MedicalExaminations)
+                .HasOne(m => m.MedicalExamination )
                 .WithMany(me => me.Medications)
-                .HasForeignKey(m => m.MedicalExaminationId);
+                .HasForeignKey(m => m.MedicalExaminationId).OnDelete(DeleteBehavior.Restrict);
 
             // FarmHealthSummary -> Farm (Many-to-One)
             modelBuilder.Entity<FarmHealthSummary>()
-                .HasOne(fhs => fhs.Farms)
+                .HasOne(fhs => fhs.Farm )
                 .WithMany(f => f.FarmHealthSummaries)
-                .HasForeignKey(fhs => fhs.FarmId);
+                .HasForeignKey(fhs => fhs.FarmId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mating>()
+        .HasOne(m => m.MaleAnimal)
+        .WithMany()
+        .HasForeignKey(m => m.MaleAnimalId)
+        .OnDelete(DeleteBehavior.Restrict); // منع الحذف التتابعي
+
+            modelBuilder.Entity<Mating>()
+                .HasOne(m => m.FemaleAnimal)
+                .WithMany()
+                .HasForeignKey(m => m.FemaleAnimalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+          
             //------------unique  --------------
 
 

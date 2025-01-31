@@ -20,7 +20,7 @@ namespace Animal_Health_System.DAL.Models
         public DateTime PlanDate { get; set; }
 
         public int? MedicalExaminationId { get; set; }
-        public MedicalExamination MedicalExaminations { get; set; }
+        public MedicalExamination MedicalExamination  { get; set; }
 
        
     }

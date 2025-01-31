@@ -25,8 +25,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                appointmentHistory.CreatedAt = DateTime.Now;
-                appointmentHistory.UpdatedAt = DateTime.Now;
+                
 
                 await context.appointmentHistories.AddAsync(appointmentHistory);
                 return await context.SaveChangesAsync();
@@ -43,8 +42,8 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.appointmentHistories
-                    .Include(a => a.Appointments)
-                    .ThenInclude(a => a.Animals)
+                    .Include(a => a.Appointment )
+                    .ThenInclude(a => a.Animal )
                     .Where(a => !a.IsDeleted)
                     .ToListAsync();
             }
@@ -60,8 +59,8 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.appointmentHistories
-                    .Include(a => a.Appointments)
-                    .ThenInclude(a => a.Animals)
+                    .Include(a => a.Appointment )
+                    .ThenInclude(a => a.Animal )
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
@@ -75,7 +74,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                appointmentHistory.UpdatedAt = DateTime.Now;
 
                 context.appointmentHistories.Update(appointmentHistory);
                 return await context.SaveChangesAsync();
@@ -95,8 +93,7 @@ namespace Animal_Health_System.BLL.Repository
                 if (appointmentHistory != null)
                 {
                     appointmentHistory.IsDeleted = true; // Soft delete
-                    appointmentHistory.UpdatedAt = DateTime.Now;
-
+ 
                     await context.SaveChangesAsync();
                 }
             }

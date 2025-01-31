@@ -12,6 +12,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public string Gender { get; set; }
         public string Age { get; set; }
         public HealthStatus CurrentHealthStatus { get; set; }
-        public string FarmName { get; set; }
+        public Farm  farm { get; set; }
     }
     }

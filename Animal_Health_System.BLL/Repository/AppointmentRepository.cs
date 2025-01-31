@@ -25,7 +25,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                appointment.CreatedAt = DateTime.UtcNow; // Ensure CreatedAt is set
                 await context.appointments.AddAsync(appointment);
                 return await context.SaveChangesAsync();
             }
@@ -42,7 +41,7 @@ namespace Animal_Health_System.BLL.Repository
             {
                 return await context.appointments
                     .Include(a => a.Veterinarian)
-                    .Include(a => a.Animals)
+                    .Include(a => a.Animal  )
                     .Where(a => !a.IsDeleted)  // Make sure not to fetch deleted appointments
                     .ToListAsync();
             }
@@ -59,7 +58,7 @@ namespace Animal_Health_System.BLL.Repository
             {
                 return await context.appointments
                     .Include(a => a.Veterinarian)
-                    .Include(a => a.Animals)
+                    .Include(a => a.Animal )
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted); // Make sure not to fetch deleted appointments
             }
             catch (Exception ex)
@@ -73,8 +72,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                appointment.UpdatedAt = DateTime.UtcNow; // Ensure UpdatedAt is set
-                context.appointments.Update(appointment);
+                 context.appointments.Update(appointment);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -92,7 +90,6 @@ namespace Animal_Health_System.BLL.Repository
                 if (appointment != null)
                 {
                     appointment.IsDeleted = true;
-                    appointment.UpdatedAt = DateTime.UtcNow; // Update the time when deleted
                     await context.SaveChangesAsync();
                 }
             }

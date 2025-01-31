@@ -38,25 +38,17 @@ namespace Animal_Health_System.DAL.Models
        
 
  public int? AnimalId { get; set; }
-        public Animal Animals { get; set; }
+        public Animal Animal  { get; set; }
 
 
 
-        public TimeSpan? PregnancyDuration
-        {
-            get
-            {
-                return ExpectedBirthDate - MatingDate;
-            }
-        }
+        public TimeSpan? PregnancyDuration => MatingDate != default && ExpectedBirthDate != default
+     ? ExpectedBirthDate - MatingDate
+     : null;
 
-        public TimeSpan? TimeToBirth
-        {
-            get
-            {
-                return ExpectedBirthDate - DateTime.Today;
-            }
-        }
+        public TimeSpan? TimeToBirth => ExpectedBirthDate != default
+            ? ExpectedBirthDate - DateTime.UtcNow
+            : null;
     }
 
 

@@ -8,24 +8,15 @@ namespace Animal_Health_System.DAL.Models
 {
     public class EntityBase
     {
-        public int Id { get; set; } 
-        // الحقول الخاصة بالتواريخ
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
-        // الحقل الخاص بالحذف غير الفعلي
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; }
 
-        // تعيين قيمة CreatedAt عند الإنشاء
-        public void SetCreatedAt(DateTime dateTime)
-        {
-            CreatedAt = dateTime;
-        }
 
-        // تعيين قيمة UpdatedAt عند التعديل
-        public void SetUpdatedAt(DateTime dateTime)
+        public void UpdateTimestamp()
         {
-            UpdatedAt = dateTime;
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 

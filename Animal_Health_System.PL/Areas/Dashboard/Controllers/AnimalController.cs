@@ -16,16 +16,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class AnimalController : Controller
     {
-        private readonly IAnimalRepository animalRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IFarmRepository farmRepository;
         private readonly ILogger<AnimalController> logger;
 
-        public AnimalController(IAnimalRepository animalRepository, IMapper mapper, IFarmRepository farmRepository, ILogger<AnimalController> logger)
+        public AnimalController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AnimalController> logger)
         {
-            this.animalRepository = animalRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.farmRepository = farmRepository;
             this.logger = logger;
         }
 
@@ -35,7 +33,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animals = await animalRepository.GetAllAsync();
+                var animals = await unitOfWork.animalRepository.GetAllAsync();
                 var animalVm = mapper.Map<IEnumerable<AnimalVM>>(animals);
                 return View(animalVm);
             }
@@ -47,15 +45,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-       
-        
+
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             try
             {
                 // Fetching all farms
-                var farms = await farmRepository.GetAllAsync();
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
 
                 // Prepare the view model and populate the farms dropdown
                 var vm = new AnimalFormVM
@@ -91,11 +89,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var animal = mapper.Map<Animal>(vm);
 
 
-                animal.CreatedAt = DateTime.Now;
-                animal.UpdatedAt = DateTime.Now;
+              
 
                 // Add the animal to the database
-                await animalRepository.AddAsync(animal);
+                await unitOfWork.animalRepository.AddAsync(animal);
 
                 // Success message
                 TempData["SuccessMessage"] = "Animal added successfully.";
@@ -118,7 +115,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             try
             {
                 // Fetch the animal by ID
-                var animal = await animalRepository.GetAsync(id);
+                var animal = await unitOfWork.animalRepository.GetAsync(id);
 
                 if (animal == null)
                 {
@@ -127,7 +124,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 }
 
                 // Fetch all farms for the dropdown
-                var farms = await farmRepository.GetAllAsync();
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
 
                 // Mapping the animal entity to the view model
                 var vm = mapper.Map<AnimalFormVM>(animal);
@@ -160,7 +157,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             try
             {
                 // Fetch the animal by ID
-                var animal = await animalRepository.GetAsync(vm.Id);
+                var animal = await unitOfWork.animalRepository.GetAsync(vm.Id);
 
                 if (animal == null)
                 {
@@ -172,10 +169,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 mapper.Map(vm, animal);
 
                 // Set UpdatedAt timestamp
-                animal.UpdatedAt = DateTime.Now;
 
                 // Update the animal in the database
-                await animalRepository.UpdateAsync(animal);
+                await unitOfWork.animalRepository.UpdateAsync(animal);
 
                 // Success message
                 TempData["SuccessMessage"] = "Animal updated successfully.";
@@ -197,7 +193,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animal = await animalRepository.GetAsync(id);
+                var animal = await unitOfWork.animalRepository.GetAsync(id);
                 if (animal == null)
                 {
                     TempData["ErrorMessage"] = "Animal not found.";
@@ -221,13 +217,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animal = await animalRepository.GetAsync(id);
+                var animal = await unitOfWork.animalRepository.GetAsync(id);
                 if (animal == null)
                 {
                     return Json(new { success = false, message = "Animal not found." });
                 }
 
-                await animalRepository.DeleteAsync(id);
+                await unitOfWork.animalRepository.DeleteAsync(id);
                 return Json(new { success = true, message = "Animal deleted successfully." });
             }
             catch (Exception ex)

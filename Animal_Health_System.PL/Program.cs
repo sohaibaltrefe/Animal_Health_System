@@ -24,7 +24,6 @@ namespace Animal_Health_System.PL
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
-        builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IVeterinarianRepository, VeterinarianRepository>();
             builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
@@ -39,8 +38,8 @@ namespace Animal_Health_System.PL
             builder.Services.AddScoped<IFarmHealthSummaryRepository, FarmHealthSummaryRepository>();
             builder.Services.AddScoped<IAppointmentHistoryRepository, AppointmentHistoryRepository>();
             builder.Services.AddScoped<IFarmStaffRepository, FarmStaffRepository>();
-            var app = builder.Build();
-
+                        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

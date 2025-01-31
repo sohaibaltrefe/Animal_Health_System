@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Interface
 {
-    public interface IUnitOfWork:IDisposable
+    public interface IUnitOfWork
     {
         public IAnimalRepository animalRepository { get; }
         public  IVeterinarianRepository veterinarianRepository { get; }

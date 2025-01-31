@@ -25,8 +25,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                veterinarian.CreatedAt = DateTime.UtcNow;
-                await context.veterinarians.AddAsync(veterinarian);
+                 await context.veterinarians.AddAsync(veterinarian);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -72,8 +71,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                veterinarian.UpdatedAt = DateTime.UtcNow;
-                context.veterinarians.Update(veterinarian);
+                 context.veterinarians.Update(veterinarian);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -91,8 +89,7 @@ namespace Animal_Health_System.BLL.Repository
                 if (veterinarian != null)
                 {
                     veterinarian.IsDeleted = true; // Soft delete
-                    veterinarian.UpdatedAt = DateTime.UtcNow;
-                    await context.SaveChangesAsync();
+                     await context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)

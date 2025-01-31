@@ -20,10 +20,10 @@ namespace Animal_Health_System.DAL.Models
 
 
         public int? AnimalId { get; set; }
-        public Animal Animals { get; set; }
+        public Animal Animal  { get; set; }
 
         public int? VaccineId { get; set; }
-        public Vaccine Vaccines { get; set; }
+        public Vaccine Vaccine  { get; set; }
 
 
     }

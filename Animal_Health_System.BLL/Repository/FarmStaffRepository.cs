@@ -27,8 +27,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                farmStaff.CreatedAt = DateTime.Now;
-                farmStaff.UpdatedAt = DateTime.Now;
+             
 
                 _context.farmStaff.Add(farmStaff);
                 await _context.SaveChangesAsync();
@@ -51,8 +50,7 @@ namespace Animal_Health_System.BLL.Repository
                 if (farmStaff != null)
                 {
                     farmStaff.IsDeleted = true;
-                    farmStaff.UpdatedAt = DateTime.Now;
-                    _context.farmStaff.Update(farmStaff);
+                     _context.farmStaff.Update(farmStaff);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -112,8 +110,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                farmStaff.UpdatedAt = DateTime.Now;
-
+ 
                 _context.farmStaff.Update(farmStaff);
                 await _context.SaveChangesAsync();
 

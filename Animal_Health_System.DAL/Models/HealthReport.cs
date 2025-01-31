@@ -24,10 +24,10 @@ namespace Animal_Health_System.DAL.Models
 
 
         public int? FarmId { get; set; }
-        public Farm Farms { get; set; }
+        public Farm Farm  { get; set; }
 
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaffs { get; set; }
+        public FarmStaff FarmStaff  { get; set; }
     }
 }

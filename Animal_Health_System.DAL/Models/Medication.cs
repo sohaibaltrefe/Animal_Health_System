@@ -24,13 +24,13 @@ namespace Animal_Health_System.DAL.Models
 
 
         public int? MedicalExaminationId { get; set; }
-        public MedicalExamination MedicalExaminations { get; set; }
+        public MedicalExamination MedicalExamination  { get; set; }
 
         public int? MedicationStockId { get; set; }
-        public MedicationStock MedicationStocks { get; set; }
+        public MedicationStock MedicationStock  { get; set; }
 
         public int? PrescriptionId { get; set; }
-        public Prescription Prescriptions { get; set; }
+        public Prescription Prescription  { get; set; }
 
 
     }

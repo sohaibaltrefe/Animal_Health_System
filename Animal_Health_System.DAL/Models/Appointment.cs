@@ -27,21 +27,21 @@ namespace Animal_Health_System.DAL.Models
 
 
         public int? AnimalId { get; set; }
-        public Animal Animals { get; set; }
+        public Animal Animal  { get; set; }
 
         public int? FarmId { get; set; }
-        public Farm Farms { get; set; }
+        public Farm Farm  { get; set; }
 
         public int? VeterinarianId { get; set; }
         public Veterinarian Veterinarian { get; set; }
 
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaffs { get; set; }
+        public FarmStaff FarmStaff  { get; set; }
         public virtual ICollection<AppointmentHistory> AppointmentHistories { get; set; } = new List<AppointmentHistory>();
 
 
-        public DateTime? EndDate { get; set; }  // Optional end date if the appointment is completed
+        public DateTime? EndDate { get; set; }  
         public TimeSpan? AppointmentDuration
         {
             get

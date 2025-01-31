@@ -22,10 +22,10 @@ namespace Animal_Health_System.DAL.Models
 
 
         public int? MedicalRecordId { get; set; }
-        public MedicalRecord MedicalRecords { get; set; }
+        public MedicalRecord MedicalRecord  { get; set; }
 
         public int? VeterinarianId { get; set; }
-        public Veterinarian Veterinarians { get; set; }
+        public Veterinarian Veterinarian   { get; set; }
 
         public virtual ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
 

@@ -34,7 +34,7 @@ namespace Animal_Health_System.DAL.Models
 
         
         public int? MedicalRecordId { get; set; }
-        public MedicalRecord MedicalRecords { get; set; }
+        public MedicalRecord MedicalRecord  { get; set; }
 
        
 

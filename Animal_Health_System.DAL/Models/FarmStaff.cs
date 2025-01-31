@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public class FarmStaff : EntityBase
+    public class FarmStaff : EntityBase 
     {
         public int Id { get; set; } 
 
@@ -18,7 +18,7 @@ namespace Animal_Health_System.DAL.Models
 
         public string Email { get; set; } 
 
-
+        public decimal salary { get; set; }
       
         public int? FarmId { get; set; }
         public Farm Farm { get; set; }

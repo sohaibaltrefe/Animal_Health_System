@@ -120,7 +120,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     }
 
                     var animalHealthHistory = mapper.Map<AnimalHealthHistory>(vm);
-                    animalHealthHistory.CreatedAt = DateTime.UtcNow;
                     await animalHealthHistoryRepository.AddAsync(animalHealthHistory);
 
                     TempData["SuccessMessage"] = "Animal health history added successfully!";
@@ -212,7 +211,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 vm.MedicalRecordiD = medicalRecord.Id;
 
                 animalHealthHistory = mapper.Map<AnimalHealthHistory>(vm);
-                animalHealthHistory.UpdatedAt = DateTime.UtcNow;
 
                 await animalHealthHistoryRepository.UpdateAsync(animalHealthHistory);
                 TempData["SuccessMessage"] = "Animal health history updated successfully!";

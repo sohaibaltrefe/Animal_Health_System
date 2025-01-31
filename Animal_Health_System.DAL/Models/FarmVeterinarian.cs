@@ -8,17 +8,17 @@ namespace Animal_Health_System.DAL.Models
 {
     public class FarmVeterinarian : EntityBase
     {
-        public int FarmVeterinarianId { get; set; }
+        public int  Id { get; set; }
         
         public string Name { get; set; }
         
-        public int FarmId { get; set; }
-        public Farm Farms { get; set; }
+        public int? FarmId { get; set; }
+        public Farm Farm  { get; set; }
 
 
       
 
-        public int VeterinarianId { get; set; }
-        public Veterinarian Veterinarians { get; set; }
+        public int? VeterinarianId { get; set; }
+        public Veterinarian Veterinarian  { get; set; }
     }
 }

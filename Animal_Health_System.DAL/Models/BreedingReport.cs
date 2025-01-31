@@ -29,10 +29,10 @@ namespace Animal_Health_System.DAL.Models
 
 
  public int? AnimalId { get; set; } 
-        public Animal Animals { get; set; }  
+        public Animal Animal { get; set; }  
 
         public int? MatingId { get; set; }  
-        public Mating Matings { get; set; }
+        public Mating Mating  { get; set; }
 
 
     }

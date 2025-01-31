@@ -75,9 +75,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             try
             {
                 var farmStaff = _mapper.Map<FarmStaff>(vm);
-                farmStaff.CreatedAt = DateTime.Now;
-                farmStaff.UpdatedAt = DateTime.Now;
-
+               
                 await _farmStaffRepository.AddAsync(farmStaff);
 
                 TempData["SuccessMessage"] = "Farm staff added successfully.";
@@ -136,8 +134,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 }
 
                 _mapper.Map(vm, farmStaff);
-                farmStaff.UpdatedAt = DateTime.Now;
-
+ 
                 await _farmStaffRepository.UpdateAsync(farmStaff);
 
                 TempData["SuccessMessage"] = "Farm staff updated successfully.";

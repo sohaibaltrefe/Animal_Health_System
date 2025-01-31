@@ -36,21 +36,25 @@ namespace Animal_Health_System.DAL.Models
 
         private string CalculateAge()
         {
-            int years = DateTime.UtcNow.Year - DateOfBirth.Year;
-            return years > 1 ? $"{years} years" : "Less than a year";
+            var age = DateTime.UtcNow - DateOfBirth;
+            int years = (int)(age.TotalDays / 365.25);
+            int months = (int)((age.TotalDays % 365.25) / 30.44);
+
+            if (years > 0)
+                return $"{years} years, {months} months";
+            return $"{months} months";
         }
 
         public HealthStatus CurrentHealthStatus { get; set; }
 
-        public DateTime RegistrationDate { get; set; }
 
 
-        public int? FarmId { get; set; }
-        public Farm Farms { get; set; }
+        public int?  FarmId { get; set; }
+        public virtual Farm Farm  { get; set; }
 
 
         public int? MedicalRecordId { get; set; }
-        public MedicalRecord MedicalRecords { get; set; }
+        public virtual  MedicalRecord MedicalRecord  { get; set; }
 
         public virtual ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List<AnimalHealthHistory>();
 

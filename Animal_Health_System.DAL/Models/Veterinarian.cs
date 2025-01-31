@@ -22,7 +22,7 @@ namespace Animal_Health_System.DAL.Models
         public int YearsOfExperience { get; set; } 
 
 
-
+        public decimal salary { get; set; }
 
         public virtual ICollection<Appointment> Appointments { get; set; }
 

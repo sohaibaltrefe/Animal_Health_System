@@ -27,13 +27,13 @@ namespace Animal_Health_System.BLL.Repository
 
         public async Task<IEnumerable<FarmHealthSummary>> GetAllAsync()
         {
-            return await context.farmHealthSummaries.Include(f=>f.Farms).ToListAsync();
+            return await context.farmHealthSummaries.Include(f=>f.Farm).ToListAsync();
         }
 
         public async Task<FarmHealthSummary> GetAsync(int id)
         {
             return await context.farmHealthSummaries
-                    .Include(f => f.Farms)
+                    .Include(f => f.Farm)
                     .FirstOrDefaultAsync(a => a.Id == id);
         }
 

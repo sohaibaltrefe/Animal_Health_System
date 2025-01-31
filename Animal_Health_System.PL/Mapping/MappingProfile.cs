@@ -26,7 +26,7 @@ namespace Animal_Health_System.PL.Mapping
 
             CreateMap<AnimalHealthHistory, AnimalHealthHistoryDetailsVM>()
                 .ForMember(dest => dest.AnimalName, opt => opt.MapFrom(src => src.Animal.Name))
-                .ForMember(dest => dest.MedicalRecordName, opt => opt.MapFrom(src => src.MedicalRecords.Name));
+                .ForMember(dest => dest.MedicalRecordName, opt => opt.MapFrom(src => src.MedicalRecord .Name));
 
             CreateMap<AnimalHealthHistoryFormVM, AnimalHealthHistory>()
                 .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => src.EventType));

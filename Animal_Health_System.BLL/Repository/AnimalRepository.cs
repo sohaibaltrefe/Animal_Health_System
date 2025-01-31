@@ -25,7 +25,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                animal.CreatedAt = DateTime.UtcNow;
                 await context.animals.AddAsync(animal);
                 return await context.SaveChangesAsync();
             }
@@ -40,7 +39,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.animals.Include(f => f.Farms).Where(a => !a.IsDeleted).ToListAsync();
+                return await context.animals.Include(f => f.Farm ).Where(a => !a.IsDeleted).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,7 +53,7 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.animals
-                    .Include(f => f.Farms)
+                    .Include(f => f.Farm  )
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
@@ -68,7 +67,6 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                animal.UpdatedAt = DateTime.UtcNow;
                 context.animals.Update(animal);
                 return await context.SaveChangesAsync();
             }

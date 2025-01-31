@@ -25,9 +25,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                owner.CreatedAt = DateTime.UtcNow;
-                owner.UpdatedAt = DateTime.UtcNow;
-
+    
                 context.owners.Add(owner);
                 return await context.SaveChangesAsync();
             }
@@ -73,8 +71,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                owner.UpdatedAt = DateTime.UtcNow;
-                context.owners.Update(owner);
+                 context.owners.Update(owner);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -92,8 +89,7 @@ namespace Animal_Health_System.BLL.Repository
                 if (owner != null)
                 {
                     owner.IsDeleted = true;
-                    owner.UpdatedAt = DateTime.UtcNow;
-                    await context.SaveChangesAsync();
+                     await context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)

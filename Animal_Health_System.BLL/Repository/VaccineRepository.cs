@@ -35,8 +35,8 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.vaccines.Include(m => m.MedicalRecords)
-                                             .Include(v => v.Veterinarians)
+                return await context.vaccines.Include(m => m.MedicalRecord)
+                                             .Include(v => v.Veterinarian )
                                              .AsNoTracking()
                                              .ToListAsync();
             }
@@ -51,8 +51,8 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.vaccines.Include(m => m.MedicalRecords)
-                                             .Include(v => v.Veterinarians)
+                return await context.vaccines.Include(m => m.MedicalRecord )
+                                             .Include(v => v.Veterinarian )
                                              .FirstOrDefaultAsync(ve => ve.Id == id);
             }
             catch (Exception ex)

@@ -11,11 +11,7 @@ namespace Animal_Health_System.DAL.Models
         public int Id { get; set; }
         
         public string Name { get; set; }
-
-
-
-     
-
+         
         public decimal QuantityProduced { get; set; } 
 
         public DateTime DateProduction { get; set; }
@@ -24,9 +20,9 @@ namespace Animal_Health_System.DAL.Models
 
 
           public int? AnimalId { get; set; }
-        public Animal Animals { get; set; }
+        public Animal Animal  { get; set; }
 
         public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaffs { get; set; }
+        public FarmStaff FarmStaff  { get; set; }
     }
 }
