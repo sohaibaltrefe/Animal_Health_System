@@ -14,31 +14,26 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class AnimalHealthHistoryController : Controller
     {
-        private readonly IAnimalHealthHistoryRepository animalHealthHistoryRepository;
+
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IAnimalRepository animalRepository;
-        private readonly IMedicalRecordRepository medicalRecordRepository;
         private readonly ILogger<AnimalHealthHistoryController> logger;
 
-        public AnimalHealthHistoryController(
-            IAnimalHealthHistoryRepository animalHealthHistoryRepository,
-            IMapper mapper,
-            IAnimalRepository animalRepository,
-            IMedicalRecordRepository medicalRecordRepository,
-            ILogger<AnimalHealthHistoryController> logger)
+        public AnimalHealthHistoryController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AnimalHealthHistoryController> logger)
         {
-            this.animalHealthHistoryRepository = animalHealthHistoryRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.animalRepository = animalRepository;
-            this.medicalRecordRepository = medicalRecordRepository;
             this.logger = logger;
         }
+
+
+
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var animalHealthHistories = await animalHealthHistoryRepository.GetAllAsync();
+                var animalHealthHistories = await unitOfWork.animalHealthHistoryRepository.GetAllAsync();
                 if (animalHealthHistories == null || !animalHealthHistories.Any())
                 {
                     ViewBag.Message = "There are no animal health history records currently available.";
@@ -60,8 +55,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animals = await animalRepository.GetAllAsync();
-                var medicalrecords = await medicalRecordRepository.GetAllAsync();
+                var animals = await unitOfWork.animalRepository.GetAllAsync();
+                var medicalrecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
 
                 if (animals == null || !animals.Any())
                 {
@@ -105,14 +100,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var animal = await animalRepository.GetAsync(vm.AnimalId.Value);
+                    var animal = await unitOfWork.animalRepository.GetAsync(vm.AnimalId.Value);
                     if (animal == null)
                     {
                         TempData["ErrorMessage"] = "The selected animal does not exist.";
                         return View(vm);
                     }
 
-                    var medicalRecord = await medicalRecordRepository.GetByAnimalIdAsync(vm.AnimalId.Value);
+                    var medicalRecord = await unitOfWork.medicalRecordRepository.GetByAnimalIdAsync(vm.AnimalId.Value);
                     if (medicalRecord == null)
                     {
                         TempData["ErrorMessage"] = "No medical record found for the selected animal.";
@@ -120,14 +115,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     }
 
                     var animalHealthHistory = mapper.Map<AnimalHealthHistory>(vm);
-                    await animalHealthHistoryRepository.AddAsync(animalHealthHistory);
+                    await unitOfWork.animalHealthHistoryRepository.AddAsync(animalHealthHistory);
 
                     TempData["SuccessMessage"] = "Animal health history added successfully!";
                     return RedirectToAction(nameof(Index));
                 }
 
-                var animalsList = await animalRepository.GetAllAsync();
-                var medicalRecordsList = await medicalRecordRepository.GetAllAsync();
+                var animalsList = await unitOfWork.animalRepository.GetAllAsync();
+                var medicalRecordsList = await unitOfWork.medicalRecordRepository.GetAllAsync();
                 vm.Animals = new SelectList(animalsList, "Id", "Name", vm.AnimalId);
                 vm.MedicalRecords = new SelectList(medicalRecordsList, "Id", "Name", vm.MedicalRecordiD);
                 return View(vm);
@@ -145,13 +140,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animalHealthHistory = await animalHealthHistoryRepository.GetAsync(id);
+                var animalHealthHistory = await unitOfWork.animalHealthHistoryRepository.GetAsync(id);
                 if (animalHealthHistory == null)
                 {
                     return NotFound("Record not found.");
                 }
 
-                var animals = await animalRepository.GetAllAsync();
+                var animals = await unitOfWork.animalRepository.GetAllAsync();
                 var eventTypes = Enum.GetValues(typeof(EventType)).Cast<EventType>()
                     .Select(e => new SelectListItem
                     {
@@ -181,27 +176,27 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var animalsList = await animalRepository.GetAllAsync();
-                    var medicalRecordsList = await medicalRecordRepository.GetAllAsync();
+                    var animalsList = await unitOfWork.animalRepository.GetAllAsync();
+                    var medicalRecordsList = await unitOfWork.medicalRecordRepository.GetAllAsync();
                     vm.Animals = new SelectList(animalsList, "Id", "Name", vm.AnimalId);
                     vm.MedicalRecords = new SelectList(medicalRecordsList, "Id", "Name", vm.MedicalRecordiD);
                     return View(vm);
                 }
 
-                var animalHealthHistory = await animalHealthHistoryRepository.GetAsync(vm.Id);
+                var animalHealthHistory = await unitOfWork.animalHealthHistoryRepository.GetAsync(vm.Id);
                 if (animalHealthHistory == null)
                 {
                     return NotFound("Record not found.");
                 }
 
-                var animal = await animalRepository.GetAsync(vm.AnimalId.Value);
+                var animal = await unitOfWork.animalRepository.GetAsync(vm.AnimalId.Value);
                 if (animal == null)
                 {
                     TempData["ErrorMessage"] = "The selected animal does not exist.";
                     return View(vm);
                 }
 
-                var medicalRecord = await medicalRecordRepository.GetByAnimalIdAsync(vm.AnimalId.Value);
+                var medicalRecord = await unitOfWork.medicalRecordRepository.GetByAnimalIdAsync(vm.AnimalId.Value);
                 if (medicalRecord == null)
                 {
                     TempData["ErrorMessage"] = "No medical record found for the selected animal.";
@@ -212,7 +207,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
                 animalHealthHistory = mapper.Map<AnimalHealthHistory>(vm);
 
-                await animalHealthHistoryRepository.UpdateAsync(animalHealthHistory);
+                await unitOfWork.animalHealthHistoryRepository.UpdateAsync(animalHealthHistory);
                 TempData["SuccessMessage"] = "Animal health history updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
@@ -229,7 +224,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animalHealthHistory = await animalHealthHistoryRepository.GetAsync(id);
+                var animalHealthHistory = await unitOfWork.animalHealthHistoryRepository.GetAsync(id);
                 if (animalHealthHistory == null)
                 {
                     TempData["ErrorMessage"] = "Animal health history not found.";
@@ -252,7 +247,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                await animalHealthHistoryRepository.DeleteAsync(id);
+                await unitOfWork.animalHealthHistoryRepository.DeleteAsync(id);
                 TempData["SuccessMessage"] = "Animal health history deleted successfully!";
             }
             catch (Exception ex)

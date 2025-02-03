@@ -27,6 +27,7 @@ namespace Animal_Health_System.DAL.Models
         public virtual ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();
         public virtual ICollection<Appointment>  Appointments { get; set; } = new List<Appointment>();
         public virtual ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
+        public virtual ICollection<Mating> Matings { get; set; } = new List<Mating>();
 
         public virtual ICollection<FarmHealthSummary>  FarmHealthSummaries { get; set; } = new List<FarmHealthSummary>();
 

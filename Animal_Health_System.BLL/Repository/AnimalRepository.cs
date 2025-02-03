@@ -13,7 +13,7 @@ namespace Animal_Health_System.BLL.Repository
     public class AnimalRepository : IAnimalRepository
     {
         private readonly ApplicationDbContext context;
-        private readonly ILogger<AnimalRepository> logger;
+        private readonly ILogger<AnimalRepository> logger; 
 
         public AnimalRepository(ApplicationDbContext context, ILogger<AnimalRepository> logger)
         {

@@ -1,5 +1,8 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +13,100 @@ namespace Animal_Health_System.BLL.Repository
 {
     public class NotificationRepository : INotificationRepository
     {
-        public Task<int> AddAsync(Notification notification)
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<NotificationRepository> logger;
+
+        public NotificationRepository(ApplicationDbContext context, ILogger<NotificationRepository> logger)
         {
-            throw new NotImplementedException();
+            this.context = context;
+            this.logger = logger;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<int> AddAsync(Notification  notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.notifications.AddAsync(notification);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding notification.");
+                throw new Exception("Error occurred while adding notification.", ex);
+            }
         }
 
-        public Task<IEnumerable<Notification>> GetAllAsync()
+        public async Task<IEnumerable<Notification>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.notifications.Where(a => !a.IsDeleted).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving notifications.");
+                throw new Exception("Error occurred while retrieving notifications.", ex);
+            }
         }
 
-        public Task<Notification> GetAsync(int id)
+        public async Task<Notification> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.notifications
+                  
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving notification.");
+                throw new Exception("Error occurred while retrieving notification.", ex);
+            }
         }
 
-        public Task SaveChangesAsync()
+        public async Task<int> UpdateAsync(Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.notifications.Update(notification);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating notification.");
+                throw new Exception("Error occurred while updating notification.", ex);
+            }
         }
 
-        public Task<int> UpdateAsync(Notification notification)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var notification = await context.notifications.FindAsync(id);
+                if (notification != null)
+                {
+                    notification.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting notification.");
+                throw new Exception("Error occurred while deleting notification.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
     }
 }

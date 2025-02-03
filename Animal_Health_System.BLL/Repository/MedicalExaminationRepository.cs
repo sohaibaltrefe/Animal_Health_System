@@ -2,7 +2,8 @@
     using Animal_Health_System.DAL.Data;
     using Animal_Health_System.DAL.Models;
     using Microsoft.EntityFrameworkCore;
-    using System;
+using Microsoft.Extensions.Logging;
+using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -13,54 +14,100 @@
         public class MedicalExaminationRepository : IMedicalExaminationRepository
 
         {
-            private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<MedicalExaminationRepository> logger;
 
-            public MedicalExaminationRepository(ApplicationDbContext context)
-            {
-                this.context = context;
-            }
-
-            
-
-            public async Task<IEnumerable<MedicalExamination>> GetAllAsync()
-            {
-                return await context.medicalExaminations.AsNoTracking().ToListAsync();
-            }
-
-            public async Task<MedicalExamination> GetAsync(int id)
-            {
-            return await context.medicalExaminations.Include(me => me.Animal )
-            .Include(me => me.MedicalRecord )
-            .Include(me => me.Medications).Include(v => v.Veterinarian )
-            .FirstOrDefaultAsync(me => me.Id == id);
-            }
-
-        public async Task<int> AddAsync(MedicalExamination medicalExamination)
+        public MedicalExaminationRepository(ApplicationDbContext context, ILogger<MedicalExaminationRepository> logger)
         {
-            await context.medicalExaminations.AddAsync(medicalExamination);
-            return await context.SaveChangesAsync();
+            this.context = context;
+            this.logger = logger;
+        }
+
+        public async Task<int> AddAsync(MedicalExamination  medicalExamination)
+        {
+            try
+            {
+                await context.medicalExaminations.AddAsync(medicalExamination);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding medicalExamination.");
+                throw new Exception("Error occurred while adding medicalExamination.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<MedicalExamination>> GetAllAsync()
+        {
+            try
+            {
+                return await context.medicalExaminations.Include(m => m.MedicalRecord).Where(a => !a.IsDeleted).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicalExaminations.");
+                throw new Exception("Error occurred while retrieving medicalExaminations.", ex);
+            }
+        }
+
+        public async Task<MedicalExamination> GetAsync(int id)
+        {
+            try
+            {
+                return await context.medicalExaminations
+                    .Include(m => m.MedicalRecord)
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicalExamination.");
+                throw new Exception("Error occurred while retrieving medicalExamination.", ex);
+            }
         }
 
         public async Task<int> UpdateAsync(MedicalExamination medicalExamination)
         {
-            context.medicalExaminations.Update(medicalExamination);
-            return await context.SaveChangesAsync();
+            try
+            {
+                context.medicalExaminations.Update(medicalExamination);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating medicalExamination.");
+                throw new Exception("Error occurred while updating medicalExamination.", ex);
+            }
         }
-       
 
-            public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
+        {
+            try
             {
                 var medicalExamination = await context.medicalExaminations.FindAsync(id);
                 if (medicalExamination != null)
                 {
-                    medicalExamination.IsDeleted = true; // Soft delete
+                    medicalExamination.IsDeleted = true;
                     await context.SaveChangesAsync();
                 }
             }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting medicalExamination.");
+                throw new Exception("Error occurred while deleting medicalExamination.", ex);
+            }
+        }
 
-            public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync()
+        {
+            try
             {
                 await context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
+    }
     }

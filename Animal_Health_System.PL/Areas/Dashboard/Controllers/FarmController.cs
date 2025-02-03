@@ -14,28 +14,29 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class FarmController : Controller
     {
-        private readonly IFarmRepository farmRepository;
-        private readonly IOwnerRepository ownerRepository;
-        private readonly IMapper mapper;
 
-        public FarmController(IFarmRepository farmRepository, IOwnerRepository ownerRepository, IMapper mapper)
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
+        private readonly ILogger<FarmController> logger;
+
+        public FarmController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FarmController> logger)
         {
-            this.farmRepository = farmRepository;
-            this.ownerRepository = ownerRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var farms = await farmRepository.GetAllAsync();
+            var farms = await unitOfWork. farmRepository.GetAllAsync();
             var farmVm = mapper.Map<IEnumerable<FarmVM>>(farms);
             return View(farmVm);
         }
 
         public async Task<IActionResult> Create()
         {
-            var owners = await ownerRepository.GetAllAsync();
+            var owners = await  unitOfWork. ownerRepository.GetAllAsync();
            
 
             var vm = new FarmFormVM
@@ -57,20 +58,20 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
 
             var farm = mapper.Map<Farm>(vm);
-            await farmRepository.AddAsync(farm);
+            await unitOfWork.farmRepository.AddAsync(farm);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var farm = await farmRepository.GetAsync(id);
+            var farm = await unitOfWork. farmRepository.GetAsync(id);
             if (farm == null)
             {
                 return NotFound();
             }
 
-            var owners = await ownerRepository.GetAllAsync();
+            var owners = await unitOfWork. ownerRepository.GetAllAsync();
             var vm = mapper.Map<FarmFormVM>(farm);
             vm.Owners = new SelectList(owners, "Id", "FullName", farm.OwnerId);
             return View(vm);
@@ -79,20 +80,20 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(FarmFormVM vm)
-        { var farm = await farmRepository.GetAsync(vm.Id);
+        { var farm = await unitOfWork. farmRepository.GetAsync(vm.Id);
                 if (farm == null)
                 {
                     return NotFound();
                 }
             if (!ModelState.IsValid)
             {
-                var owners = await ownerRepository.GetAllAsync();
+                var owners = await unitOfWork. ownerRepository.GetAllAsync();
                 vm.Owners = new SelectList(owners, "Id", "FullName", vm.OwnerId); 
                 return View(vm);
             }
             mapper.Map(vm, farm);
             farm.OwnerId = (int)vm.OwnerId;
-            await farmRepository.UpdateAsync(farm);
+            await unitOfWork. farmRepository.UpdateAsync(farm);
             return RedirectToAction(nameof(Index));
            
 
@@ -100,7 +101,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var farm = await farmRepository.GetAsync(id);
+            var farm = await unitOfWork. farmRepository.GetAsync(id);
             if (farm == null)
             {
                 return NotFound();
@@ -112,14 +113,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var farm = await farmRepository.GetAsync(id);
+        { 
+            var farm = await unitOfWork. farmRepository.GetAsync(id);
             if (farm == null)
             {
                 return NotFound();
             }
 
-            await farmRepository.DeleteAsync(id);
+            await unitOfWork. farmRepository.DeleteAsync(id);
             return Ok(new { Message = "Farm deleted successfully" });
         }
     }

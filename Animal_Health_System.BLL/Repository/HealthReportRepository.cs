@@ -1,5 +1,8 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +13,100 @@ namespace Animal_Health_System.BLL.Repository
 {
     public class HealthReportRepository : IHealthReportRepository
     {
-        public Task<int> AddAsync(HealthReport healthReport)
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<HealthReportRepository> logger;
+
+        public HealthReportRepository(ApplicationDbContext context, ILogger<HealthReportRepository> logger)
         {
-            throw new NotImplementedException();
+            this.context = context;
+            this.logger = logger;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<int> AddAsync(HealthReport  healthReport)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.healthReports.AddAsync(healthReport);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding healthReport.");
+                throw new Exception("Error occurred while adding healthReport.", ex);
+            }
         }
 
-        public Task<IEnumerable<HealthReport>> GetAllAsync()
+        public async Task<IEnumerable<HealthReport>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.healthReports.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving healthReports.");
+                throw new Exception("Error occurred while retrieving healthReports.", ex);
+            }
         }
 
-        public Task<HealthReport> GetAsync(int id)
+        public async Task<HealthReport> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.healthReports
+                    .Include(f => f.Farm)
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving healthReport.");
+                throw new Exception("Error occurred while retrieving healthReport.", ex);
+            }
         }
 
-        public Task SaveChangesAsync()
+        public async Task<int> UpdateAsync(HealthReport healthReport)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.healthReports.Update(healthReport);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating healthReport.");
+                throw new Exception("Error occurred while updating healthReport.", ex);
+            }
         }
 
-        public Task<int> UpdateAsync(HealthReport healthReport)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var healthReport = await context.healthReports.FindAsync(id);
+                if (healthReport != null)
+                {
+                    healthReport.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting healthReport.");
+                throw new Exception("Error occurred while deleting healthReport.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
     }
 }

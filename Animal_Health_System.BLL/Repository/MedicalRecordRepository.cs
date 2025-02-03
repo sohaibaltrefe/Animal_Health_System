@@ -2,108 +2,142 @@
 using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    public class MedicalRecordRepository: IMedicalRecordRepository
+    public class MedicalRecordRepository : IMedicalRecordRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly ILogger<MedicalRecordRepository> logger;
 
-        public MedicalRecordRepository(ApplicationDbContext context)
+        public MedicalRecordRepository(ApplicationDbContext context, ILogger<MedicalRecordRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public async Task<int> AddAsync(MedicalRecord medicalRecord)
         {
-            // التحقق إذا كان للحيوان سجل طبي
-            var existingRecord = await context.medicalRecords
-                .FirstOrDefaultAsync(mr => mr.AnimalId == medicalRecord.AnimalId && !mr.IsDeleted);
-
-            if (existingRecord != null)
+            try
             {
-                throw new InvalidOperationException("This animal already has a medical record.");
+                await context.medicalRecords.AddAsync(medicalRecord);
+                return await context.SaveChangesAsync();
             }
-
-            await context.medicalRecords.AddAsync(medicalRecord);
-            var result = await context.SaveChangesAsync();
-
-            // تعيين MedicalRecordId في Animal
-            var animal = await context.animals.FindAsync(medicalRecord.AnimalId);
-            if (animal != null)
+            catch (Exception ex)
             {
-                animal.MedicalRecordId = medicalRecord.Id;
-                context.animals.Update(animal);
-                await context.SaveChangesAsync();
+                logger.LogError(ex, "Error occurred while adding medicalRecord.");
+                throw new Exception("Error occurred while adding medicalRecord.", ex);
             }
-
-            return result;
         }
 
-        public async Task<MedicalRecord> GetByAnimalIdAsync(int animalId)
-        {
-            return await context.medicalRecords
-                                 .FirstOrDefaultAsync(mr => mr.AnimalId == animalId);
-        }
         public async Task<IEnumerable<MedicalRecord>> GetAllAsync()
         {
-            return await context.medicalRecords
-                .Include(m => m.Animal )      // تضمين الكائن Animal
-                .ThenInclude(a => a.Farm )    // تضمين الكائن Farm داخل Animal
-                .AsNoTracking()
-                .ToListAsync();
+            try
+            {
+                return await context.medicalRecords.Where(a => !a.IsDeleted).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicalRecords.");
+                throw new Exception("Error occurred while retrieving medicalRecords.", ex);
+            }
         }
 
         public async Task<MedicalRecord> GetAsync(int id)
         {
-            return await context.medicalRecords
-        .Include(m => m.Animal ).ThenInclude(a => a.Farm )
-        .Include(m => m.Vaccines)
-        .Include(m=>m.Examinations)
-        .ThenInclude(m=>m.Medications)// Ensure this includes the Vaccines
-        .FirstOrDefaultAsync(m => m.Id == id);
+            try
+            {
+                return await context.medicalRecords
+                    .Include(m => m.Animal)
+                    .Include(m => m.Examinations)
+                    .Include(m => m.Vaccines)
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicalRecord.");
+                throw new Exception("Error occurred while retrieving medicalRecord.", ex);
+            }
         }
 
         public async Task<int> UpdateAsync(MedicalRecord medicalRecord)
         {
-            context.medicalRecords.Update(medicalRecord);
-            var result = await context.SaveChangesAsync();
-
-            // تعيين MedicalRecordId في Animal
-            var animal = await context.animals.FindAsync(medicalRecord.AnimalId);
-            if (animal != null)
+            try
             {
-                animal.MedicalRecordId = medicalRecord.Id;
-                context.animals.Update(animal);
-                await context.SaveChangesAsync();
+                context.medicalRecords.Update(medicalRecord);
+                return await context.SaveChangesAsync();
             }
-
-            return result;
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating medicalRecord.");
+                throw new Exception("Error occurred while updating medicalRecord.", ex);
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var medicalRecord = await context.medicalRecords.FindAsync(id);
-            if (medicalRecord != null)
+            try
             {
-                medicalRecord.IsDeleted = true; // Soft delete
+                var medicalRecord = await context.medicalRecords.FindAsync(id);
+                if (medicalRecord != null)
+                {
+                    medicalRecord.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting medicalRecord.");
+                throw new Exception("Error occurred while deleting medicalRecord.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
                 await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
+        }
+
+        public async Task<MedicalRecord> GetByAnimalIdAsync(int animalId)
+        {
+            try
+            {
+                return await context.medicalRecords
+                    .Include(m => m.Animal)
+                    .Include(m => m.Examinations)
+                    .Include(m => m.Vaccines)
+                    .FirstOrDefaultAsync(m => m.AnimalId == animalId && !m.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medical record by animal ID.");
+                throw new Exception("Error occurred while retrieving medical record by animal ID.", ex);
             }
         }
 
         public async Task<bool> AnyAsync(Func<MedicalRecord, bool> predicate)
         {
-            return await Task.FromResult(context.medicalRecords.Any(predicate));
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await context.SaveChangesAsync();
+            try
+            {
+                return await Task.Run(() => context.medicalRecords.Any(predicate));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while checking if any medical record exists.");
+                throw new Exception("Error occurred while checking if any medical record exists.", ex);
+            }
         }
     }
 }

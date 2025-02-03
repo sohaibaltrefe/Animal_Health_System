@@ -1,5 +1,8 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,36 +11,101 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    internal class ProductionRecordRepository : IProductionRecordRepository
+    public class ProductionRecordRepository : IProductionRecordRepository
     {
-        public Task<int> AddAsync(ProductionRecord productionRecord)
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<ProductionRecordRepository> logger;
+
+        public ProductionRecordRepository(ApplicationDbContext context, ILogger<ProductionRecordRepository> logger)
         {
-            throw new NotImplementedException();
+            this.context = context;
+            this.logger = logger;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<int> AddAsync(ProductionRecord  productionRecord)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.productionRecords.AddAsync(productionRecord);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding production Record.");
+                throw new Exception("Error occurred while adding production Record.", ex);
+            }
         }
 
-        public Task<IEnumerable<ProductionRecord>> GetAllAsync()
+        public async Task<IEnumerable<ProductionRecord>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.productionRecords.ToListAsync();           }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving production Record.");
+                throw new Exception("Error occurred while retrieving production Record.", ex);
+            }
         }
 
-        public Task<ProductionRecord> GetAsync(int id)
+        public async Task<ProductionRecord> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.productionRecords
+                  
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving production Record.");
+                throw new Exception("Error occurred while retrieving production Record.", ex);
+            }
         }
 
-        public Task SaveChangesAsync()
+        public async Task<int> UpdateAsync(ProductionRecord  productionRecord)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.productionRecords.Update(productionRecord);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating production Record.");
+                throw new Exception("Error occurred while updating production Record.", ex);
+            }
         }
 
-        public Task<int> UpdateAsync(ProductionRecord productionRecord)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var productionRecords = await context.productionRecords.FindAsync(id);
+                if (productionRecords != null)
+                {
+                    productionRecords.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting production Records.");
+                throw new Exception("Error occurred while deleting production Records.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
     }
 }

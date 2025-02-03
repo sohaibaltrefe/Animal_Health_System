@@ -14,34 +14,24 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class AppointmentController : Controller
     {
-        private readonly IAppointmentRepository appointmentRepository;
-        private readonly IAnimalRepository animalRepository;
-        private readonly IVeterinarianRepository veterinarianRepository;
-        private readonly IOwnerRepository ownerRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger<AppointmentController> logger;
 
-        public AppointmentController(IAppointmentRepository appointmentRepository,
-                                     IAnimalRepository animalRepository,
-                                     IVeterinarianRepository veterinarianRepository,
-                                     IOwnerRepository ownerRepository,
-                                     IMapper mapper,
-                                     ILogger<AppointmentController> logger)
+        public AppointmentController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AppointmentController> logger)
         {
-            this.appointmentRepository = appointmentRepository;
-            this.animalRepository = animalRepository;
-            this.veterinarianRepository = veterinarianRepository;
-            this.ownerRepository = ownerRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.logger = logger;
         }
+
 
         // Index Action - List all appointments
         public async Task<IActionResult> Index()
         {
             try
             {
-                var appointments = await appointmentRepository.GetAllAsync();
+                var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                 var appointmentsViewModel = mapper.Map<IEnumerable<AppointmentVM>>(appointments);
                 return View(appointmentsViewModel);
             }
@@ -58,9 +48,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var animals = await animalRepository.GetAllAsync();
-                var veterinarians = await veterinarianRepository.GetAllAsync();
-                var owners = await ownerRepository.GetAllAsync();
+                var animals = await unitOfWork.animalRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
+                var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
                 var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
 
@@ -92,7 +82,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 try
                 {
                     var appointment = mapper.Map<Appointment>(vm);
-                    await appointmentRepository.AddAsync(appointment);
+                    await unitOfWork.appointmentRepository.AddAsync(appointment);
                     TempData["SuccessMessage"] = "Appointment created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -116,15 +106,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointment = await appointmentRepository.GetAsync(id);
+                var appointment = await unitOfWork.appointmentRepository.GetAsync(id);
                 if (appointment == null)
                     return NotFound();
 
                 var vm = mapper.Map<AppointmentFormVM>(appointment);
 
-                var animals = await animalRepository.GetAllAsync();
-                var veterinarians = await veterinarianRepository.GetAllAsync();
-                var owners = await ownerRepository.GetAllAsync();
+                var animals = await unitOfWork.animalRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
+                var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
                 var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
 
@@ -151,12 +141,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 try
                 {
-                    var appointment = await appointmentRepository.GetAsync(id);
+                    var appointment = await unitOfWork.appointmentRepository.GetAsync(id);
                     if (appointment == null)
                         return NotFound();
 
                     mapper.Map(vm, appointment);
-                    await appointmentRepository.UpdateAsync(appointment);
+                    await unitOfWork.appointmentRepository.UpdateAsync(appointment);
                     TempData["SuccessMessage"] = "Appointment updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -178,7 +168,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointment = await appointmentRepository.GetAsync(id);
+                var appointment = await unitOfWork.appointmentRepository.GetAsync(id);
                 if (appointment == null)
                     return NotFound();
 
@@ -199,14 +189,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointment = await appointmentRepository.GetAsync(id);
+                var appointment = await unitOfWork.appointmentRepository.GetAsync(id);
                 if (appointment == null)
                 {
                     TempData["ErrorMessage"] = "Appointment not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                await appointmentRepository.DeleteAsync(id);
+                await unitOfWork.appointmentRepository.DeleteAsync(id);
                 TempData["SuccessMessage"] = "Appointment deleted successfully.";
                 return RedirectToAction(nameof(Index));
             }
@@ -221,9 +211,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         // Helper method to populate SelectLists for Animal, Veterinarian, Owner, and Status
         private async Task PopulateSelectLists(AppointmentFormVM vm)
         {
-            var animals = await animalRepository.GetAllAsync();
-            var veterinarians = await veterinarianRepository.GetAllAsync();
-            var owners = await ownerRepository.GetAllAsync();
+            var animals = await unitOfWork.animalRepository.GetAllAsync();
+            var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
+            var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
             var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
 

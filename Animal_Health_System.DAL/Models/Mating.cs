@@ -15,11 +15,12 @@ namespace Animal_Health_System.DAL.Models
 
         public DateTime MatingDate { get; set; }  
 
-        public string Notes { get; set; }  
+        public string Notes { get; set; }
 
+        public int? FarmId { get; set; }
+        public Farm farm { get; set; }
 
-     
-  public int? MaleAnimalId { get; set; } 
+        public int? MaleAnimalId { get; set; } 
         public Animal MaleAnimal { get; set; }
 
         public int? FemaleAnimalId { get; set; }  

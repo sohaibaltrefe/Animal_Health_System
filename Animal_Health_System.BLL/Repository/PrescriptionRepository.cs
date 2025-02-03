@@ -1,5 +1,8 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,36 +11,101 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    internal class PrescriptionRepository : IPrescriptionRepository
+    public class PrescriptionRepository : IPrescriptionRepository
     {
-        public Task<int> AddAsync(Prescription prescription)
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<PrescriptionRepository> logger;
+
+        public PrescriptionRepository(ApplicationDbContext context, ILogger<PrescriptionRepository> logger)
         {
-            throw new NotImplementedException();
+            this.context = context;
+            this.logger = logger;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<int> AddAsync(Prescription  prescription)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.prescriptions.AddAsync(prescription);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding prescription.");
+                throw new Exception("Error occurred while adding prescription.", ex);
+            }
         }
 
-        public Task<IEnumerable<Prescription>> GetAllAsync()
+        public async Task<IEnumerable<Prescription>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.prescriptions.ToListAsync();            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving prescription.");
+                throw new Exception("Error occurred while retrieving prescription.", ex);
+            }
         }
 
-        public Task<Prescription> GetAsync(int id)
+        public async Task<Prescription> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.prescriptions
+                
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving prescription.");
+                throw new Exception("Error occurred while retrieving prescription.", ex);
+            }
         }
 
-        public Task SaveChangesAsync()
+        public async Task<int> UpdateAsync(Prescription prescription)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.prescriptions.Update(prescription);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating prescription.");
+                throw new Exception("Error occurred while updating prescription.", ex);
+            }
         }
 
-        public Task<int> UpdateAsync(Prescription prescription)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var prescription = await context.prescriptions.FindAsync(id);
+                if (prescription != null)
+                {
+                    prescription.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting prescription.");
+                throw new Exception("Error occurred while deleting prescription.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
     }
 }

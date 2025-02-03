@@ -21,6 +21,7 @@ namespace Animal_Health_System.DAL.Data
         public DbSet<BreedingReport>  breedingReports { get; set; }
         public DbSet<Farm>  farms{ get; set; }
         public DbSet<FarmHealthSummary>  farmHealthSummaries { get; set; }
+
         public DbSet<HealthReport> healthReports { get; set; }
         public DbSet<Mating> matings  { get; set; }
         public DbSet<MedicalExamination> medicalExaminations  { get; set; }
@@ -39,8 +40,9 @@ namespace Animal_Health_System.DAL.Data
         public DbSet<Veterinarian>  veterinarians { get; set; }
 
         public DbSet<FarmStaff>  farmStaff { get; set; }
+        public DbSet<FarmVeterinarian> farmVeterinarians { get; set; }
 
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -273,7 +275,11 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey(m => m.FemaleAnimalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-          
+            // Animal -> Farm (Many-to-One)
+            modelBuilder.Entity<Mating>()
+                .HasOne(a => a.farm)  // Animal has one Farm
+                .WithMany(f => f.Matings) // Farm has many Animals
+                .HasForeignKey(a => a.FarmId).OnDelete(DeleteBehavior.Restrict);
             //------------unique  --------------
 
 

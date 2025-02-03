@@ -1,5 +1,8 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,36 +11,102 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    internal class BirthRepository : IBirthRepository
+    public class BirthRepository : IBirthRepository
     {
-        public Task<int> AddAsync(Birth birth)
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<BirthRepository> logger;
+
+        public BirthRepository(ApplicationDbContext context, ILogger<BirthRepository> logger)
         {
-            throw new NotImplementedException();
+            this.context = context;
+            this.logger = logger;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<int> AddAsync(Birth  birth)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.births.AddAsync(birth);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding birth.");
+                throw new Exception("Error occurred while adding birth.", ex);
+            }
         }
 
-        public Task<IEnumerable<Birth>> GetAllAsync()
+        public async Task<IEnumerable<Birth>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.births.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving birth.");
+                throw new Exception("Error occurred while retrieving birth.", ex);
+            }
         }
 
-        public Task<Birth> GetAsync(int id)
+        public async Task<Birth> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await context.births
+                   
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving birth.");
+                throw new Exception("Error occurred while retrieving birth.", ex);
+            }
         }
 
-        public Task SaveChangesAsync()
+        public async Task<int> UpdateAsync(Birth  birth)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.births.Update(birth);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating birth.");
+                throw new Exception("Error occurred while updating birth.", ex);
+            }
         }
 
-        public Task<int> UpdateAsync(Birth birth)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var birth = await context.births.FindAsync(id);
+                if (birth != null)
+                {
+                    birth.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting birth.");
+                throw new Exception("Error occurred while deleting birth.", ex);
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
     }
 }

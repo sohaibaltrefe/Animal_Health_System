@@ -2,6 +2,7 @@
 using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,13 +12,15 @@ namespace Animal_Health_System.BLL.Repository
     public class VaccineRepository : IVaccineRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly ILogger<VaccineRepository> logger;
 
-        public VaccineRepository(ApplicationDbContext context)
+        public VaccineRepository(ApplicationDbContext context, ILogger<VaccineRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
-        public async Task<int> AddAsync(Vaccine vaccine)
+        public async Task<int> AddAsync(Vaccine  vaccine)
         {
             try
             {
@@ -26,8 +29,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception("An error occurred while adding the vaccine", ex);
+                logger.LogError(ex, "Error occurred while adding vaccine.");
+                throw new Exception("Error occurred while adding vaccine.", ex);
             }
         }
 
@@ -35,15 +38,12 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.vaccines.Include(m => m.MedicalRecord)
-                                             .Include(v => v.Veterinarian )
-                                             .AsNoTracking()
-                                             .ToListAsync();
+                return await context.vaccines.Where(a => !a.IsDeleted).ToListAsync();
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception("An error occurred while retrieving vaccines", ex);
+                logger.LogError(ex, "Error occurred while retrieving vaccines.");
+                throw new Exception("Error occurred while retrieving vaccines.", ex);
             }
         }
 
@@ -51,14 +51,13 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.vaccines.Include(m => m.MedicalRecord )
-                                             .Include(v => v.Veterinarian )
-                                             .FirstOrDefaultAsync(ve => ve.Id == id);
+                return await context.vaccines
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception($"An error occurred while retrieving the vaccine with ID {id}", ex);
+                logger.LogError(ex, "Error occurred while retrieving vaccine.");
+                throw new Exception("Error occurred while retrieving vaccine.", ex);
             }
         }
 
@@ -71,8 +70,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception("An error occurred while updating the vaccine", ex);
+                logger.LogError(ex, "Error occurred while updating vaccine.");
+                throw new Exception("Error occurred while updating vaccine.", ex);
             }
         }
 
@@ -83,14 +82,14 @@ namespace Animal_Health_System.BLL.Repository
                 var vaccine = await context.vaccines.FindAsync(id);
                 if (vaccine != null)
                 {
-                    vaccine.IsDeleted = true; // Soft delete
+                    vaccine.IsDeleted = true;
                     await context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception($"An error occurred while deleting the vaccine with ID {id}", ex);
+                logger.LogError(ex, "Error occurred while deleting vaccine.");
+                throw new Exception("Error occurred while deleting vaccine.", ex);
             }
         }
 
@@ -102,8 +101,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as needed
-                throw new Exception("An error occurred while saving changes", ex);
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
             }
         }
     }

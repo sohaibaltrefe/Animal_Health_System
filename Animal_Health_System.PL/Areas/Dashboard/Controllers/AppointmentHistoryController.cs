@@ -1,4 +1,5 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.BLL.Repository;
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
 using AutoMapper;
@@ -14,28 +15,24 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class AppointmentHistoryController : Controller
     {
-        private readonly IAppointmentHistoryRepository appointmentHistoryRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IAppointmentRepository appointmentRepository;
         private readonly ILogger<AppointmentHistoryController> logger;
 
-        public AppointmentHistoryController(IAppointmentHistoryRepository appointmentHistoryRepository,
-                                             IMapper mapper,
-                                             IAppointmentRepository appointmentRepository,
-                                             ILogger<AppointmentHistoryController> logger)
+        public AppointmentHistoryController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AppointmentHistoryController> logger)
         {
-            this.appointmentHistoryRepository = appointmentHistoryRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.appointmentRepository = appointmentRepository;
             this.logger = logger;
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var appointments = await appointmentRepository.GetAllAsync();
+                var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                 bool hasAppointments = appointments != null && appointments.Any();
 
                 if (!hasAppointments)
@@ -43,7 +40,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     TempData["NoAppointments"] = "There are no reservations currently. Please add a new reservation";
                 }
 
-                var appointmentHistories = await appointmentHistoryRepository.GetAllAsync();
+                var appointmentHistories = await unitOfWork.appointmentHistoryRepository.GetAllAsync();
                 var appointmentHistoriesVm = mapper.Map<IEnumerable<AppointmentHistoryVM>>(appointmentHistories);
                 return View(appointmentHistoriesVm);
             }
@@ -60,7 +57,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointments = await appointmentRepository.GetAllAsync();
+                var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                 if (appointments == null || !appointments.Any())
                 {
                     ModelState.AddModelError("", "No appointments available. Please add an appointment first.");
@@ -89,12 +86,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var appointments = await appointmentRepository.GetAllAsync();
+                    var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                     vm.Appointment = new SelectList(appointments, "Id", "Name", vm.AppointmentId);
                     return View(vm);
                 }
 
-                var appointment = await appointmentRepository.GetAsync((int)vm.AppointmentId);
+                var appointment = await unitOfWork.appointmentRepository.GetAsync((int)vm.AppointmentId);
                 if (appointment == null)
                 {
                     ModelState.AddModelError("", "Appointment not found.");
@@ -103,7 +100,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
                 vm.Status = appointment.AppointmentDate < DateTime.Now ? "Completed" : "Pending";
                 var appointmentHistory = mapper.Map<AppointmentHistory>(vm);
-                await appointmentHistoryRepository.AddAsync(appointmentHistory);
+                await unitOfWork.appointmentHistoryRepository.AddAsync(appointmentHistory);
 
                 TempData["Success"] = "Appointment history added successfully!";
                 return RedirectToAction(nameof(Index));
@@ -121,13 +118,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointmentHistory = await appointmentHistoryRepository.GetAsync(id);
+                var appointmentHistory = await unitOfWork.appointmentHistoryRepository.GetAsync(id);
                 if (appointmentHistory == null)
                 {
                     return NotFound();
                 }
 
-                var appointments = await appointmentRepository.GetAllAsync();
+                var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                 var vm = mapper.Map<AppointmentHistoryFormVM>(appointmentHistory);
                 vm.Appointment = new SelectList(appointments, "Id", "Name", appointmentHistory.AppointmentId);
 
@@ -148,18 +145,18 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var appointments = await appointmentRepository.GetAllAsync();
+                    var appointments = await unitOfWork.appointmentRepository.GetAllAsync();
                     vm.Appointment = new SelectList(appointments, "Id", "Name", vm.AppointmentId);
                     return View(vm);
                 }
 
-                var appointmentHistory = await appointmentHistoryRepository.GetAsync(vm.Id);
+                var appointmentHistory = await unitOfWork.appointmentHistoryRepository.GetAsync(vm.Id);
                 if (appointmentHistory == null)
                 {
                     return NotFound();
                 }
 
-                var appointment = await appointmentRepository.GetAsync((int)vm.AppointmentId);
+                var appointment = await unitOfWork.appointmentRepository.GetAsync((int)vm.AppointmentId);
                 if (appointment == null)
                 {
                     ModelState.AddModelError("", "Appointment not found.");
@@ -169,7 +166,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 vm.Status = appointment.AppointmentDate < DateTime.Now ? "Completed" : "Pending";
                 mapper.Map(vm, appointmentHistory);
 
-                await appointmentHistoryRepository.UpdateAsync(appointmentHistory);
+                await unitOfWork.appointmentHistoryRepository.UpdateAsync(appointmentHistory);
 
                 TempData["Success"] = "Appointment history updated successfully!";
                 return RedirectToAction(nameof(Index));
@@ -187,7 +184,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointmentHistory = await appointmentHistoryRepository.GetAsync(id);
+                var appointmentHistory = await unitOfWork.appointmentHistoryRepository.GetAsync(id);
                 if (appointmentHistory == null)
                 {
                     return NotFound();
@@ -208,13 +205,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var appointmentHistory = await appointmentHistoryRepository.GetAsync(id);
+                var appointmentHistory = await unitOfWork.appointmentHistoryRepository.GetAsync(id);
                 if (appointmentHistory == null)
                 {
                     return Json(new { success = false, message = "Appointment history not found." });
                 }
 
-                await appointmentHistoryRepository.DeleteAsync(id);
+                await unitOfWork.appointmentHistoryRepository.DeleteAsync(id);
                 return Json(new { success = true });
             }
             catch (Exception ex)

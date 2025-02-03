@@ -13,113 +13,99 @@ namespace Animal_Health_System.BLL.Repository
 {
     public class FarmStaffRepository : IFarmStaffRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ILogger<FarmStaffRepository> _logger;
+        private readonly ApplicationDbContext context;
+        private readonly ILogger<FarmStaffRepository> logger;
 
         public FarmStaffRepository(ApplicationDbContext context, ILogger<FarmStaffRepository> logger)
         {
-            _context = context;
-            _logger = logger;
+            this.context = context;
+            this.logger = logger;
         }
 
-        // Add new FarmStaff
-        public async Task<int> AddAsync(FarmStaff farmStaff)
+        public async Task<int> AddAsync(FarmStaff  farmStaff)
         {
             try
             {
-             
-
-                _context.farmStaff.Add(farmStaff);
-                await _context.SaveChangesAsync();
-
-                return farmStaff.Id;
+                await context.farmStaff.AddAsync(farmStaff);
+                return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding farm staff.");
-                throw new Exception("Error adding farm staff.", ex);
+                logger.LogError(ex, "Error occurred while adding farm Staff.");
+                throw new Exception("Error occurred while adding farm Staff.", ex);
             }
         }
 
-        // Delete FarmStaff (soft delete)
-        public async Task DeleteAsync(int id)
-        {
-            try
-            {
-                var farmStaff = await _context.farmStaff.FindAsync(id);
-                if (farmStaff != null)
-                {
-                    farmStaff.IsDeleted = true;
-                     _context.farmStaff.Update(farmStaff);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting farm staff.");
-                throw new Exception("Error deleting farm staff.", ex);
-            }
-        }
-
-        // Get all FarmStaff
         public async Task<IEnumerable<FarmStaff>> GetAllAsync()
         {
             try
             {
-                return await _context.farmStaff
-                                     .Where(f => !f.IsDeleted)
-                                     .ToListAsync();
+                return await context.farmStaff.Include(f => f.Farm).Where(a => !a.IsDeleted).ToListAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching farm staff.");
-                throw new Exception("Error fetching farm staff.", ex);
+                logger.LogError(ex, "Error occurred while retrieving farm Staff.");
+                throw new Exception("Error occurred while retrieving farm Staff.", ex);
             }
         }
 
-        // Get FarmStaff by ID
         public async Task<FarmStaff> GetAsync(int id)
         {
             try
             {
-                return await _context.farmStaff.FindAsync(id);
+                return await context.farmStaff
+                    .Include(f => f.Farm)
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching farm staff by ID.");
-                throw new Exception("Error fetching farm staff by ID.", ex);
+                logger.LogError(ex, "Error occurred while retrieving farm Staff.");
+                throw new Exception("Error occurred while retrieving farmS taff.", ex);
             }
         }
 
-        // Save Changes
+        public async Task<int> UpdateAsync(FarmStaff  farmStaff)
+        {
+            try
+            {
+                context.farmStaff.Update(farmStaff);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating farm Staff.");
+                throw new Exception("Error occurred while updating farm Staff.", ex);
+            }
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            try
+            {
+                var farmStaff = await context.farmStaff.FindAsync(id);
+                if (farmStaff != null)
+                {
+                    farmStaff.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting farm Staff.");
+                throw new Exception("Error occurred while deleting farm Staff.", ex);
+            }
+        }
+
         public async Task SaveChangesAsync()
         {
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving changes.");
-                throw new Exception("Error saving changes.", ex);
-            }
-        }
-
-        // Update FarmStaff
-        public async Task<int> UpdateAsync(FarmStaff farmStaff)
-        {
-            try
-            {
- 
-                _context.farmStaff.Update(farmStaff);
-                await _context.SaveChangesAsync();
-
-                return farmStaff.Id;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating farm staff.");
-                throw new Exception("Error updating farm staff.", ex);
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
             }
         }
     }

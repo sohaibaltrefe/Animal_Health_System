@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
 {
-    public class VeterinarianRepository:IVeterinarianRepository    {
+    public class VeterinarianRepository:IVeterinarianRepository{
         private readonly ApplicationDbContext context;
         private readonly ILogger<VeterinarianRepository> logger;
 

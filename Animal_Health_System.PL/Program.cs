@@ -24,21 +24,37 @@ namespace Animal_Health_System.PL
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
-            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-            builder.Services.AddScoped<IVeterinarianRepository, VeterinarianRepository>();
-            builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
-            builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
-            builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
-            builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
-            builder.Services.AddScoped<IMedicalExaminationRepository, MedicalExaminationRepository>();
-            builder.Services.AddScoped<IFarmRepository, FarmRepository>();
             builder.Services.AddScoped<IAnimalHealthHistoryRepository, AnimalHealthHistoryRepository>();
-
-            builder.Services.AddScoped<IMedicationStockRepository, MedicationStockRepository>();
-            builder.Services.AddScoped<IFarmHealthSummaryRepository, FarmHealthSummaryRepository>();
+            builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IAppointmentHistoryRepository, AppointmentHistoryRepository>();
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            builder.Services.AddScoped<IBirthRepository, BirthRepository>();
+            builder.Services.AddScoped<IBreedingReportRepository, BreedingReportRepository>();
+
+
+
+            builder.Services.AddScoped<IFarmHealthSummaryRepository, FarmHealthSummaryRepository>();
+            builder.Services.AddScoped<IFarmRepository, FarmRepository>();
             builder.Services.AddScoped<IFarmStaffRepository, FarmStaffRepository>();
-                        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IFarmVeterinarianRepository, FarmVeterinarianRepository>();
+            builder.Services.AddScoped<IHealthReportRepository, HealthReportRepository>();
+            builder.Services.AddScoped<IMatingRepository, MatingRepository>();
+            builder.Services.AddScoped<IMedicalExaminationRepository, MedicalExaminationRepository>();
+            builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
+            builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
+            builder.Services.AddScoped<IMedicationStockRepository, MedicationStockRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
+            builder.Services.AddScoped<IPregnancyRepository, PregnancyRepository>();
+            builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+            builder.Services.AddScoped<IProductionRecordRepository, ProductionRecordRepository>();
+            builder.Services.AddScoped<IVaccineHistoryRepository, VaccineHistoryRepository>();
+            builder.Services.AddScoped<IVaccineReminderRepository, VaccineReminderRepository>();
+            builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
+            builder.Services.AddScoped<IVeterinarianRepository, VeterinarianRepository>();
+
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

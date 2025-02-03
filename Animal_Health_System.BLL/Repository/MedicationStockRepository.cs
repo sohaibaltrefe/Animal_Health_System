@@ -2,6 +2,7 @@
 using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,52 +14,99 @@ namespace Animal_Health_System.BLL.Repository
     public class MedicationStockRepository : IMedicationStockRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly ILogger<MedicationStockRepository> logger;
 
-        public MedicationStockRepository(ApplicationDbContext context)
+        public MedicationStockRepository(ApplicationDbContext context, ILogger<MedicationStockRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public async Task<int> AddAsync(MedicationStock  medicationStock)
         {
-
-         
-           
-            await context.medicationStocks.AddAsync(medicationStock);
-            return await context.SaveChangesAsync();
+            try
+            {
+                await context.medicationStocks.AddAsync(medicationStock);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding medicationStock.");
+                throw new Exception("Error occurred while adding medicationStock.", ex);
+            }
         }
 
         public async Task<IEnumerable<MedicationStock>> GetAllAsync()
         {
-            return await context.medicationStocks.Include(m=>m.Medications).ToListAsync();
+            try
+            {
+                return await context.medicationStocks.Where(a => !a.IsDeleted).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicationStocks.");
+                throw new Exception("Error occurred while retrieving medicationStocks.", ex);
+            }
         }
 
         public async Task<MedicationStock> GetAsync(int id)
         {
-            return await context.medicationStocks
-                    .Include(m => m.Medications)
-                    .FirstOrDefaultAsync(a => a.Id == id);
+            try
+            {
+                return await context.medicationStocks
+                   
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving medicationStock.");
+                throw new Exception("Error occurred while retrieving medicationStock.", ex);
+            }
         }
 
-        public async Task<int> UpdateAsync(MedicationStock  medicationStock)
+        public async Task<int> UpdateAsync(MedicationStock medicationStock)
         {
-            context.medicationStocks.Update(medicationStock);
-            return await context.SaveChangesAsync();
+            try
+            {
+                context.medicationStocks.Update(medicationStock);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating medicationStock.");
+                throw new Exception("Error occurred while updating medicationStock.", ex);
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var MedicationStock = await context.medicationStocks.FindAsync(id);
-            if (MedicationStock != null)
+            try
             {
-                MedicationStock.IsDeleted = true; // Soft delete
-                await context.SaveChangesAsync();
+                var medicationStock = await context.medicationStocks.FindAsync(id);
+                if (medicationStock != null)
+                {
+                    medicationStock.IsDeleted = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting medicationStock.");
+                throw new Exception("Error occurred while deleting medicationStock.", ex);
             }
         }
 
         public async Task SaveChangesAsync()
         {
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while saving changes.");
+                throw new Exception("Error occurred while saving changes.", ex);
+            }
         }
 
     }
