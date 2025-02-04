@@ -3,21 +3,21 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
-{
-    [Area("Dashboard")]
-    public class BreedingReportController : Controller
-    {
+{        [Area("Dashboard")]
 
+    public class FarmVeterinarianController : Controller
+    {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly ILogger<BreedingReportController> logger;
+        private readonly ILogger<FarmVeterinarianController> logger;
 
-        public BreedingReportController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<BreedingReportController> logger)
+        public FarmVeterinarianController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FarmVeterinarianController> logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.logger = logger;
         }
+
         public IActionResult Index()
         {
             return View();

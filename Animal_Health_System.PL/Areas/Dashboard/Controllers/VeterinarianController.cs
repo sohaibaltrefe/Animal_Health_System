@@ -12,16 +12,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class VeterinarianController : Controller
     {
-        private readonly IVeterinarianRepository veterinarianRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger<VeterinarianController> logger;
 
-        public VeterinarianController(
-            IVeterinarianRepository veterinarianRepository,
-            IMapper mapper,
-            ILogger<VeterinarianController> logger)
+        public VeterinarianController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<VeterinarianController> logger)
         {
-            this.veterinarianRepository = veterinarianRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -31,7 +28,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var veterinarians = await veterinarianRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
                 var veterinarianVm = mapper.Map<IEnumerable<VeterinarianVM>>(veterinarians);
                 return View(veterinarianVm);
             }
@@ -58,7 +55,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 if (ModelState.IsValid)
                 {
                     var veterinarian = mapper.Map<Veterinarian>(vm);
-                    await veterinarianRepository.AddAsync(veterinarian);
+                    await unitOfWork.veterinarianRepository.AddAsync(veterinarian);
                     TempData["SuccessMessage"] = "Veterinarian created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -77,7 +74,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var veterinarian = await veterinarianRepository.GetAsync(id);
+                var veterinarian = await unitOfWork.veterinarianRepository.GetAsync(id);
                 if (veterinarian == null)
                 {
                     return NotFound();
@@ -101,13 +98,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var veterinarian = await veterinarianRepository.GetAsync(vm.Id);
+                    var veterinarian = await unitOfWork.veterinarianRepository.GetAsync(vm.Id);
                     if (veterinarian == null)
                     {
                         return NotFound();
                     }
                     mapper.Map(vm, veterinarian);
-                    await veterinarianRepository.UpdateAsync(veterinarian);
+                    await unitOfWork.veterinarianRepository.UpdateAsync(veterinarian);
                     TempData["SuccessMessage"] = "Veterinarian updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -126,7 +123,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var veterinarian = await veterinarianRepository.GetAsync(id);
+                var veterinarian = await unitOfWork.veterinarianRepository.GetAsync(id);
                 if (veterinarian == null)
                 {
                     return NotFound();
@@ -148,13 +145,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var veterinarian = await veterinarianRepository.GetAsync(id);
+                var veterinarian = await unitOfWork.veterinarianRepository.GetAsync(id);
                 if (veterinarian == null)
                 {
                     return NotFound();
                 }
 
-                await veterinarianRepository.DeleteAsync(id);
+                await unitOfWork.veterinarianRepository.DeleteAsync(id);
                 TempData["SuccessMessage"] = "Veterinarian deleted successfully.";
                 return RedirectToAction(nameof(Index));
             }

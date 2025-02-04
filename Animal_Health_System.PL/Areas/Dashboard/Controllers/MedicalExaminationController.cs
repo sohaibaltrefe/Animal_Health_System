@@ -14,34 +14,21 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class MedicalExaminationController : Controller
     {
-        private readonly IMedicalExaminationRepository medicalExaminationRepository;
-        private readonly IMedicalRecordRepository medicalRecordRepository;
-        private readonly IAnimalRepository animalRepository;
-        private readonly IVeterinarianRepository veterinarianRepository;
-        private readonly IMedicationRepository medicationRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly ApplicationDbContext context;
+        private readonly ILogger<MedicalExaminationController> logger;
 
-        public MedicalExaminationController(
-            IMedicalExaminationRepository medicalExaminationRepository,
-            IMedicalRecordRepository medicalRecordRepository,
-            IAnimalRepository animalRepository,
-            IVeterinarianRepository veterinarianRepository,
-            IMedicationRepository medicationRepository,
-            IMapper mapper,ApplicationDbContext context)
+        public MedicalExaminationController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<MedicalExaminationController> logger)
         {
-            this.medicalExaminationRepository = medicalExaminationRepository;
-            this.medicalRecordRepository = medicalRecordRepository;
-            this.animalRepository = animalRepository;
-            this.veterinarianRepository = veterinarianRepository;
-            this.medicationRepository = medicationRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.context = context;
+            this.logger = logger;
         }
+
 
         public async Task<IActionResult> Index()
         {
-            var medicalExaminations = await medicalExaminationRepository.GetAllAsync();
+            var medicalExaminations = await unitOfWork.medicalExaminationRepository.GetAllAsync();
             var medicalExaminationVm = mapper.Map<IEnumerable<MedicalExaminationVM>>(medicalExaminations);
             return View(medicalExaminationVm);
         }
@@ -49,7 +36,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var medicalExamination = await medicalExaminationRepository.GetAsync(id);
+            var medicalExamination = await unitOfWork.medicalExaminationRepository.GetAsync(id);
             if (medicalExamination == null)
                 return NotFound();
 
@@ -60,15 +47,16 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> CheckMedicalRecord(int animalId)
         {
-            // استخدم DbContext مباشرة للوصول إلى السجلات الطبية
-            var medicalRecord = await context.medicalRecords
-                .Where(r => r.AnimalId == animalId) // تحديد الحيوان المرتبط بالسجل الطبي
-                .FirstOrDefaultAsync(); // جلب أول سجل يتطابق مع الشرط
+            var medicalRecord = await unitOfWork.medicalRecordRepository.GetByAnimalIdAsync(animalId);
 
-            // إذا تم العثور على السجل الطبي
             if (medicalRecord != null)
             {
-                return Json(new { hasMedicalRecord = true, medicalRecordId = medicalRecord.Id, medicalRecordName = medicalRecord.Name });
+                return Json(new
+                {
+                    hasMedicalRecord = true,
+                    medicalRecordId = medicalRecord.Id,
+                    medicalRecordName = medicalRecord.Name
+                });
             }
             else
             {
@@ -81,10 +69,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var medicalRecords = await medicalRecordRepository.GetAllAsync();
-            var animals = await animalRepository.GetAllAsync();
-            var veterinarians = await veterinarianRepository.GetAllAsync();
-            var medications = await medicationRepository.GetAllAsync();
+            var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
+            var animals = await unitOfWork.animalRepository.GetAllAsync();
+            var veterinarians = await unitOfWork. veterinarianRepository.GetAllAsync();
+            var medications = await unitOfWork.medicationRepository.GetAllAsync();
 
             var vm = new MedicalExaminationFormVM
             {
@@ -107,11 +95,11 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             if (ModelState.IsValid)
             {
-                var animal = await animalRepository.GetAsync(vm.AnimalId.Value);
-                if (animal == null || !await medicalRecordRepository.AnyAsync(r => r.AnimalId == animal.Id))
+                var animal = await unitOfWork.animalRepository.GetAsync(vm.AnimalId.Value);
+                if (animal == null || !await unitOfWork.medicalRecordRepository.AnyAsync(r => r.AnimalId == animal.Id))
                 {
                     ModelState.AddModelError("MedicalRecordId", "There is no medical record for this animal.");
-                    var medications = await medicationRepository.GetAllAsync();
+                    var medications = await unitOfWork.medicationRepository.GetAllAsync();
                     ViewBag.Medications = new SelectList(medications, "Id", "Name");
 
                     // Update the ViewBag to indicate the absence of a medical record
@@ -123,18 +111,18 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
                 foreach (var medicationId in vm.SelectedMedications)
                 {
-                    var medication = await medicationRepository.GetAsync(medicationId);
+                    var medication = await unitOfWork.medicationRepository.GetAsync(medicationId);
                     if (medication != null)
                     {
                         medicalExamination.Medications.Add(medication);
                     }
                 }
 
-                await medicalExaminationRepository.AddAsync(medicalExamination);
+                await unitOfWork.medicalExaminationRepository.AddAsync(medicalExamination);
                 return RedirectToAction(nameof(Index));
             }
 
-            var medicationsList = await medicationRepository.GetAllAsync();
+            var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
             ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
 
             return View(vm);
@@ -143,15 +131,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var medicalExamination = await medicalExaminationRepository.GetAsync(id);
+            var medicalExamination = await unitOfWork.medicalExaminationRepository.GetAsync(id);
             if (medicalExamination == null) return NotFound();
 
             var vm = mapper.Map<MedicalExaminationFormVM>(medicalExamination);
 
-            var medicalRecords = await medicalRecordRepository.GetAllAsync();
-            var animals = await animalRepository.GetAllAsync();
-            var veterinarians = await veterinarianRepository.GetAllAsync();
-            var medications = await medicationRepository.GetAllAsync();
+            var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
+            var animals = await unitOfWork.animalRepository.GetAllAsync();
+            var veterinarians = await unitOfWork. veterinarianRepository.GetAllAsync();
+            var medications = await unitOfWork.medicationRepository.GetAllAsync();
 
             vm.MedicalRecord = new SelectList(medicalRecords, "Id", "Name", medicalExamination.MedicalRecordId);
             vm.Animal = new SelectList(animals, "Id", "Name", medicalExamination.AnimalId);
@@ -169,21 +157,21 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var medicationsList = await medicationRepository.GetAllAsync();
+                var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
                 ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
                 return View(vm);
             }
 
-            var animal = await animalRepository.GetAsync(vm.AnimalId.Value);
-            if (animal == null || !await medicalRecordRepository.AnyAsync(r => r.AnimalId == animal.Id))
+            var animal = await unitOfWork.animalRepository.GetAsync(vm.AnimalId.Value);
+            if (animal == null || !await unitOfWork.medicalRecordRepository.AnyAsync(r => r.AnimalId == animal.Id))
             {
                 ModelState.AddModelError("MedicalRecordId", "There is no medical record for this animal.");
-                var medicationsList = await medicationRepository.GetAllAsync();
+                var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
                 ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
                 return View(vm);
             }
 
-            var medicalExamination = await medicalExaminationRepository.GetAsync(vm.Id);
+            var medicalExamination = await unitOfWork.medicalExaminationRepository.GetAsync(vm.Id);
             if (medicalExamination == null) return NotFound();
 
             mapper.Map(vm, medicalExamination);
@@ -191,26 +179,26 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             medicalExamination.Medications.Clear();
             foreach (var medicationId in vm.SelectedMedications)
             {
-                var medication = await medicationRepository.GetAsync(medicationId);
+                var medication = await unitOfWork.medicationRepository.GetAsync(medicationId);
                 if (medication != null)
                 {
                     medicalExamination.Medications.Add(medication);
                 }
             }
 
-            await medicalExaminationRepository.UpdateAsync(medicalExamination);
+            await unitOfWork.medicalExaminationRepository.UpdateAsync(medicalExamination);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var medicalExamination = await medicalExaminationRepository.GetAsync(id);
+            var medicalExamination = await unitOfWork.medicalExaminationRepository.GetAsync(id);
             if (medicalExamination == null)
             {
                 return RedirectToAction(nameof(Index));
             }
-            await medicalExaminationRepository.DeleteAsync(id);
+            await unitOfWork.medicalExaminationRepository.DeleteAsync(id);
             return Ok(new { Message = "Medical Examination deleted successfully" });
         }
     }

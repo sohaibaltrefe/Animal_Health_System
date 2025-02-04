@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
     [Area("Dashboard")]
-    public class BreedingReportController : Controller
+    public class BirthController : Controller
     {
-
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly ILogger<BreedingReportController> logger;
+        private readonly ILogger<BirthController> logger;
 
-        public BreedingReportController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<BreedingReportController> logger)
+        public BirthController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<BirthController> logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;

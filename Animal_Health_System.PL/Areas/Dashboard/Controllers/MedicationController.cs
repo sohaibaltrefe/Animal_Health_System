@@ -16,17 +16,20 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
     public class MedicationController : Controller
     {
-        private readonly IMedicationRepository medicationRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly ILogger<MedicationController> logger;
 
-        public MedicationController(IMedicationRepository medicationRepository,IMapper mapper)
+        public MedicationController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<MedicationController> logger)
         {
-            this.medicationRepository = medicationRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
+
         public async Task<IActionResult> Index()
         {
-            var medications = await medicationRepository.GetAllAsync();
+            var medications = await unitOfWork.medicationRepository.GetAllAsync();
             var medicationVMs = mapper.Map<IEnumerable<MedicationVM>>(medications);
             return View(medicationVMs);
         }
@@ -44,14 +47,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
 
             var medication = mapper.Map<Medication>(vm);
-            await medicationRepository.AddAsync(medication);
-            await medicationRepository.SaveChangesAsync();
+            await unitOfWork.medicationRepository.AddAsync(medication);
+            await unitOfWork.medicationRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var medication = await medicationRepository.GetAsync(id);
+            var medication = await unitOfWork.medicationRepository.GetAsync(id);
             if (medication == null)
             {
                 return NotFound();
@@ -70,22 +73,22 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return View(vm);
             }
 
-            var medication = await medicationRepository.GetAsync(vm.Id);
+            var medication = await unitOfWork.medicationRepository.GetAsync(vm.Id);
             if (medication == null)
             {
                 return NotFound();
             }
 
             mapper.Map(vm, medication);
-            await medicationRepository.UpdateAsync(medication);
-            await medicationRepository.SaveChangesAsync();
+            await unitOfWork.medicationRepository.UpdateAsync(medication);
+            await unitOfWork.medicationRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var medication = await medicationRepository.GetAsync(id);
+            var medication = await unitOfWork.medicationRepository.GetAsync(id);
             if (medication == null)
             {
                 return NotFound();
@@ -98,8 +101,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await medicationRepository.DeleteAsync(id);
-            await medicationRepository.SaveChangesAsync();
+            await unitOfWork.medicationRepository.DeleteAsync(id);
+            await unitOfWork.medicationRepository.SaveChangesAsync();
             return Ok(new { Message = "Medication deleted" });
         }
     }

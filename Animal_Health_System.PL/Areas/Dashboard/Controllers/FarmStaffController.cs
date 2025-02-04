@@ -15,15 +15,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class FarmStaffController : Controller
     {
-        private readonly IFarmStaffRepository _farmStaffRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger<FarmStaffController> _logger;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
+        private readonly ILogger<FarmStaffController> logger;
 
-        public FarmStaffController(IFarmStaffRepository farmStaffRepository, IMapper mapper, ILogger<FarmStaffController> logger)
+        public FarmStaffController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FarmStaffController> logger)
         {
-            _farmStaffRepository = farmStaffRepository;
-            _mapper = mapper;
-            _logger = logger;
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
+            this.logger = logger;
         }
 
         // Get all FarmStaff
@@ -32,13 +32,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var farmStaffList = await _farmStaffRepository.GetAllAsync();
-                var farmStaffVm = _mapper.Map<IEnumerable<FarmStaffVM>>(farmStaffList);
+                var farmStaffList = await unitOfWork.farmStaffRepository.GetAllAsync();
+                var farmStaffVm = mapper.Map<IEnumerable<FarmStaffVM>>(farmStaffList);
                 return View(farmStaffVm);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching farm staff.");
+                logger.LogError(ex, "An error occurred while fetching farm staff.");
                 TempData["ErrorMessage"] = "An error occurred while loading the farm staff data.";
                 return RedirectToAction("Index");
             }
@@ -55,7 +55,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while preparing the create view.");
+                logger.LogError(ex, "Error occurred while preparing the create view.");
                 TempData["ErrorMessage"] = "An error occurred while preparing the form.";
                 return RedirectToAction("Index");
             }
@@ -74,16 +74,16 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
             try
             {
-                var farmStaff = _mapper.Map<FarmStaff>(vm);
+                var farmStaff = mapper.Map<FarmStaff>(vm);
                
-                await _farmStaffRepository.AddAsync(farmStaff);
+                await unitOfWork.farmStaffRepository.AddAsync(farmStaff);
 
                 TempData["SuccessMessage"] = "Farm staff added successfully.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while adding the farm staff.");
+                logger.LogError(ex, "Error occurred while adding the farm staff.");
                 TempData["ErrorMessage"] = "An error occurred while adding the farm staff.";
                 return View(vm);
             }
@@ -95,19 +95,19 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var farmStaff = await _farmStaffRepository.GetAsync(id);
+                var farmStaff = await unitOfWork.farmStaffRepository.GetAsync(id);
                 if (farmStaff == null)
                 {
                     TempData["ErrorMessage"] = "Farm staff not found.";
                     return RedirectToAction("Index");
                 }
 
-                var vm = _mapper.Map<FarmStaffFormVM>(farmStaff);
+                var vm = mapper.Map<FarmStaffFormVM>(farmStaff);
                 return View(vm);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while preparing the edit view.");
+                logger.LogError(ex, "Error occurred while preparing the edit view.");
                 TempData["ErrorMessage"] = "An error occurred while preparing the form.";
                 return RedirectToAction("Index");
             }
@@ -126,23 +126,23 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
             try
             {
-                var farmStaff = await _farmStaffRepository.GetAsync(vm.Id);
+                var farmStaff = await unitOfWork.farmStaffRepository.GetAsync(vm.Id);
                 if (farmStaff == null)
                 {
                     TempData["ErrorMessage"] = "Farm staff not found.";
                     return RedirectToAction("Index");
                 }
 
-                _mapper.Map(vm, farmStaff);
+                mapper.Map(vm, farmStaff);
  
-                await _farmStaffRepository.UpdateAsync(farmStaff);
+                await unitOfWork.farmStaffRepository.UpdateAsync(farmStaff);
 
                 TempData["SuccessMessage"] = "Farm staff updated successfully.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating the farm staff.");
+                logger.LogError(ex, "Error occurred while updating the farm staff.");
                 TempData["ErrorMessage"] = "An error occurred while updating the farm staff.";
                 return View(vm);
             }
@@ -154,13 +154,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                await _farmStaffRepository.DeleteAsync(id);
+                await unitOfWork.farmStaffRepository.DeleteAsync(id);
                 TempData["SuccessMessage"] = "Farm staff deleted successfully.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting farm staff.");
+                logger.LogError(ex, "Error occurred while deleting farm staff.");
                 TempData["ErrorMessage"] = "An error occurred while deleting the farm staff.";
                 return RedirectToAction("Index");
             }

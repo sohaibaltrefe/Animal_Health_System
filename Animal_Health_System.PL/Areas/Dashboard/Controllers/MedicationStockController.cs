@@ -1,7 +1,5 @@
 ﻿using Animal_Health_System.BLL.Interface;
-using Animal_Health_System.BLL.Repository;
 using Animal_Health_System.DAL.Models;
-using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationStockVIMO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -13,27 +11,28 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
     public class MedicationStockController : Controller
     {
-        private readonly IMedicationStockRepository medicationStockRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IMedicationRepository medicationRepository;
+        private readonly ILogger<MedicationStockController> logger;
 
-        public MedicationStockController(IMedicationStockRepository medicationStockRepository, IMapper mapper, IMedicationRepository medicationRepository)
+        public MedicationStockController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<MedicationStockController> logger)
         {
-            this.medicationStockRepository = medicationStockRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.medicationRepository = medicationRepository;
+            this.logger = logger;
         }
+
 
         public async Task<IActionResult> Index()
         {
-            var medicationSt = await medicationStockRepository.GetAllAsync();
+            var medicationSt = await unitOfWork.medicationStockRepository.GetAllAsync();
             var medicationStVM = mapper.Map<IEnumerable<MedicationStockVM>>(medicationSt);
             return View(medicationStVM);
         }
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var medications = await medicationRepository.GetAllAsync();
+            var medications = await unitOfWork.medicationRepository.GetAllAsync();
             var vm = new MedicationStockFormVM
             {
                 Medication = new SelectList(medications, "Id", "Name")
@@ -52,31 +51,31 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
 
             // تحقق من وجود مخزون دواء بنفس MedicationId
-            var existingStock = await medicationStockRepository.GetAllAsync();
+            var existingStock = await unitOfWork.medicationStockRepository.GetAllAsync();
             if (existingStock.Any(ms => ms.Medications.Any(m => m.Id == vm.MedicationId) && !ms.IsDeleted))
             {
                 // إضافة رسالة الخطأ إذا تم العثور على MedicationId مكرر
                 ModelState.AddModelError("", "The medication is already in stock.");
-                var medications = await medicationRepository.GetAllAsync();
+                var medications = await unitOfWork.medicationRepository.GetAllAsync();
                 vm.Medication = new SelectList(medications, "Id", "Name");
                 return View(vm);
             }
 
             var medicationStock = mapper.Map<MedicationStock>(vm);
-            await medicationStockRepository.AddAsync(medicationStock);
+            await unitOfWork.medicationStockRepository.AddAsync(medicationStock);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var medicationStock = await medicationStockRepository.GetAsync(id);
+            var medicationStock = await unitOfWork.medicationStockRepository.GetAsync(id);
             if (medicationStock == null)
             {
                 return NotFound();
             }
 
-            var medications = await medicationRepository.GetAllAsync();
+            var medications = await unitOfWork.medicationRepository.GetAllAsync();
             var vm = mapper.Map<MedicationStockFormVM>(medicationStock);
            
 
@@ -87,14 +86,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MedicationStockFormVM vm)
         {
-            var medicsto = await medicationStockRepository.GetAsync(vm.Id);
+            var medicsto = await unitOfWork.medicationStockRepository.GetAsync(vm.Id);
             if (medicsto == null)
             {
                 return NotFound();
             }
             if (!ModelState.IsValid)
             {
-                var medications = await medicationRepository.GetAllAsync();
+                var medications = await unitOfWork.medicationRepository.GetAllAsync();
                 vm.Medication = new SelectList(medications, "Id", "Name", vm.MedicationId);
                 return View(vm);
             }
@@ -102,7 +101,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
 
 
-            await medicationStockRepository.UpdateAsync(medicsto);
+            await unitOfWork.medicationStockRepository.UpdateAsync(medicsto);
             return RedirectToAction(nameof(Index));
 
 
@@ -111,7 +110,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var medicationStock = await medicationStockRepository.GetAsync(id);
+            var medicationStock = await unitOfWork.medicationStockRepository.GetAsync(id);
             if (medicationStock == null)
             {
                 return NotFound();
@@ -124,12 +123,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var medicationStock = await medicationStockRepository.GetAsync(id);
+            var medicationStock = await unitOfWork.medicationStockRepository.GetAsync(id);
             if (medicationStock == null)
             {
                 return Json(new { success = false, message = "Medication stock not found." });
             }
-            await medicationStockRepository.DeleteAsync(id);
+            await unitOfWork.medicationStockRepository.DeleteAsync(id);
             return Json(new { success = true });
         }
     }

@@ -13,19 +13,19 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
     public class FarmHealthSummaryController : Controller
     {
-        private readonly IFarmHealthSummaryRepository farmHealthSummaryRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IFarmRepository farmRepository;
+        private readonly ILogger<FarmHealthSummaryController> logger;
 
-        public FarmHealthSummaryController(IFarmHealthSummaryRepository  farmHealthSummaryRepository, IMapper mapper, IFarmRepository farmRepository)
+        public FarmHealthSummaryController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FarmHealthSummaryController> logger)
         {
-            this.farmRepository = farmRepository;
-            this.farmHealthSummaryRepository = farmHealthSummaryRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<IActionResult> Index()
         {
-            var farmHealthSummary = await farmHealthSummaryRepository.GetAllAsync();
+            var farmHealthSummary = await   unitOfWork.farmHealthSummaryRepository.GetAllAsync();
             var farmHealthSummaryVm = mapper.Map<IEnumerable<FarmHealthSummaryVM>>(farmHealthSummary);
             return View(farmHealthSummaryVm);
         }
@@ -33,7 +33,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var farms = await farmRepository.GetAllAsync();
+            var farms = await unitOfWork.farmRepository.GetAllAsync();
             var vm = new FarmHealthSummaryFormVM
             {
                 Farms = new SelectList(farms, "Id", "Name")
@@ -52,7 +52,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
             var farmHealthSummary = mapper.Map<FarmHealthSummary>(vm);
             // Calculate and set the age
-            await farmHealthSummaryRepository.AddAsync(farmHealthSummary);
+            await unitOfWork.farmHealthSummaryRepository.AddAsync(farmHealthSummary);
             return RedirectToAction(nameof(Index));
 
         }
@@ -60,12 +60,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var farmHealthSummary = await farmHealthSummaryRepository.GetAsync(id);
+            var farmHealthSummary = await unitOfWork.farmHealthSummaryRepository.GetAsync(id);
             if (farmHealthSummary == null)
             {
                 return NotFound();
             }
-            var farms = await farmRepository.GetAllAsync();
+            var farms = await unitOfWork.farmRepository.GetAllAsync();
             var vm = mapper.Map<FarmHealthSummaryFormVM>(farmHealthSummary);
             vm.Farms = new SelectList(farms, "Id", "Name", farmHealthSummary.FarmId);
             return View(vm);
@@ -75,14 +75,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(FarmHealthSummaryFormVM VM)
         {
-            var farmHealthSummary = await farmHealthSummaryRepository.GetAsync(VM.Id);
+            var farmHealthSummary = await unitOfWork.farmHealthSummaryRepository.GetAsync(VM.Id);
             if (farmHealthSummary == null)
             {
                 return NotFound();
             }
             if (!ModelState.IsValid)
             {
-                var farms = await farmRepository.GetAllAsync();
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
                 VM.Farms = new SelectList(farms, "Id", "Name", VM.FarmId);
                 return View(VM);
             }
@@ -93,7 +93,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             farmHealthSummary.FarmId = (int)VM.FarmId;
 
 
-            await farmHealthSummaryRepository.UpdateAsync(farmHealthSummary);
+            await unitOfWork.farmHealthSummaryRepository.UpdateAsync(farmHealthSummary);
             return RedirectToAction(nameof(Index));
 
 
@@ -103,7 +103,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var farmHealthSummary = await farmHealthSummaryRepository.GetAsync(id);
+            var farmHealthSummary = await unitOfWork.farmHealthSummaryRepository.GetAsync(id);
             if (farmHealthSummary == null)
             {
                 return NotFound();
@@ -116,12 +116,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var farmHealthSummary = await farmHealthSummaryRepository.GetAsync(id);
+            var farmHealthSummary = await unitOfWork.farmHealthSummaryRepository.GetAsync(id);
             if (farmHealthSummary == null)
             {
                 return Json(new { success = false, message = "farm Health Summary not found." });
             }
-            await farmHealthSummaryRepository.DeleteAsync(id);
+            await unitOfWork.farmHealthSummaryRepository.DeleteAsync(id);
             return Json(new { success = true });
         }
     }

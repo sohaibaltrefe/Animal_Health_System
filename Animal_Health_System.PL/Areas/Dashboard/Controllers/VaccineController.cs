@@ -13,17 +13,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class VaccineController : Controller
     {
-        private readonly IVaccineRepository vaccineRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IVeterinarianRepository veterinarianRepository;
-        private readonly IMedicalRecordRepository medicalRecordRepository;
+        private readonly ILogger<VaccineController> logger;
 
-        public VaccineController(IVaccineRepository vaccineRepository, IMapper mapper, IVeterinarianRepository veterinarianRepository, IMedicalRecordRepository medicalRecordRepository)
+        public VaccineController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<VaccineController> logger)
         {
-            this.vaccineRepository = vaccineRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.veterinarianRepository = veterinarianRepository;
-            this.medicalRecordRepository = medicalRecordRepository;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -31,7 +29,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccines = await vaccineRepository.GetAllAsync();
+                var vaccines = await unitOfWork.vaccineRepository.GetAllAsync();
                 var vaccineVm = mapper.Map<IEnumerable<VaccineVM>>(vaccines);
                 return View(vaccineVm);
             }
@@ -48,8 +46,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var veterinarians = await veterinarianRepository.GetAllAsync();
-                var medicalRecords = await medicalRecordRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
+                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
 
                 var vm = new VaccineFormVM
                 {
@@ -77,13 +75,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     
                     var vaccine = mapper.Map<Vaccine>(vm);
 
-                    await vaccineRepository.AddAsync(vaccine);
-                    await vaccineRepository.SaveChangesAsync();
+                    await unitOfWork.vaccineRepository.AddAsync(vaccine);
+                    await unitOfWork.vaccineRepository.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
 
-                var veterinarians = await veterinarianRepository.GetAllAsync();
-                var medicalRecords = await medicalRecordRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
+                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
 
                 vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
                 vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
@@ -102,15 +100,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await vaccineRepository.GetAsync(id);
+                var vaccine = await unitOfWork.vaccineRepository.GetAsync(id);
                 if (vaccine == null)
                 {
                     return NotFound();
                 }
 
                 var vm = mapper.Map<VaccineFormVM>(vaccine);
-                var medicalRecords = await medicalRecordRepository.GetAllAsync();
-                var veterinarians = await veterinarianRepository.GetAllAsync();
+                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
 
                 vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
                 vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
@@ -131,7 +129,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await vaccineRepository.GetAsync(vm.Id);
+                var vaccine = await unitOfWork.vaccineRepository.GetAsync(vm.Id);
                 if (vaccine == null)
                 {
                     return NotFound();
@@ -140,13 +138,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 if (ModelState.IsValid)
                 {
                     mapper.Map(vm, vaccine);
-                    await vaccineRepository.UpdateAsync(vaccine);
-                    await vaccineRepository.SaveChangesAsync();
+                    await unitOfWork.vaccineRepository.UpdateAsync(vaccine);
+                    await unitOfWork.vaccineRepository.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
 
-                var medicalRecords = await medicalRecordRepository.GetAllAsync();
-                var veterinarians = await veterinarianRepository.GetAllAsync();
+                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
+                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
 
                 vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
                 vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
@@ -165,7 +163,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await vaccineRepository.GetAsync(id);
+                var vaccine = await unitOfWork.vaccineRepository.GetAsync(id);
                 if (vaccine == null)
                 {
                     return NotFound();
@@ -187,14 +185,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await vaccineRepository.GetAsync(id);
+                var vaccine = await unitOfWork.vaccineRepository.GetAsync(id);
                 if (vaccine == null)
                 {
                     return RedirectToAction(nameof(Index));
                 }
 
-                await vaccineRepository.DeleteAsync(id);
-                await vaccineRepository.SaveChangesAsync();
+                await unitOfWork.vaccineRepository.DeleteAsync(id);
+                await unitOfWork.vaccineRepository.SaveChangesAsync();
                 return Ok(new { Message = "Vaccine deleted successfully" });
             }
             catch (Exception ex)
