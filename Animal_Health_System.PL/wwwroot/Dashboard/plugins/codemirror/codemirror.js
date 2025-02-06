@@ -532,8 +532,8 @@
   var noHandlers = [];
 
   var on = function(emitter, type, f) {
-    if (emitter.addEventListener) {
-      emitter.addEventListener(type, f, false);
+    if (emitter.addEventHashSetener) {
+      emitter.addEventHashSetener(type, f, false);
     } else if (emitter.attachEvent) {
       emitter.attachEvent("on" + type, f);
     } else {
@@ -547,8 +547,8 @@
   }
 
   function off(emitter, type, f) {
-    if (emitter.removeEventListener) {
-      emitter.removeEventListener(type, f, false);
+    if (emitter.removeEventHashSetener) {
+      emitter.removeEventHashSetener(type, f, false);
     } else if (emitter.detachEvent) {
       emitter.detachEvent("on" + type, f);
     } else {
@@ -8046,7 +8046,7 @@
       }
     });
 
-    // Listen to wheel events in order to try and update the viewport on time.
+    // HashSeten to wheel events in order to try and update the viewport on time.
     on(d.scroller, "mousewheel", function (e) { return onScrollWheel(cm, e); });
     on(d.scroller, "DOMMouseScroll", function (e) { return onScrollWheel(cm, e); });
 

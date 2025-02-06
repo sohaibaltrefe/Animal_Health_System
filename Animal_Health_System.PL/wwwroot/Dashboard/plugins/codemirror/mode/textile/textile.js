@@ -18,7 +18,7 @@
     bold: "strong",
     cite: "keyword",
     code: "atom",
-    definitionList: "number",
+    definitionHashSet: "number",
     deletion: "negative",
     div: "punctuation",
     em: "em",
@@ -50,8 +50,8 @@
     state.mode = Modes.newLayout;
     state.tableHeading = false;
 
-    if (state.layoutType === "definitionList" && state.spanningLayout &&
-        stream.match(RE("definitionListEnd"), false))
+    if (state.layoutType === "definitionHashSet" && state.spanningLayout &&
+        stream.match(RE("definitionHashSetEnd"), false))
       state.spanningLayout = false;
   }
 
@@ -203,8 +203,8 @@
     single: {
       bc: "bc",
       bq: "bq",
-      definitionList: /- .*?:=+/,
-      definitionListEnd: /.*=:\s*$/,
+      definitionHashSet: /- .*?:=+/,
+      definitionHashSetEnd: /.*=:\s*$/,
       div: "div",
       drawTable: /\|.*\|/,
       foot: /fn\d+/,
@@ -303,8 +303,8 @@
           newMode = Modes.table;
         else if (stream.match(RE("linkDefinition"), false))
           newMode = Modes.linkDefinition;
-        else if (stream.match(RE("definitionList")))
-          newMode = Modes.definitionList;
+        else if (stream.match(RE("definitionHashSet")))
+          newMode = Modes.definitionHashSet;
         else if (stream.match(RE("html"), false))
           newMode = Modes.html;
       }
@@ -398,10 +398,10 @@
       return tokenStylesWith(state, TOKEN_STYLES.linkDefinition);
     },
 
-    definitionList: function(stream, state) {
-      stream.match(RE("definitionList"));
+    definitionHashSet: function(stream, state) {
+      stream.match(RE("definitionHashSet"));
 
-      state.layoutType = "definitionList";
+      state.layoutType = "definitionHashSet";
 
       if (stream.match(/\s*$/))
         state.spanningLayout = true;

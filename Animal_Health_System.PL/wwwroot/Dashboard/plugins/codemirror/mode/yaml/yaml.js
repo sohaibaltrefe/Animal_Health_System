@@ -51,14 +51,14 @@ CodeMirror.defineMode("yaml", function() {
         else if (ch == '}')
           state.inlinePairs--;
         else if (ch == '[')
-          state.inlineList++;
+          state.inlineHashSet++;
         else
-          state.inlineList--;
+          state.inlineHashSet--;
         return 'meta';
       }
 
       /* list separator */
-      if (state.inlineList > 0 && !esc && ch == ',') {
+      if (state.inlineHashSet > 0 && !esc && ch == ',') {
         stream.next();
         return 'meta';
       }
@@ -104,7 +104,7 @@ CodeMirror.defineMode("yaml", function() {
         pairStart: false,
         keyCol: 0,
         inlinePairs: 0,
-        inlineList: 0,
+        inlineHashSet: 0,
         literal: false,
         escaped: false
       };

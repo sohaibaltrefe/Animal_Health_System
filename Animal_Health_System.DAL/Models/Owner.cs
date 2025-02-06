@@ -20,9 +20,9 @@ namespace Animal_Health_System.DAL.Models
 
 
 
-        public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
+        public   ICollection<Farm> Farms { get; set; } = new List <Farm>();
 
-        public virtual ICollection<Notification> Notifications { get; set; }
+        public   ICollection<Notification> Notifications { get; set; }= new List <Notification>();
 
 
     }

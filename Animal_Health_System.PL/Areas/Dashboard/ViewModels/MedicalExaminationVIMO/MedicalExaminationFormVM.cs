@@ -14,7 +14,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationV
         [Required]
         public string Treatment { get; set; }
 
-        public List<int> SelectedMedications { get; set; } = new List<int>();
+        public HashSet<int> SelectedMedications { get; set; } = new HashSet<int>();
 
         [Required]
         public int? AnimalId { get; set; }

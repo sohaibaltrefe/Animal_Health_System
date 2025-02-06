@@ -10,8 +10,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationV
         public string Diagnosis { get; set; }
         public string Treatment { get; set; }
 
-        // List of Medications
-        public ICollection<Medication> Medications { get; set; } = new List<Medication>();
+        // HashSet of Medications
+        public ICollection<Medication> Medications { get; set; } = new HashSet<Medication>();
 
         // Foreign Key for Animal
         public int AnimalId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +21,17 @@ namespace Animal_Health_System.DAL.Models
         public DateTime AdministrationDate { get; set; }
 
 
+        [ForeignKey(nameof(MedicalRecord))]
+        public int  MedicalRecordId { get; set; }
 
-        public int? MedicalRecordId { get; set; }
+        [ForeignKey(nameof(Veterinarian))]
+        public int  VeterinarianId { get; set; }
+
         public MedicalRecord MedicalRecord  { get; set; }
 
-        public int? VeterinarianId { get; set; }
         public Veterinarian Veterinarian   { get; set; }
 
-        public virtual ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
+        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
 
       
     }

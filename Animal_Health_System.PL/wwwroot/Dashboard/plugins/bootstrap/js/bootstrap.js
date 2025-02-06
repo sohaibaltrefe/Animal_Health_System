@@ -430,7 +430,7 @@
 
         if (input) {
           if (input.type === 'radio') {
-            if (input.checked && this._element.classList.contains(CLASS_NAME_ACTIVE$3)) {
+            if (input.checked && this._element.classHashSet.contains(CLASS_NAME_ACTIVE$3)) {
               triggerChangeEvent = false;
             } else {
               var activeElement = rootElement.querySelector(SELECTOR_ACTIVE$2);
@@ -444,7 +444,7 @@
           if (triggerChangeEvent) {
             // if it's not a radio button or checkbox don't add a pointless/invalid checked property to the input
             if (input.type === 'checkbox' || input.type === 'radio') {
-              input.checked = !this._element.classList.contains(CLASS_NAME_ACTIVE$3);
+              input.checked = !this._element.classHashSet.contains(CLASS_NAME_ACTIVE$3);
             }
 
             if (!this.shouldAvoidTriggerChange) {
@@ -457,9 +457,9 @@
         }
       }
 
-      if (!(this._element.hasAttribute('disabled') || this._element.classList.contains('disabled'))) {
+      if (!(this._element.hasAttribute('disabled') || this._element.classHashSet.contains('disabled'))) {
         if (addAriaPressed) {
-          this._element.setAttribute('aria-pressed', !this._element.classList.contains(CLASS_NAME_ACTIVE$3));
+          this._element.setAttribute('aria-pressed', !this._element.classHashSet.contains(CLASS_NAME_ACTIVE$3));
         }
 
         if (triggerChangeEvent) {
@@ -514,12 +514,12 @@
       button = $__default["default"](button).closest(SELECTOR_BUTTON)[0];
     }
 
-    if (!button || button.hasAttribute('disabled') || button.classList.contains('disabled')) {
+    if (!button || button.hasAttribute('disabled') || button.classHashSet.contains('disabled')) {
       event.preventDefault(); // work around Firefox bug #1540995
     } else {
       var inputBtn = button.querySelector(SELECTOR_INPUT);
 
-      if (inputBtn && (inputBtn.hasAttribute('disabled') || inputBtn.classList.contains('disabled'))) {
+      if (inputBtn && (inputBtn.hasAttribute('disabled') || inputBtn.classHashSet.contains('disabled'))) {
         event.preventDefault(); // work around Firefox bug #1540995
 
         return;
@@ -543,9 +543,9 @@
       var input = button.querySelector(SELECTOR_INPUT);
 
       if (input.checked || input.hasAttribute('checked')) {
-        button.classList.add(CLASS_NAME_ACTIVE$3);
+        button.classHashSet.add(CLASS_NAME_ACTIVE$3);
       } else {
-        button.classList.remove(CLASS_NAME_ACTIVE$3);
+        button.classHashSet.remove(CLASS_NAME_ACTIVE$3);
       }
     } // find all button toggles
 
@@ -556,9 +556,9 @@
       var _button = buttons[_i];
 
       if (_button.getAttribute('aria-pressed') === 'true') {
-        _button.classList.add(CLASS_NAME_ACTIVE$3);
+        _button.classHashSet.add(CLASS_NAME_ACTIVE$3);
       } else {
-        _button.classList.remove(CLASS_NAME_ACTIVE$3);
+        _button.classHashSet.remove(CLASS_NAME_ACTIVE$3);
       }
     }
   });
@@ -664,7 +664,7 @@
       this._touchSupported = 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0;
       this._pointerEvent = Boolean(window.PointerEvent || window.MSPointerEvent);
 
-      this._addEventListeners();
+      this._addEventHashSeteners();
     } // Getters
 
 
@@ -792,7 +792,7 @@
       }
     };
 
-    _proto._addEventListeners = function _addEventListeners() {
+    _proto._addEventHashSeteners = function _addEventHashSeteners() {
       var _this2 = this;
 
       if (this._config.keyboard) {
@@ -810,11 +810,11 @@
       }
 
       if (this._config.touch) {
-        this._addTouchEventListeners();
+        this._addTouchEventHashSeteners();
       }
     };
 
-    _proto._addTouchEventListeners = function _addTouchEventListeners() {
+    _proto._addTouchEventHashSeteners = function _addTouchEventHashSeteners() {
       var _this3 = this;
 
       if (!this._touchSupported) {
@@ -873,7 +873,7 @@
           return end(event);
         });
 
-        this._element.classList.add(CLASS_NAME_POINTER_EVENT);
+        this._element.classHashSet.add(CLASS_NAME_POINTER_EVENT);
       } else {
         $__default["default"](this._element).on(EVENT_TOUCHSTART, function (event) {
           return start(event);
@@ -1202,10 +1202,10 @@
       this._element = element;
       this._config = this._getConfig(config);
       this._triggerArray = [].slice.call(document.querySelectorAll("[data-toggle=\"collapse\"][href=\"#" + element.id + "\"]," + ("[data-toggle=\"collapse\"][data-target=\"#" + element.id + "\"]")));
-      var toggleList = [].slice.call(document.querySelectorAll(SELECTOR_DATA_TOGGLE$3));
+      var toggleHashSet = [].slice.call(document.querySelectorAll(SELECTOR_DATA_TOGGLE$3));
 
-      for (var i = 0, len = toggleList.length; i < len; i++) {
-        var elem = toggleList[i];
+      for (var i = 0, len = toggleHashSet.length; i < len; i++) {
+        var elem = toggleHashSet[i];
         var selector = Util.getSelectorFromElement(elem);
         var filterElement = [].slice.call(document.querySelectorAll(selector)).filter(function (foundElem) {
           return foundElem === element;
@@ -1257,7 +1257,7 @@
             return elem.getAttribute('data-parent') === _this._config.parent;
           }
 
-          return elem.classList.contains(CLASS_NAME_COLLAPSE);
+          return elem.classHashSet.contains(CLASS_NAME_COLLAPSE);
         });
 
         if (actives.length === 0) {
@@ -1579,7 +1579,7 @@
       this._menu = this._getMenuElement();
       this._inNavbar = this._detectNavbar();
 
-      this._addEventListeners();
+      this._addEventHashSeteners();
     } // Getters
 
 
@@ -1717,7 +1717,7 @@
     } // Private
     ;
 
-    _proto._addEventListeners = function _addEventListeners() {
+    _proto._addEventHashSeteners = function _addEventHashSeteners() {
       var _this = this;
 
       $__default["default"](this._element).on(EVENT_CLICK, function (event) {
@@ -2221,12 +2221,12 @@
         this._element.style.overflowY = 'hidden';
       }
 
-      this._element.classList.add(CLASS_NAME_STATIC);
+      this._element.classHashSet.add(CLASS_NAME_STATIC);
 
       var modalTransitionDuration = Util.getTransitionDurationFromElement(this._dialog);
       $__default["default"](this._element).off(Util.TRANSITION_END);
       $__default["default"](this._element).one(Util.TRANSITION_END, function () {
-        _this3._element.classList.remove(CLASS_NAME_STATIC);
+        _this3._element.classHashSet.remove(CLASS_NAME_STATIC);
 
         if (!isModalOverflowing) {
           $__default["default"](_this3._element).one(Util.TRANSITION_END, function () {
@@ -2376,7 +2376,7 @@
         this._backdrop.className = CLASS_NAME_BACKDROP;
 
         if (animate) {
-          this._backdrop.classList.add(animate);
+          this._backdrop.classHashSet.add(animate);
         }
 
         $__default["default"](this._backdrop).appendTo(document.body);
@@ -2668,10 +2668,10 @@
 
   var DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[\d+/a-z]+=*$/i;
 
-  function allowedAttribute(attr, allowedAttributeList) {
+  function allowedAttribute(attr, allowedAttributeHashSet) {
     var attrName = attr.nodeName.toLowerCase();
 
-    if (allowedAttributeList.indexOf(attrName) !== -1) {
+    if (allowedAttributeHashSet.indexOf(attrName) !== -1) {
       if (uriAttrs.indexOf(attrName) !== -1) {
         return Boolean(SAFE_URL_PATTERN.test(attr.nodeValue) || DATA_URL_PATTERN.test(attr.nodeValue));
       }
@@ -2679,7 +2679,7 @@
       return true;
     }
 
-    var regExp = allowedAttributeList.filter(function (attrRegex) {
+    var regExp = allowedAttributeHashSet.filter(function (attrRegex) {
       return attrRegex instanceof RegExp;
     }); // Check if a regular expression validates the attribute.
 
@@ -2692,7 +2692,7 @@
     return false;
   }
 
-  function sanitizeHtml(unsafeHtml, whiteList, sanitizeFn) {
+  function sanitizeHtml(unsafeHtml, whiteHashSet, sanitizeFn) {
     if (unsafeHtml.length === 0) {
       return unsafeHtml;
     }
@@ -2703,7 +2703,7 @@
 
     var domParser = new window.DOMParser();
     var createdDocument = domParser.parseFromString(unsafeHtml, 'text/html');
-    var whitelistKeys = Object.keys(whiteList);
+    var whitelistKeys = Object.keys(whiteHashSet);
     var elements = [].slice.call(createdDocument.body.querySelectorAll('*'));
 
     var _loop = function _loop(i, len) {
@@ -2715,10 +2715,10 @@
         return "continue";
       }
 
-      var attributeList = [].slice.call(el.attributes); // eslint-disable-next-line unicorn/prefer-spread
+      var attributeHashSet = [].slice.call(el.attributes); // eslint-disable-next-line unicorn/prefer-spread
 
-      var whitelistedAttributes = [].concat(whiteList['*'] || [], whiteList[elName] || []);
-      attributeList.forEach(function (attr) {
+      var whitelistedAttributes = [].concat(whiteHashSet['*'] || [], whiteHashSet[elName] || []);
+      attributeHashSet.forEach(function (attr) {
         if (!allowedAttribute(attr, whitelistedAttributes)) {
           el.removeAttribute(attr.nodeName);
         }
@@ -2745,7 +2745,7 @@
   var JQUERY_NO_CONFLICT$4 = $__default["default"].fn[NAME$4];
   var CLASS_PREFIX$1 = 'bs-tooltip';
   var BSCLS_PREFIX_REGEX$1 = new RegExp("(^|\\s)" + CLASS_PREFIX$1 + "\\S+", 'g');
-  var DISALLOWED_ATTRIBUTES = ['sanitize', 'whiteList', 'sanitizeFn'];
+  var DISALLOWED_ATTRIBUTES = ['sanitize', 'whiteHashSet', 'sanitizeFn'];
   var CLASS_NAME_FADE$3 = 'fade';
   var CLASS_NAME_SHOW$3 = 'show';
   var HOVER_STATE_SHOW = 'show';
@@ -2779,7 +2779,7 @@
     customClass: '',
     sanitize: true,
     sanitizeFn: null,
-    whiteList: DefaultWhitelist,
+    whiteHashSet: DefaultWhitelist,
     popperConfig: null
   };
   var DefaultType$3 = {
@@ -2798,7 +2798,7 @@
     customClass: '(string|function)',
     sanitize: 'boolean',
     sanitizeFn: '(null|function)',
-    whiteList: 'object',
+    whiteHashSet: 'object',
     popperConfig: '(null|object)'
   };
   var Event$1 = {
@@ -2834,7 +2834,7 @@
       this.config = this._getConfig(config);
       this.tip = null;
 
-      this._setListeners();
+      this._setHashSeteners();
     } // Getters
 
 
@@ -3082,7 +3082,7 @@
 
       if (this.config.html) {
         if (this.config.sanitize) {
-          content = sanitizeHtml(content, this.config.whiteList, this.config.sanitizeFn);
+          content = sanitizeHtml(content, this.config.whiteHashSet, this.config.sanitizeFn);
         }
 
         $element.html(content);
@@ -3164,7 +3164,7 @@
       return AttachmentMap[placement.toUpperCase()];
     };
 
-    _proto._setListeners = function _setListeners() {
+    _proto._setHashSeteners = function _setHashSeteners() {
       var _this5 = this;
 
       var triggers = this.config.trigger.split(' ');
@@ -3313,7 +3313,7 @@
       Util.typeCheckConfig(NAME$4, config, this.constructor.DefaultType);
 
       if (config.sanitize) {
-        config.template = sanitizeHtml(config.template, config.whiteList, config.sanitizeFn);
+        config.template = sanitizeHtml(config.template, config.whiteHashSet, config.sanitizeFn);
       }
 
       return config;
@@ -3833,9 +3833,9 @@
 
     _proto._clear = function _clear() {
       [].slice.call(document.querySelectorAll(this._selector)).filter(function (node) {
-        return node.classList.contains(CLASS_NAME_ACTIVE$1);
+        return node.classHashSet.contains(CLASS_NAME_ACTIVE$1);
       }).forEach(function (node) {
-        return node.classList.remove(CLASS_NAME_ACTIVE$1);
+        return node.classHashSet.remove(CLASS_NAME_ACTIVE$1);
       });
     } // Static
     ;
@@ -4048,8 +4048,8 @@
 
       Util.reflow(element);
 
-      if (element.classList.contains(CLASS_NAME_FADE$1)) {
-        element.classList.add(CLASS_NAME_SHOW$1);
+      if (element.classHashSet.contains(CLASS_NAME_FADE$1)) {
+        element.classHashSet.add(CLASS_NAME_SHOW$1);
       }
 
       var parent = element.parentNode;
@@ -4062,8 +4062,8 @@
         var dropdownElement = $__default["default"](element).closest(SELECTOR_DROPDOWN)[0];
 
         if (dropdownElement) {
-          var dropdownToggleList = [].slice.call(dropdownElement.querySelectorAll(SELECTOR_DROPDOWN_TOGGLE));
-          $__default["default"](dropdownToggleList).addClass(CLASS_NAME_ACTIVE);
+          var dropdownToggleHashSet = [].slice.call(dropdownElement.querySelectorAll(SELECTOR_DROPDOWN_TOGGLE));
+          $__default["default"](dropdownToggleHashSet).addClass(CLASS_NAME_ACTIVE);
         }
 
         element.setAttribute('aria-expanded', true);
@@ -4165,7 +4165,7 @@
       this._config = this._getConfig(config);
       this._timeout = null;
 
-      this._setListeners();
+      this._setHashSeteners();
     } // Getters
 
 
@@ -4185,13 +4185,13 @@
       this._clearTimeout();
 
       if (this._config.animation) {
-        this._element.classList.add(CLASS_NAME_FADE);
+        this._element.classHashSet.add(CLASS_NAME_FADE);
       }
 
       var complete = function complete() {
-        _this._element.classList.remove(CLASS_NAME_SHOWING);
+        _this._element.classHashSet.remove(CLASS_NAME_SHOWING);
 
-        _this._element.classList.add(CLASS_NAME_SHOW);
+        _this._element.classHashSet.add(CLASS_NAME_SHOW);
 
         $__default["default"](_this._element).trigger(EVENT_SHOWN);
 
@@ -4202,11 +4202,11 @@
         }
       };
 
-      this._element.classList.remove(CLASS_NAME_HIDE);
+      this._element.classHashSet.remove(CLASS_NAME_HIDE);
 
       Util.reflow(this._element);
 
-      this._element.classList.add(CLASS_NAME_SHOWING);
+      this._element.classHashSet.add(CLASS_NAME_SHOWING);
 
       if (this._config.animation) {
         var transitionDuration = Util.getTransitionDurationFromElement(this._element);
@@ -4217,7 +4217,7 @@
     };
 
     _proto.hide = function hide() {
-      if (!this._element.classList.contains(CLASS_NAME_SHOW)) {
+      if (!this._element.classHashSet.contains(CLASS_NAME_SHOW)) {
         return;
       }
 
@@ -4234,8 +4234,8 @@
     _proto.dispose = function dispose() {
       this._clearTimeout();
 
-      if (this._element.classList.contains(CLASS_NAME_SHOW)) {
-        this._element.classList.remove(CLASS_NAME_SHOW);
+      if (this._element.classHashSet.contains(CLASS_NAME_SHOW)) {
+        this._element.classHashSet.remove(CLASS_NAME_SHOW);
       }
 
       $__default["default"](this._element).off(EVENT_CLICK_DISMISS);
@@ -4251,7 +4251,7 @@
       return config;
     };
 
-    _proto._setListeners = function _setListeners() {
+    _proto._setHashSeteners = function _setHashSeteners() {
       var _this2 = this;
 
       $__default["default"](this._element).on(EVENT_CLICK_DISMISS, SELECTOR_DATA_DISMISS, function () {
@@ -4263,12 +4263,12 @@
       var _this3 = this;
 
       var complete = function complete() {
-        _this3._element.classList.add(CLASS_NAME_HIDE);
+        _this3._element.classHashSet.add(CLASS_NAME_HIDE);
 
         $__default["default"](_this3._element).trigger(EVENT_HIDDEN);
       };
 
-      this._element.classList.remove(CLASS_NAME_SHOW);
+      this._element.classHashSet.remove(CLASS_NAME_SHOW);
 
       if (this._config.animation) {
         var transitionDuration = Util.getTransitionDurationFromElement(this._element);

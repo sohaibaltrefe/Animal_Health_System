@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,22 +24,28 @@ namespace Animal_Health_System.DAL.Models
 
         public AppointmentStatus Status { get; set; }
 
+        [ForeignKey(nameof(Animal))]
+        public int  AnimalId { get; set; }
 
+        [ForeignKey(nameof(Farm))]
+        public int  FarmId { get; set; }
 
+        [ForeignKey(nameof(Veterinarian))]
+        public int   VeterinarianId { get; set; }
 
-        public int? AnimalId { get; set; }
+        [ForeignKey(nameof(FarmStaff))]
+        public int  FarmStaffId { get; set; }
+
         public Animal Animal  { get; set; }
 
-        public int? FarmId { get; set; }
         public Farm Farm  { get; set; }
 
-        public int? VeterinarianId { get; set; }
         public Veterinarian Veterinarian { get; set; }
 
 
-        public int? FarmStaffId { get; set; }
         public FarmStaff FarmStaff  { get; set; }
-        public virtual ICollection<AppointmentHistory> AppointmentHistories { get; set; } = new List<AppointmentHistory>();
+
+        public   ICollection<AppointmentHistory> AppointmentHistories { get; set; } = new List <AppointmentHistory>();
 
 
         public DateTime? EndDate { get; set; }  

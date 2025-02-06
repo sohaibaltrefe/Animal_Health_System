@@ -272,7 +272,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     pass.apply(null, arguments);
     return true;
   }
-  function inList(name, list) {
+  function inHashSet(name, list) {
     for (var v = list; v; v = v.next) if (v.name == name) return true
     return false;
   }
@@ -288,13 +288,13 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
           state.context = newContext
           return
         }
-      } else if (!inList(varname, state.localVars)) {
+      } else if (!inHashSet(varname, state.localVars)) {
         state.localVars = new Var(varname, state.localVars)
         return
       }
     }
     // Fall through means this is global
-    if (parserConfig.globalVars && !inList(varname, state.globalVars))
+    if (parserConfig.globalVars && !inHashSet(varname, state.globalVars))
       state.globalVars = new Var(varname, state.globalVars)
   }
   function registerVarScoped(varname, context) {
@@ -305,7 +305,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
       if (!inner) return null
       if (inner == context.prev) return context
       return new Context(inner, context.vars, true)
-    } else if (inList(varname, context.vars)) {
+    } else if (inHashSet(varname, context.vars)) {
       return context
     } else {
       return new Context(context.prev, new Var(varname, context.vars), false)

@@ -36,7 +36,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     modeCfg.maxBlockquoteDepth = 0;
 
   // Turn on task lists? ("- [ ] " and "- [x] ")
-  if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
+  if (modeCfg.taskHashSets === undefined) modeCfg.taskHashSets = false;
 
   // Turn on strikethrough syntax
   if (modeCfg.strikethrough === undefined)
@@ -88,7 +88,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   var hrRE = /^([*\-_])(?:\s*\1){2,}\s*$/
   ,   listRE = /^(?:[*\-+]|^[0-9]+([.)]))\s+/
-  ,   taskListRE = /^\[(x| )\](?=\s)/i // Must follow listRE
+  ,   taskHashSetRE = /^\[(x| )\](?=\s)/i // Must follow listRE
   ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
   ,   setextHeaderRE = /^ {0,3}(?:\={1,}|-{2,})\s*$/
   ,   textRE = /^[^#!\[\]*_\\<>` "'(~:]+/
@@ -155,7 +155,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     var prevLineLineIsEmpty = lineIsEmpty(state.prevLine.stream);
     var prevLineIsIndentedCode = state.indentedCode;
     var prevLineIsHr = state.prevLine.hr;
-    var prevLineIsList = state.list !== false;
+    var prevLineIsHashSet = state.list !== false;
     var maxNonCodeIndentation = (state.listStack[state.listStack.length - 1] || 0) + 3;
 
     state.indentedCode = false;
@@ -164,7 +164,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     // compute once per line (on first token)
     if (state.indentationDiff === null) {
       state.indentationDiff = state.indentation;
-      if (prevLineIsList) {
+      if (prevLineIsHashSet) {
         state.list = null;
         // While this list item's marker's indentation is less than the deepest
         //  list item's content's indentation,pop the deepest list item
@@ -187,7 +187,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     // not comprehensive (currently only for setext detection purposes)
     var allowsInlineContinuation = (
         !prevLineLineIsEmpty && !prevLineIsHr && !state.prevLine.header &&
-        (!prevLineIsList || !prevLineIsIndentedCode) &&
+        (!prevLineIsHashSet || !prevLineIsIndentedCode) &&
         !state.prevLine.fencedCodeEnd
     );
 
@@ -229,8 +229,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.code = false;
       state.strikethrough = false;
 
-      if (modeCfg.taskLists && stream.match(taskListRE, false)) {
-        state.taskList = true;
+      if (modeCfg.taskHashSets && stream.match(taskHashSetRE, false)) {
+        state.taskHashSet = true;
       }
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
@@ -251,7 +251,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       // if setext set, indicates line after ---/===
       state.setext || (
         // line before ---/===
-        (!allowsInlineContinuation || !prevLineIsList) && !state.quote && state.list === false &&
+        (!allowsInlineContinuation || !prevLineIsHashSet) && !state.quote && state.list === false &&
         !state.code && !isHr && !linkDefRE.test(stream.string) &&
         (match = stream.lookAhead(1)) && (match = match.match(setextHeaderRE))
       )
@@ -297,20 +297,20 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
-    var currListInd = state.listStack[state.listStack.length - 1] || 0;
-    var hasExitedList = state.indentation < currListInd;
-    var maxFencedEndInd = currListInd + 3;
-    if (state.fencedEndRE && state.indentation <= maxFencedEndInd && (hasExitedList || stream.match(state.fencedEndRE))) {
+    var currHashSetInd = state.listStack[state.listStack.length - 1] || 0;
+    var hasExitedHashSet = state.indentation < currHashSetInd;
+    var maxFencedEndInd = currHashSetInd + 3;
+    if (state.fencedEndRE && state.indentation <= maxFencedEndInd && (hasExitedHashSet || stream.match(state.fencedEndRE))) {
       if (modeCfg.highlightFormatting) state.formatting = "code-block";
       var returnType;
-      if (!hasExitedList) returnType = getType(state)
+      if (!hasExitedHashSet) returnType = getType(state)
       state.localMode = state.localState = null;
       state.block = blockNormal;
       state.f = inlineNormal;
       state.fencedEndRE = null;
       state.code = 0
       state.thisLine.fencedCodeEnd = true;
-      if (hasExitedList) return switchBlock(stream, state, state.block);
+      if (hasExitedHashSet) return switchBlock(stream, state, state.block);
       return returnType;
     } else if (state.localMode) {
       return state.localMode.token(stream, state.localState);
@@ -416,17 +416,17 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     if (typeof style !== 'undefined')
       return style;
 
-    if (state.list) { // List marker (*, +, -, 1., etc)
+    if (state.list) { // HashSet marker (*, +, -, 1., etc)
       state.list = null;
       return getType(state);
     }
 
-    if (state.taskList) {
-      var taskOpen = stream.match(taskListRE, true)[1] === " ";
+    if (state.taskHashSet) {
+      var taskOpen = stream.match(taskHashSetRE, true)[1] === " ";
       if (taskOpen) state.taskOpen = true;
       else state.taskClosed = true;
       if (modeCfg.highlightFormatting) state.formatting = "task";
-      state.taskList = false;
+      state.taskHashSet = false;
       return getType(state);
     }
 
@@ -766,7 +766,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         header: 0,
         setext: 0,
         hr: false,
-        taskList: false,
+        taskHashSet: false,
         list: false,
         listStack: [],
         quote: 0,
@@ -806,7 +806,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         header: s.header,
         setext: s.setext,
         hr: s.hr,
-        taskList: s.taskList,
+        taskHashSet: s.taskHashSet,
         list: s.list,
         listStack: s.listStack.slice(0),
         quote: s.quote,
@@ -835,8 +835,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         state.prevLine = state.thisLine
         state.thisLine = {stream: stream}
 
-        // Reset state.taskList
-        state.taskList = false;
+        // Reset state.taskHashSet
+        state.taskHashSet = false;
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;

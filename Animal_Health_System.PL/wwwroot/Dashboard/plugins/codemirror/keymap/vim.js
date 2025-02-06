@@ -186,8 +186,8 @@
     //ignore C-w in normal mode
     { keys: '<C-w>', type: 'idle', context: 'normal' },
     // Actions
-    { keys: '<C-i>', type: 'action', action: 'jumpListWalk', actionArgs: { forward: true }},
-    { keys: '<C-o>', type: 'action', action: 'jumpListWalk', actionArgs: { forward: false }},
+    { keys: '<C-i>', type: 'action', action: 'jumpHashSetWalk', actionArgs: { forward: true }},
+    { keys: '<C-o>', type: 'action', action: 'jumpHashSetWalk', actionArgs: { forward: false }},
     { keys: '<C-e>', type: 'action', action: 'scroll', actionArgs: { forward: true, linewise: true }},
     { keys: '<C-y>', type: 'action', action: 'scroll', actionArgs: { forward: false, linewise: true }},
     { keys: 'a', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'charAfter' }, context: 'normal' },
@@ -526,7 +526,7 @@
       }
     });
 
-    var createCircularJumpList = function() {
+    var createCircularJumpHashSet = function() {
       var size = 100;
       var pointer = -1;
       var head = 0;
@@ -699,7 +699,7 @@
         searchIsReversed: false,
         // Replace part of the last substituted pattern
         lastSubstituteReplacePart: undefined,
-        jumpList: createCircularJumpList(),
+        jumpHashSet: createCircularJumpHashSet(),
         macroModeState: new MacroModeState,
         // Recording latest f, t, F or T motion command.
         lastCharacterSearch: {increment:0, forward:true, selectedCharacter:''},
@@ -1473,7 +1473,7 @@
             // cachedCursor is used to save the old position of the cursor
             // when * or # causes vim to seek for the nearest word and shift
             // the cursor before entering the motion.
-            vimGlobalState.jumpList.cachedCursor = cm.getCursor();
+            vimGlobalState.jumpHashSet.cachedCursor = cm.getCursor();
             cm.setCursor(word.start);
 
             handleQuery(query, true /** ignoreCase */, false /** smartCase */);
@@ -1576,12 +1576,12 @@
             return;
           }
           if (motionArgs.toJumplist) {
-            var jumpList = vimGlobalState.jumpList;
+            var jumpHashSet = vimGlobalState.jumpHashSet;
             // if the current motion is # or *, use cachedCursor
-            var cachedCursor = jumpList.cachedCursor;
+            var cachedCursor = jumpHashSet.cachedCursor;
             if (cachedCursor) {
               recordJumpPosition(cm, cachedCursor, motionResult);
-              delete jumpList.cachedCursor;
+              delete jumpHashSet.cachedCursor;
             } else {
               recordJumpPosition(cm, origHead, motionResult);
             }
@@ -2357,15 +2357,15 @@
     }
 
     var actions = {
-      jumpListWalk: function(cm, actionArgs, vim) {
+      jumpHashSetWalk: function(cm, actionArgs, vim) {
         if (vim.visualMode) {
           return;
         }
         var repeat = actionArgs.repeat;
         var forward = actionArgs.forward;
-        var jumpList = vimGlobalState.jumpList;
+        var jumpHashSet = vimGlobalState.jumpHashSet;
 
-        var mark = jumpList.move(cm, forward ? repeat : -repeat);
+        var mark = jumpHashSet.move(cm, forward ? repeat : -repeat);
         var markPos = mark ? mark.find() : undefined;
         markPos = markPos ? markPos : cm.getCursor();
         cm.setCursor(markPos);
@@ -3421,7 +3421,7 @@
 
     function recordJumpPosition(cm, oldCur, newCur) {
       if (!cursorEqual(oldCur, newCur)) {
-        vimGlobalState.jumpList.add(cm, oldCur, newCur);
+        vimGlobalState.jumpHashSet.add(cm, oldCur, newCur);
       }
     }
 
@@ -4558,7 +4558,7 @@
 
     function getMarkPos(cm, vim, markName) {
       if (markName == '\'' || markName == '`') {
-        return vimGlobalState.jumpList.find(cm, -1) || new Pos(0, 0);
+        return vimGlobalState.jumpHashSet.find(cm, -1) || new Pos(0, 0);
       } else if (markName == '.') {
         return getLastEditPos(cm);
       }
@@ -5517,7 +5517,7 @@
     }
 
     /**
-     * Listens for changes made in insert mode.
+     * HashSetens for changes made in insert mode.
      * Should only be active in insert mode.
      */
     function onChange(cm, changeObj) {
@@ -5553,7 +5553,7 @@
     }
 
     /**
-    * Listens for any kind of cursor activity on CodeMirror.
+    * HashSetens for any kind of cursor activity on CodeMirror.
     */
     function onCursorActivity(cm) {
       var vim = cm.state.vim;

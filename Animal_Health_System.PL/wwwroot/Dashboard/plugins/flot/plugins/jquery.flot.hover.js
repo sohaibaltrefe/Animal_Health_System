@@ -49,8 +49,8 @@ the tooltip from webcharts).
             var o = plot.getOptions();
 
             if (o.grid.hoverable || o.grid.clickable) {
-                eventHolder[0].addEventListener('touchevent', triggerCleanupEvent, false);
-                eventHolder[0].addEventListener('tap', generatePlothoverEvent, false);
+                eventHolder[0].addEventHashSetener('touchevent', triggerCleanupEvent, false);
+                eventHolder[0].addEventHashSetener('tap', generatePlothoverEvent, false);
             }
 
             if (o.grid.clickable) {
@@ -71,8 +71,8 @@ the tooltip from webcharts).
         }
 
         function shutdown(plot, eventHolder) {
-            eventHolder[0].removeEventListener('tap', generatePlothoverEvent);
-            eventHolder[0].removeEventListener('touchevent', triggerCleanupEvent);
+            eventHolder[0].removeEventHashSetener('tap', generatePlothoverEvent);
+            eventHolder[0].removeEventHashSetener('touchevent', triggerCleanupEvent);
             eventHolder.unbind("mousemove", onMouseMove);
             eventHolder.unbind("mouseleave", onMouseLeave);
             eventHolder.unbind("click", onClick);

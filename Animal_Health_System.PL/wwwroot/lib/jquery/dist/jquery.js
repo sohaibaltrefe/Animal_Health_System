@@ -724,7 +724,7 @@ var i,
 		{ dir: "parentNode", next: "legend" }
 	);
 
-// Optimize for push.apply( _, NodeList )
+// Optimize for push.apply( _, NodeHashSet )
 try {
 	push.apply(
 		( arr = slice.call( preferredDoc.childNodes ) ),
@@ -749,7 +749,7 @@ try {
 			var j = target.length,
 				i = 0;
 
-			// Can't trust NodeList.length
+			// Can't trust NodeHashSet.length
 			while ( ( target[ j++ ] = els[ i++ ] ) ) {}
 			target.length = j - 1;
 		}
@@ -1154,8 +1154,8 @@ setDocument = Sizzle.setDocument = function( node ) {
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 11, Edge
-		if ( subWindow.addEventListener ) {
-			subWindow.addEventListener( "unload", unloadHandler, false );
+		if ( subWindow.addEventHashSetener ) {
+			subWindow.addEventHashSetener( "unload", unloadHandler, false );
 
 		// Support: IE 9 - 10 only
 		} else if ( subWindow.attachEvent ) {
@@ -2697,7 +2697,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 
 			// Add elements passing elementMatchers directly to results
 			// Support: IE<9, Safari
-			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
+			// Tolerate NodeHashSet properties (IE: "length"; Safari: <number>) matching elements by id
 			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
 				if ( byElement && elem ) {
 					j = 0;
@@ -4064,11 +4064,11 @@ jQuery.readyException = function( error ) {
 
 
 // The deferred used on DOM ready
-var readyList = jQuery.Deferred();
+var readyHashSet = jQuery.Deferred();
 
 jQuery.fn.ready = function( fn ) {
 
-	readyList
+	readyHashSet
 		.then( fn )
 
 		// Wrap jQuery.readyException in a function so that the lookup
@@ -4107,16 +4107,16 @@ jQuery.extend( {
 		}
 
 		// If there are functions bound, to execute
-		readyList.resolveWith( document, [ jQuery ] );
+		readyHashSet.resolveWith( document, [ jQuery ] );
 	}
 } );
 
-jQuery.ready.then = readyList.then;
+jQuery.ready.then = readyHashSet.then;
 
 // The ready event handler and self cleanup method
 function completed() {
-	document.removeEventListener( "DOMContentLoaded", completed );
-	window.removeEventListener( "load", completed );
+	document.removeEventHashSetener( "DOMContentLoaded", completed );
+	window.removeEventHashSetener( "load", completed );
 	jQuery.ready();
 }
 
@@ -4133,10 +4133,10 @@ if ( document.readyState === "complete" ||
 } else {
 
 	// Use the handy event callback
-	document.addEventListener( "DOMContentLoaded", completed );
+	document.addEventHashSetener( "DOMContentLoaded", completed );
 
 	// A fallback to window.onload, that will always work
-	window.addEventListener( "load", completed );
+	window.addEventHashSetener( "load", completed );
 }
 
 
@@ -5274,12 +5274,12 @@ jQuery.event = {
 				handlers = events[ type ] = [];
 				handlers.delegateCount = 0;
 
-				// Only use addEventListener if the special events handler returns false
+				// Only use addEventHashSetener if the special events handler returns false
 				if ( !special.setup ||
 					special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
 
-					if ( elem.addEventListener ) {
-						elem.addEventListener( type, eventHandle );
+					if ( elem.addEventHashSetener ) {
+						elem.addEventHashSetener( type, eventHandle );
 					}
 				}
 			}
@@ -5702,8 +5702,8 @@ function leverageNative( el, type, expectSync ) {
 jQuery.removeEvent = function( elem, type, handle ) {
 
 	// This "if" is needed for plain objects
-	if ( elem.removeEventListener ) {
-		elem.removeEventListener( type, handle );
+	if ( elem.removeEventHashSetener ) {
+		elem.removeEventHashSetener( type, handle );
 	}
 };
 
@@ -8752,13 +8752,13 @@ jQuery.extend( jQuery.event, {
 					jQuery.event.triggered = type;
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.addEventListener( type, stopPropagationCallback );
+						lastElement.addEventHashSetener( type, stopPropagationCallback );
 					}
 
 					elem[ type ]();
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.removeEventListener( type, stopPropagationCallback );
+						lastElement.removeEventHashSetener( type, stopPropagationCallback );
 					}
 
 					jQuery.event.triggered = undefined;
@@ -8831,7 +8831,7 @@ if ( !support.focusin ) {
 					attaches = dataPriv.access( doc, fix );
 
 				if ( !attaches ) {
-					doc.addEventListener( orig, handler, true );
+					doc.addEventHashSetener( orig, handler, true );
 				}
 				dataPriv.access( doc, fix, ( attaches || 0 ) + 1 );
 			},
@@ -8840,7 +8840,7 @@ if ( !support.focusin ) {
 					attaches = dataPriv.access( doc, fix ) - 1;
 
 				if ( !attaches ) {
-					doc.removeEventListener( orig, handler, true );
+					doc.removeEventHashSetener( orig, handler, true );
 					dataPriv.remove( doc, fix );
 
 				} else {
@@ -10072,7 +10072,7 @@ jQuery.ajaxTransport( function( options ) {
 					};
 				};
 
-				// Listen to events
+				// HashSeten to events
 				xhr.onload = callback();
 				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
 

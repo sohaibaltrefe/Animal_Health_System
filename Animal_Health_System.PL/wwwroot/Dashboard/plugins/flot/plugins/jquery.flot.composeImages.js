@@ -111,7 +111,7 @@ temporary images load their data.
 
     function getCSSRules(document) {
         var styleSheets = document.styleSheets,
-            rulesList = [];
+            rulesHashSet = [];
         for (var i = 0; i < styleSheets.length; i++) {
             // CORS requests for style sheets throw and an exception on Chrome > 64
             try {
@@ -119,18 +119,18 @@ temporary images load their data.
                 var rules = styleSheets[i].cssRules || [];
                 for (var j = 0; j < rules.length; j++) {
                     var rule = rules[j];
-                    rulesList.push(rule.cssText);
+                    rulesHashSet.push(rule.cssText);
                 }
             } catch (e) {
                 console.log('Failed to get some css rules');
             }
         }
-        return rulesList;
+        return rulesHashSet;
     }
 
     function embedCSSRulesInSVG(rules, svg) {
         var text = [
-            '<svg class="snapshot ' + svg.classList + '" width="' + svg.width.baseVal.value * pixelRatio + '" height="' + svg.height.baseVal.value * pixelRatio + '" viewBox="0 0 ' + svg.width.baseVal.value + ' ' + svg.height.baseVal.value + '" xmlns="http://www.w3.org/2000/svg">',
+            '<svg class="snapshot ' + svg.classHashSet + '" width="' + svg.width.baseVal.value * pixelRatio + '" height="' + svg.height.baseVal.value * pixelRatio + '" viewBox="0 0 ' + svg.width.baseVal.value + ' ' + svg.height.baseVal.value + '" xmlns="http://www.w3.org/2000/svg">',
             '<style>',
             '/* <![CDATA[ */',
             rules.join('\n'),

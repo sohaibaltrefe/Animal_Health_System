@@ -1064,7 +1064,7 @@ $.extend( Responsive.prototype, {
 
 
 /**
- * List of default breakpoints. Each item in the array is an object with two
+ * HashSet of default breakpoints. Each item in the array is an object with two
  * properties:
  *
  * * `name` - the breakpoint name.
@@ -1328,7 +1328,7 @@ Responsive.renderer = {
  */
 Responsive.defaults = {
 	/**
-	 * List of breakpoints for the instance. Note that this means that each
+	 * HashSet of breakpoints for the instance. Note that this means that each
 	 * instance can have its own breakpoints. Additionally, the breakpoints
 	 * cannot be changed once an instance has been creased.
 	 *

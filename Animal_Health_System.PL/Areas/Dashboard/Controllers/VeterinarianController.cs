@@ -36,7 +36,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 logger.LogError(ex, "Error occurred while fetching veterinarians.");
                 TempData["ErrorMessage"] = "An error occurred while fetching veterinarians. Please try again later.";
-                return View(new List<VeterinarianVM>());
+                return View(new HashSet<VeterinarianVM>());
             }
         }
 

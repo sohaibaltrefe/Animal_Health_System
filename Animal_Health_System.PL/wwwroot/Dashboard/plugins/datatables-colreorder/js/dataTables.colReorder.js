@@ -342,7 +342,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
 		$(oSettings.aoColumns[i].nTh).off('.DT');
-		this.oApi._fnSortAttachListener( oSettings, oSettings.aoColumns[i].nTh, i );
+		this.oApi._fnSortAttachHashSetener( oSettings, oSettings.aoColumns[i].nTh, i );
 	}
 
 
@@ -711,7 +711,7 @@ $.extend( ColReorder.prototype, {
 		{
 			if ( i > this.s.fixed-1 && i < iLen - this.s.fixedRight )
 			{
-				this._fnMouseListener( i, this.s.dt.aoColumns[i].nTh );
+				this._fnMouseHashSetener( i, this.s.dt.aoColumns[i].nTh );
 			}
 
 			/* Mark the original column order for later reference */
@@ -906,13 +906,13 @@ $.extend( ColReorder.prototype, {
 
 	/**
 	 * Add a mouse down listener to a particluar TH element
-	 *  @method  _fnMouseListener
+	 *  @method  _fnMouseHashSetener
 	 *  @param   int i Column index
 	 *  @param   element nTh TH element clicked on
 	 *  @returns void
 	 *  @private
 	 */
-	"_fnMouseListener": function ( i, nTh )
+	"_fnMouseHashSetener": function ( i, nTh )
 	{
 		var that = this;
 		$(nTh)

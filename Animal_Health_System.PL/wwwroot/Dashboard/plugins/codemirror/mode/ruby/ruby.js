@@ -17,14 +17,14 @@ function wordObj(words) {
   return o;
 }
 
-var keywordList = [
+var keywordHashSet = [
   "alias", "and", "BEGIN", "begin", "break", "case", "class", "def", "defined?", "do", "else",
   "elsif", "END", "end", "ensure", "false", "for", "if", "in", "module", "next", "not", "or",
   "redo", "rescue", "retry", "return", "self", "super", "then", "true", "undef", "unless",
   "until", "when", "while", "yield", "nil", "raise", "throw", "catch", "fail", "loop", "callcc",
   "caller", "lambda", "proc", "public", "protected", "private", "require", "load",
   "require_relative", "extend", "autoload", "__END__", "__FILE__", "__LINE__", "__dir__"
-], keywords = wordObj(keywordList);
+], keywords = wordObj(keywordHashSet);
 
 var indentWords = wordObj(["def", "class", "case", "for", "while", "until", "module", "then",
                            "catch", "loop", "proc", "begin"]);
@@ -123,7 +123,7 @@ CodeMirror.defineMode("ruby", function(config) {
       stream.eat(/[\?\!]/);
       if (stream.eat(":")) return "atom";
       return "ident";
-    } else if (ch == "|" && (state.varList || state.lastTok == "{" || state.lastTok == "do")) {
+    } else if (ch == "|" && (state.varHashSet || state.lastTok == "{" || state.lastTok == "do")) {
       curPunc = "|";
       return null;
     } else if (/[\(\)\[\]{}\\;]/.test(ch)) {
@@ -242,7 +242,7 @@ CodeMirror.defineMode("ruby", function(config) {
               context: {type: "top", indented: -config.indentUnit},
               continuedLine: false,
               lastTok: null,
-              varList: false};
+              varHashSet: false};
     },
 
     token: function(stream, state) {
@@ -255,7 +255,7 @@ CodeMirror.defineMode("ruby", function(config) {
         style = state.lastTok == "." ? "property"
           : keywords.propertyIsEnumerable(stream.current()) ? "keyword"
           : /^[A-Z]/.test(word) ? "tag"
-          : (state.lastTok == "def" || state.lastTok == "class" || state.varList) ? "def"
+          : (state.lastTok == "def" || state.lastTok == "class" || state.varHashSet) ? "def"
           : "variable";
         if (style == "keyword") {
           thisTok = word;
@@ -268,7 +268,7 @@ CodeMirror.defineMode("ruby", function(config) {
         }
       }
       if (curPunc || (style && style != "comment")) state.lastTok = thisTok;
-      if (curPunc == "|") state.varList = !state.varList;
+      if (curPunc == "|") state.varHashSet = !state.varHashSet;
 
       if (kwtype == "indent" || /[\(\[\{]/.test(curPunc))
         state.context = {prev: state.context, type: curPunc || style, indented: state.indented};
@@ -298,6 +298,6 @@ CodeMirror.defineMode("ruby", function(config) {
 
 CodeMirror.defineMIME("text/x-ruby", "ruby");
 
-CodeMirror.registerHelper("hintWords", "ruby", keywordList);
+CodeMirror.registerHelper("hintWords", "ruby", keywordHashSet);
 
 });

@@ -153,7 +153,7 @@
                 .append(this.dom.data)
                 .append(this.dom.condition)
                 .append(this.dom.value[0]);
-            this.setListeners();
+            this.setHashSeteners();
             // Trigger the inserted events for the value elements as they are inserted
             if (this.dom.value[0] !== undefined) {
                 this.dom.value[0].trigger('dtsb-inserted');
@@ -407,7 +407,7 @@
         /**
          * Sets the listeners for the criteria
          */
-        Criteria.prototype.setListeners = function () {
+        Criteria.prototype.setHashSeteners = function () {
             var _this = this;
             this.dom.data
                 .unbind('change')
@@ -435,7 +435,7 @@
                         if (_this.s.filled) {
                             _this.s.filled = false;
                             _this.s.dt.draw();
-                            _this.setListeners();
+                            _this.setHashSeteners();
                         }
                         _this.s.dt.state.save();
                     }
@@ -476,7 +476,7 @@
                             if (_this.s.filled && val !== undefined && _this.dom.container.has(val[0]).length !== 0) {
                                 _this.s.filled = false;
                                 _this.s.dt.draw();
-                                _this.setListeners();
+                                _this.setHashSeteners();
                             }
                         }
                         if (_this.dom.value.length === 0 ||
@@ -557,7 +557,7 @@
             this.dom.container
                 .append(this.dom["delete"])
                 .append(this.dom.right);
-            this.setListeners();
+            this.setHashSeteners();
         };
         /**
          * Clears the condition select element
@@ -590,7 +590,7 @@
                     }
                 }
                 // Call the init function to get the value elements for this condition
-                this.dom.value = [].concat(this.s.conditions[this.s.condition].init(this, Criteria.updateListener));
+                this.dom.value = [].concat(this.s.conditions[this.s.condition].init(this, Criteria.updateHashSetener));
                 if (this.dom.value.length > 0 && this.dom.value[0] !== undefined) {
                     this.dom.value[0].insertAfter(this.dom.condition).trigger('dtsb-inserted');
                     // Insert all of the value elements
@@ -876,7 +876,7 @@
                 });
             }
             // Initialise the value elements based on the condition
-            this.dom.value = [].concat(this.s.conditions[this.s.condition].init(this, Criteria.updateListener, loadedCriteria !== undefined ? loadedCriteria.value : undefined));
+            this.dom.value = [].concat(this.s.conditions[this.s.condition].init(this, Criteria.updateHashSetener, loadedCriteria !== undefined ? loadedCriteria.value : undefined));
             if (loadedCriteria !== undefined && loadedCriteria.value !== undefined) {
                 this.s.value = loadedCriteria.value;
             }
@@ -893,7 +893,7 @@
             }
             // Check if the criteria can be used in a search
             this.s.filled = this.s.conditions[this.s.condition].isInputValid(this.dom.value, this);
-            this.setListeners();
+            this.setHashSeteners();
             // If it can and this is different to before then trigger a draw
             if (prevFilled !== this.s.filled) {
                 // If using SSP we want to restrict the amount of server calls that take place
@@ -901,7 +901,7 @@
                 if (!this.s.dt.page.info().serverSide) {
                     this.s.dt.draw();
                 }
-                this.setListeners();
+                this.setHashSeteners();
             }
         };
         /**
@@ -1389,7 +1389,7 @@
         /**
          * Function that is run on each element as a call back when a search should be triggered
          */
-        Criteria.updateListener = function (that, el) {
+        Criteria.updateHashSetener = function (that, el) {
             // When the value is changed the criteria is now complete so can be included in searches
             // Get the condition from the map based on the key that has been selected for the condition
             var condition = that.s.conditions[that.s.condition];
@@ -2565,7 +2565,7 @@
                 var crit = _c[_b];
                 if (crit.criteria instanceof Criteria) {
                     crit.criteria.updateArrows(this.s.criteria.length > 1, false);
-                    this._setCriteriaListeners(crit.criteria);
+                    this._setCriteriaHashSeteners(crit.criteria);
                 }
             }
         };
@@ -2591,7 +2591,7 @@
                 }
                 return 0;
             });
-            this.setListeners();
+            this.setHashSeteners();
             for (var i = 0; i < this.s.criteria.length; i++) {
                 var crit = this.s.criteria[i].criteria;
                 if (crit instanceof Criteria) {
@@ -2601,7 +2601,7 @@
                     // Add to the group
                     this.s.criteria[i].criteria.dom.container.insertBefore(this.dom.add);
                     // Set listeners for various points
-                    this._setCriteriaListeners(crit);
+                    this._setCriteriaHashSeteners(crit);
                     this.s.criteria[i].criteria.rebuild(this.s.criteria[i].criteria.getDetails());
                 }
                 else if (crit instanceof Group && crit.s.criteria.length > 0) {
@@ -2612,7 +2612,7 @@
                     this.s.criteria[i].criteria.dom.container.insertBefore(this.dom.add);
                     // Redraw the contents of the group
                     crit.redrawContents();
-                    this._setGroupListeners(crit);
+                    this._setGroupHashSeteners(crit);
                 }
                 else {
                     // The group is empty so remove it
@@ -2671,7 +2671,7 @@
             this.dom.logicContainer.append(this.dom.clear).width(height);
             // Prepend logic button
             this.dom.container.prepend(this.dom.logicContainer);
-            this._setLogicListener();
+            this._setLogicHashSetener();
             // Set criteria left margin
             this.dom.container.css('margin-left', this.dom.logicContainer.outerHeight(true));
             var logicOffset = this.dom.logicContainer.offset();
@@ -2689,12 +2689,12 @@
             var newTop = currentTop - shuffleTop;
             this.dom.logicContainer.offset({ top: newTop });
             this.dom.clear.outerHeight(this.dom.logicContainer.height());
-            this._setClearListener();
+            this._setClearHashSetener();
         };
         /**
          * Sets listeners on the groups elements
          */
-        Group.prototype.setListeners = function () {
+        Group.prototype.setHashSeteners = function () {
             var _this = this;
             this.dom.add.unbind('click');
             this.dom.add.on('click.dtsb', function () {
@@ -2709,10 +2709,10 @@
             });
             for (var _i = 0, _a = this.s.criteria; _i < _a.length; _i++) {
                 var crit = _a[_i];
-                crit.criteria.setListeners();
+                crit.criteria.setHashSeteners();
             }
-            this._setClearListener();
-            this._setLogicListener();
+            this._setClearHashSetener();
+            this._setLogicHashSetener();
         };
         /**
          * Adds a criteria to the group
@@ -2762,8 +2762,8 @@
                     opt.criteria.updateArrows(this.s.criteria.length > 1, redraw);
                 }
             }
-            this._setCriteriaListeners(criteria);
-            criteria.setListeners();
+            this._setCriteriaHashSeteners(criteria);
+            criteria.setHashSeteners();
             this.setupLogic();
         };
         /**
@@ -2813,7 +2813,7 @@
             group.rebuild(loadedGroup);
             this.s.criteria[idx].criteria = group;
             this.s.topGroup.trigger('dtsb-redrawContents');
-            this._setGroupListeners(group);
+            this._setGroupHashSeteners(group);
         };
         /**
          * Rebuilds a criteria of this group that previously existed
@@ -2928,7 +2928,7 @@
          *
          * @param criteria The criteria for the listeners to be set on
          */
-        Group.prototype._setCriteriaListeners = function (criteria) {
+        Group.prototype._setCriteriaHashSeteners = function (criteria) {
             var _this = this;
             criteria.dom["delete"]
                 .unbind('click')
@@ -2957,7 +2957,7 @@
                 _this.s.criteria[idx].criteria = group;
                 _this.s.criteria[idx].logic = 'AND';
                 _this.s.topGroup.trigger('dtsb-redrawContents');
-                _this._setGroupListeners(group);
+                _this._setGroupHashSeteners(group);
                 return false;
             });
             criteria.dom.left
@@ -2983,7 +2983,7 @@
         /**
          * Set's the listeners for the group clear button
          */
-        Group.prototype._setClearListener = function () {
+        Group.prototype._setClearHashSetener = function () {
             var _this = this;
             this.dom.clear
                 .unbind('click')
@@ -3002,7 +3002,7 @@
          *
          * @param group The sub group that the listeners are to be set on
          */
-        Group.prototype._setGroupListeners = function (group) {
+        Group.prototype._setGroupHashSeteners = function (group) {
             var _this = this;
             // Set listeners for the new group
             group.dom.add
@@ -3036,13 +3036,13 @@
                 _this.addCriteria(toDrop, false);
                 return false;
             });
-            group.setListeners();
+            group.setHashSeteners();
         };
         /**
          * Sets up the Group instance, setting listeners and appending elements
          */
         Group.prototype._setup = function () {
-            this.setListeners();
+            this.setHashSeteners();
             this.dom.add.html(this.s.dt.i18n('searchBuilder.add', this.c.i18n.add));
             this.dom.logic.children().first().html(this.c.logic === 'OR'
                 ? this.s.dt.i18n('searchBuilder.logicOr', this.c.i18n.logicOr)
@@ -3062,7 +3062,7 @@
         /**
          * Sets the listener for the logic button
          */
-        Group.prototype._setLogicListener = function () {
+        Group.prototype._setLogicHashSetener = function () {
             var _this = this;
             this.dom.logic
                 .unbind('click')
@@ -3071,7 +3071,7 @@
                 _this.s.dt.draw();
                 for (var _i = 0, _a = _this.s.criteria; _i < _a.length; _i++) {
                     var crit = _a[_i];
-                    crit.criteria.setListeners();
+                    crit.criteria.setHashSeteners();
                 }
             });
         };
@@ -3253,7 +3253,7 @@
             this.s.topGroup.s.preventRedraw = false;
             this.s.topGroup.redrawContents();
             this.s.dt.draw(false);
-            this.s.topGroup.setListeners();
+            this.s.topGroup.setHashSeteners();
             return this;
         };
         /**
@@ -3333,7 +3333,7 @@
                 }
             }
             this.s.topGroup = new Group(this.s.dt, this.c, undefined);
-            this._setClearListener();
+            this._setClearHashSetener();
             this.s.dt.on('stateSaveParams.dtsb', function (e, settings, data) {
                 data.searchBuilder = _this.getDetails();
                 data.page = _this.s.dt.page();
@@ -3361,7 +3361,7 @@
                     if (!this.s.dt.page.info().serverSide) {
                         this.s.dt.page(loadedState.page).draw('page');
                     }
-                    this.s.topGroup.setListeners();
+                    this.s.topGroup.setHashSeteners();
                 }
                 // Otherwise load any predefined options
                 else if (this.c.preDefined !== false) {
@@ -3369,7 +3369,7 @@
                     this.rebuild(this.c.preDefined);
                 }
             }
-            this._setEmptyListener();
+            this._setEmptyHashSetener();
             this.s.dt.state.save();
         };
         SearchBuilder.prototype._collapseArray = function (criteria) {
@@ -3423,7 +3423,7 @@
             this.dom.container.append(this.dom.titleRow);
             this.dom.topGroup = this.s.topGroup.getNode();
             this.dom.container.append(this.dom.topGroup);
-            this._setRedrawListener();
+            this._setRedrawHashSetener();
             var tableNode = this.s.dt.table(0).node();
             if (!$.fn.dataTable.ext.search.includes(this.s.search)) {
                 // Custom search function for SearchBuilder
@@ -3454,7 +3454,7 @@
         SearchBuilder.prototype._checkClear = function () {
             if (this.s.topGroup.s.criteria.length > 0) {
                 this.dom.clearAll.insertAfter(this.dom.title);
-                this._setClearListener();
+                this._setClearHashSetener();
             }
             else {
                 this.dom.clearAll.remove();
@@ -3474,16 +3474,16 @@
         /**
          * Set the listener for the clear button
          */
-        SearchBuilder.prototype._setClearListener = function () {
+        SearchBuilder.prototype._setClearHashSetener = function () {
             var _this = this;
             this.dom.clearAll.unbind('click');
             this.dom.clearAll.on('click.dtsb', function () {
                 _this.s.topGroup = new Group(_this.s.dt, _this.c, undefined);
                 _this._build();
                 _this.s.dt.draw();
-                _this.s.topGroup.setListeners();
+                _this.s.topGroup.setHashSeteners();
                 _this.dom.clearAll.remove();
-                _this._setEmptyListener();
+                _this._setEmptyHashSetener();
                 _this._filterChanged(0);
                 return false;
             });
@@ -3491,14 +3491,14 @@
         /**
          * Set the listener for the Redraw event
          */
-        SearchBuilder.prototype._setRedrawListener = function () {
+        SearchBuilder.prototype._setRedrawHashSetener = function () {
             var _this = this;
             this.s.topGroup.dom.container.unbind('dtsb-redrawContents');
             this.s.topGroup.dom.container.on('dtsb-redrawContents.dtsb', function () {
                 _this._checkClear();
                 _this.s.topGroup.redrawContents();
                 _this.s.topGroup.setupLogic();
-                _this._setEmptyListener();
+                _this._setEmptyHashSetener();
                 var count = _this.s.topGroup.count();
                 _this._updateTitle(count);
                 _this._filterChanged(count);
@@ -3535,7 +3535,7 @@
         /**
          * Sets listeners to check whether clearAll should be added or removed
          */
-        SearchBuilder.prototype._setEmptyListener = function () {
+        SearchBuilder.prototype._setEmptyHashSetener = function () {
             var _this = this;
             this.s.topGroup.dom.add.on('click.dtsb', function () {
                 _this._checkClear();

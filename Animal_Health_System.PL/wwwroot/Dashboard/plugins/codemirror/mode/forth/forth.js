@@ -13,7 +13,7 @@
 })(function(CodeMirror) {
   "use strict";
 
-  function toWordList(words) {
+  function toWordHashSet(words) {
     var ret = [];
     words.split(' ').forEach(function(e){
       ret.push({name: e});
@@ -21,7 +21,7 @@
     return ret;
   }
 
-  var coreWordList = toWordList(
+  var coreWordHashSet = toWordHashSet(
 'INVERT AND OR XOR\
  2* 2/ LSHIFT RSHIFT\
  0= = 0< < > U< MIN MAX\
@@ -61,14 +61,14 @@
  PREVIOUS SEARCH-WORDLIST WORDLIST FIND ALSO ONLY FORTH DEFINITIONS ORDER\
  -TRAILING /STRING SEARCH COMPARE CMOVE CMOVE> BLANK SLITERAL');
 
-  var immediateWordList = toWordList('IF ELSE THEN BEGIN WHILE REPEAT UNTIL RECURSE [IF] [ELSE] [THEN] ?DO DO LOOP +LOOP UNLOOP LEAVE EXIT AGAIN CASE OF ENDOF ENDCASE');
+  var immediateWordHashSet = toWordHashSet('IF ELSE THEN BEGIN WHILE REPEAT UNTIL RECURSE [IF] [ELSE] [THEN] ?DO DO LOOP +LOOP UNLOOP LEAVE EXIT AGAIN CASE OF ENDOF ENDCASE');
 
   CodeMirror.defineMode('forth', function() {
-    function searchWordList (wordList, word) {
+    function searchWordHashSet (wordHashSet, word) {
       var i;
-      for (i = wordList.length - 1; i >= 0; i--) {
-        if (wordList[i].name === word.toUpperCase()) {
-          return wordList[i];
+      for (i = wordHashSet.length - 1; i >= 0; i--) {
+        if (wordHashSet[i].name === word.toUpperCase()) {
+          return wordHashSet[i];
         }
       }
       return undefined;
@@ -78,9 +78,9 @@
       return {
         state: '',
         base: 10,
-        coreWordList: coreWordList,
-        immediateWordList: immediateWordList,
-        wordList: []
+        coreWordHashSet: coreWordHashSet,
+        immediateWordHashSet: immediateWordHashSet,
+        wordHashSet: []
       };
     },
     token: function (stream, stt) {
@@ -95,13 +95,13 @@
         }
         mat = stream.match(/^(\:)\s+(\S+)(\s|$)+/);
         if (mat) {
-          stt.wordList.push({name: mat[2].toUpperCase()});
+          stt.wordHashSet.push({name: mat[2].toUpperCase()});
           stt.state = ' compilation';
           return 'def' + stt.state;
         }
         mat = stream.match(/^(VARIABLE|2VARIABLE|CONSTANT|2CONSTANT|CREATE|POSTPONE|VALUE|WORD)\s+(\S+)(\s|$)+/i);
         if (mat) {
-          stt.wordList.push({name: mat[2].toUpperCase()});
+          stt.wordHashSet.push({name: mat[2].toUpperCase()});
           return 'def' + stt.state;
         }
         mat = stream.match(/^(\'|\[\'\])\s+(\S+)(\s|$)+/);
@@ -127,7 +127,7 @@
       // dynamic wordlist
       mat = stream.match(/^(\S+)(\s+|$)/);
       if (mat) {
-        if (searchWordList(stt.wordList, mat[1]) !== undefined) {
+        if (searchWordHashSet(stt.wordHashSet, mat[1]) !== undefined) {
           return 'variable' + stt.state;
         }
 
@@ -138,10 +138,10 @@
           }
 
           // core words
-          if (searchWordList(stt.coreWordList, mat[1]) !== undefined) {
+          if (searchWordHashSet(stt.coreWordHashSet, mat[1]) !== undefined) {
             return 'builtin' + stt.state;
           }
-          if (searchWordList(stt.immediateWordList, mat[1]) !== undefined) {
+          if (searchWordHashSet(stt.immediateWordHashSet, mat[1]) !== undefined) {
             return 'keyword' + stt.state;
           }
 

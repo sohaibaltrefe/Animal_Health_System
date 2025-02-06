@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,25 +20,30 @@ namespace Animal_Health_System.DAL.Models
 
         public string Name { get; set; }
 
-
-
-
       
         public DateTime AdministrationDate { get; set; }
 
         public VaccinationStatus Status { get; set; }
 
-        public int? VeterinarianId { get; set; }
+
+        [ForeignKey(nameof(Veterinarian))]
+        public int VeterinarianId { get; set; }
+
+        [ForeignKey(nameof(AnimalHealthHistory))]
+        public int AnimalId { get; set; }
+
+        [ForeignKey(nameof(Vaccine))]
+        public int  VaccineId { get; set; }
+
+        [ForeignKey(nameof(FarmStaff))]
+
+        public int  FarmStaffId { get; set; }
+
+        public Animal Animal  { get; set; }
         public Veterinarian Veterinarian { get; set; }
 
-     
-        public int? AnimalId { get; set; }
-        public Animal Animal  { get; set; }
-
-        public int? VaccineId { get; set; }
         public Vaccine Vaccine  { get; set; }
 
-        public int? FarmStaffId { get; set; }
         public FarmStaff FarmStaff  { get; set; }
     }
 

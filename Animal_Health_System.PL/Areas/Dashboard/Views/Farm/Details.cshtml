@@ -56,7 +56,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var animal in Model.Animals.ToList())
+                        @foreach (var animal in Model.Animals.ToHashSet())
                         {
                             <tr>
                                 <td>@animal.Name</td>

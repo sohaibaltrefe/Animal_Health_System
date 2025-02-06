@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,10 @@ namespace Animal_Health_System.DAL.Models
         public int UnderTreatment { get; set; }
 
 
+        [ForeignKey(nameof(Farm))]
 
 
-        public int? FarmId { get; set; }
+        public int  FarmId { get; set; }
         public Farm Farm  { get; set; }
     }
 

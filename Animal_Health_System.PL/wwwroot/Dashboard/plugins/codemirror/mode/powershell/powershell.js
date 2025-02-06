@@ -75,7 +75,7 @@ CodeMirror.defineMode('powershell', function() {
     /(Enter|Exit)-PSSession/,
     /Export-(Alias|Clixml|Console|Counter|Csv|FormatData|ModuleMember|PSSession)/,
     /ForEach-Object/,
-    /Format-(Custom|List|Table|Wide)/,
+    /Format-(Custom|HashSet|Table|Wide)/,
     new RegExp('Get-(Acl|Alias|AuthenticodeSignature|ChildItem|Command|ComputerRestorePoint|Content|ControlPanelItem|Counter|Credential'
       + '|Culture|Date|Event|EventLog|EventSubscriber|ExecutionPolicy|FormatData|Help|History|Host|HotFix|Item|ItemProperty|Job'
       + '|Location|Member|Module|PfxCertificate|Process|PSBreakpoint|PSCallStack|PSDrive|PSProvider|PSSession|PSSessionConfiguration'
@@ -121,7 +121,7 @@ CodeMirror.defineMode('powershell', function() {
     /Unblock-File/,
     /Undo-Transaction/,
     /Unregister-(Event|PSSessionConfiguration)/,
-    /Update-(FormatData|Help|List|TypeData)/,
+    /Update-(FormatData|Help|HashSet|TypeData)/,
     /Use-Transaction/,
     /Wait-(Event|Job|Process)/,
     /Where-Object/,

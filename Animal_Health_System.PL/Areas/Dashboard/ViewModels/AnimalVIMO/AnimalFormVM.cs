@@ -30,9 +30,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public bool IsDeleted { get; set; }
 
         [Required(ErrorMessage = "Farm is required.")]
-            public int? FarmId { get; set; }
+            public int  FarmId { get; set; }
 
-            public SelectList? Farms { get; set; } // For populating farm list in dropdown
+            public SelectList Farms { get; set; } // For populating farm list in dropdown
         }
 
 

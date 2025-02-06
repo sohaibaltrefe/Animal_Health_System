@@ -26,7 +26,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         }
 
 
-        // Index Action - List all appointments
+        // Index Action - HashSet all appointments
         public async Task<IActionResult> Index()
         {
             try
@@ -52,14 +52,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
                 var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
-                var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
+                var statusHashSet = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToHashSet();
 
                 var vm = new AppointmentFormVM
                 {
                     Animal = new SelectList(animals, "Id", "Name"),
                     Veterinarian = new SelectList(veterinarians, "Id", "FullName"),
                     Owner = new SelectList(owners, "Id", "FullName"),
-                    StatusList = new SelectList(statusList)
+                    StatusHashSet = new SelectList(statusHashSet)
                 };
 
                 return View(vm);
@@ -90,13 +90,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 {
                     logger.LogError(ex, "Error occurred while creating appointment.");
                     TempData["ErrorMessage"] = "An error occurred while creating the appointment.";
-                    await PopulateSelectLists(vm); // Repopulate select lists in case of error
+                    await PopulateSelectHashSets(vm); // Repopulate select lists in case of error
                     return View(vm);
                 }
             }
 
-            // Re-populate the SelectLists if validation fails
-            await PopulateSelectLists(vm);
+            // Re-populate the SelectHashSets if validation fails
+            await PopulateSelectHashSets(vm);
             return View(vm);
         }
 
@@ -116,11 +116,11 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
                 var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
-                var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
+                var statusHashSet = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToHashSet();
 
                 vm.Animal = new SelectList(animals, "Id", "Name", appointment.AnimalId);
                 vm.Veterinarian = new SelectList(veterinarians, "Id", "FullName", appointment.VeterinarianId);
-                vm.StatusList = new SelectList(statusList, "Value", "Text", vm.Status);
+                vm.StatusHashSet = new SelectList(statusHashSet, "Value", "Text", vm.Status);
 
                 return View(vm);
             }
@@ -154,13 +154,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 {
                     logger.LogError(ex, "Error occurred while updating the appointment.");
                     TempData["ErrorMessage"] = "An error occurred while updating the appointment.";
-                    await PopulateSelectLists(vm); // Repopulate select lists in case of error
+                    await PopulateSelectHashSets(vm); // Repopulate select lists in case of error
                     return View(vm);
                 }
             }
 
-            // Re-populate the SelectLists if validation fails
-            await PopulateSelectLists(vm);
+            // Re-populate the SelectHashSets if validation fails
+            await PopulateSelectHashSets(vm);
             return View(vm);
         }
         // Details Page - View appointment details
@@ -208,19 +208,19 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Helper method to populate SelectLists for Animal, Veterinarian, Owner, and Status
-        private async Task PopulateSelectLists(AppointmentFormVM vm)
+        // Helper method to populate SelectHashSets for Animal, Veterinarian, Owner, and Status
+        private async Task PopulateSelectHashSets(AppointmentFormVM vm)
         {
             var animals = await unitOfWork.animalRepository.GetAllAsync();
             var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
             var owners = await unitOfWork.ownerRepository.GetAllAsync();
 
-            var statusList = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToList();
+            var statusHashSet = Enum.GetValues(typeof(AppointmentStatus)).Cast<AppointmentStatus>().ToHashSet();
 
             vm.Animal = new SelectList(animals, "Id", "Name");
             vm.Veterinarian = new SelectList(veterinarians, "Id", "FullName");
             vm.Owner = new SelectList(owners, "Id", "FullName");
-            vm.StatusList = new SelectList(statusList);
+            vm.StatusHashSet = new SelectList(statusHashSet);
         }
     }
 }

@@ -13,17 +13,17 @@
 
   CodeMirror.defineOption("autoRefresh", false, function(cm, val) {
     if (cm.state.autoRefresh) {
-      stopListening(cm, cm.state.autoRefresh)
+      stopHashSetening(cm, cm.state.autoRefresh)
       cm.state.autoRefresh = null
     }
     if (val && cm.display.wrapper.offsetHeight == 0)
-      startListening(cm, cm.state.autoRefresh = {delay: val.delay || 250})
+      startHashSetening(cm, cm.state.autoRefresh = {delay: val.delay || 250})
   })
 
-  function startListening(cm, state) {
+  function startHashSetening(cm, state) {
     function check() {
       if (cm.display.wrapper.offsetHeight) {
-        stopListening(cm, state)
+        stopHashSetening(cm, state)
         if (cm.display.lastWrapHeight != cm.display.wrapper.clientHeight)
           cm.refresh()
       } else {
@@ -39,7 +39,7 @@
     CodeMirror.on(window, "keyup", state.hurry)
   }
 
-  function stopListening(_cm, state) {
+  function stopHashSetening(_cm, state) {
     clearTimeout(state.timeout)
     CodeMirror.off(window, "mouseup", state.hurry)
     CodeMirror.off(window, "keyup", state.hurry)

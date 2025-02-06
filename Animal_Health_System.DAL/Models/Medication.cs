@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,14 +23,20 @@ namespace Animal_Health_System.DAL.Models
 
         public int Quantity { get; set; }
 
+        [ForeignKey(nameof(MedicalExamination))]
+        public int  MedicalExaminationId { get; set; }
 
-        public int? MedicalExaminationId { get; set; }
+        [ForeignKey(nameof(MedicationStock))]
+        public int  MedicationStockId { get; set; }
+
+        [ForeignKey(nameof(Prescription))]
+        public int  PrescriptionId { get; set; }
+
+
         public MedicalExamination MedicalExamination  { get; set; }
 
-        public int? MedicationStockId { get; set; }
         public MedicationStock MedicationStock  { get; set; }
 
-        public int? PrescriptionId { get; set; }
         public Prescription Prescription  { get; set; }
 
 

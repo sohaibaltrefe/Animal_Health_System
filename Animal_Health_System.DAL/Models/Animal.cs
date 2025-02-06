@@ -48,32 +48,36 @@ namespace Animal_Health_System.DAL.Models
         public HealthStatus CurrentHealthStatus { get; set; }
 
 
+        [ForeignKey(nameof(Farm))] 
+        public int  FarmId { get; set; }
 
-        public int?  FarmId { get; set; }
-        public virtual Farm Farm  { get; set; }
+        [ForeignKey(nameof(MedicalRecord))]
+        public int  MedicalRecordId { get; set; }
 
 
-        public int? MedicalRecordId { get; set; }
-        public virtual  MedicalRecord MedicalRecord  { get; set; }
+        public Farm Farm  { get; set; }
 
-        public virtual ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List<AnimalHealthHistory>();
 
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public MedicalRecord MedicalRecord  { get; set; }
 
-        public virtual ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
+        public   ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List <AnimalHealthHistory>();
 
-        public virtual ICollection<MedicalExamination> MedicalExaminations { get; set; }
+        public  ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
 
-        public virtual ICollection<Pregnancy> Pregnancies { get; set; }
+        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
 
-        public virtual ICollection<Birth> Births { get; set; }
+        public   ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List <MedicalExamination>();
 
-        public virtual ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
-        public virtual ICollection<Notification>  PregnancyNotifications { get; set; } = new List< Notification>();
-        public virtual ICollection<ProductionRecord>  ProductionRecords { get; set; } = new List<ProductionRecord>();
+        public   ICollection<Pregnancy> Pregnancies { get; set; } = new List <Pregnancy>();
 
-        public virtual ICollection<FarmStaff> FarmStaffs { get; set; }
-       
+        public   ICollection<Birth> Births { get; set; } = new List <Birth>();
+
+        public   ICollection<BreedingReport> BreedingReports { get; set; } = new List <BreedingReport>();
+        public   ICollection<Notification>  PregnancyNotifications { get; set; } = new List < Notification>();
+        public   ICollection<ProductionRecord>  ProductionRecords { get; set; } = new List <ProductionRecord>();
+
+        public   ICollection<FarmStaff> FarmStaffs { get; set; } = new List <FarmStaff>();
+
     }
 
 

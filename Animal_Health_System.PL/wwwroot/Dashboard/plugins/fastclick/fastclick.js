@@ -120,23 +120,23 @@
 
 		// Set up event handlers as required
 		if (deviceIsAndroid) {
-			layer.addEventListener('mouseover', this.onMouse, true);
-			layer.addEventListener('mousedown', this.onMouse, true);
-			layer.addEventListener('mouseup', this.onMouse, true);
+			layer.addEventHashSetener('mouseover', this.onMouse, true);
+			layer.addEventHashSetener('mousedown', this.onMouse, true);
+			layer.addEventHashSetener('mouseup', this.onMouse, true);
 		}
 
-		layer.addEventListener('click', this.onClick, true);
-		layer.addEventListener('touchstart', this.onTouchStart, false);
-		layer.addEventListener('touchmove', this.onTouchMove, false);
-		layer.addEventListener('touchend', this.onTouchEnd, false);
-		layer.addEventListener('touchcancel', this.onTouchCancel, false);
+		layer.addEventHashSetener('click', this.onClick, true);
+		layer.addEventHashSetener('touchstart', this.onTouchStart, false);
+		layer.addEventHashSetener('touchmove', this.onTouchMove, false);
+		layer.addEventHashSetener('touchend', this.onTouchEnd, false);
+		layer.addEventHashSetener('touchcancel', this.onTouchCancel, false);
 
 		// Hack is required for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
 		// which is how FastClick normally stops click events bubbling to callbacks registered on the FastClick
 		// layer when they are cancelled.
 		if (!Event.prototype.stopImmediatePropagation) {
-			layer.removeEventListener = function(type, callback, capture) {
-				var rmv = Node.prototype.removeEventListener;
+			layer.removeEventHashSetener = function(type, callback, capture) {
+				var rmv = Node.prototype.removeEventHashSetener;
 				if (type === 'click') {
 					rmv.call(layer, type, callback.hijacked || callback, capture);
 				} else {
@@ -144,8 +144,8 @@
 				}
 			};
 
-			layer.addEventListener = function(type, callback, capture) {
-				var adv = Node.prototype.addEventListener;
+			layer.addEventHashSetener = function(type, callback, capture) {
+				var adv = Node.prototype.addEventHashSetener;
 				if (type === 'click') {
 					adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
 						if (!event.propagationStopped) {
@@ -164,9 +164,9 @@
 		if (typeof layer.onclick === 'function') {
 
 			// Android browser on at least 3.2 requires a new reference to the function in layer.onclick
-			// - the old one won't work if passed to addEventListener directly.
+			// - the old one won't work if passed to addEventHashSetener directly.
 			oldOnClick = layer.onclick;
-			layer.addEventListener('click', function(event) {
+			layer.addEventHashSetener('click', function(event) {
 				oldOnClick(event);
 			}, false);
 			layer.onclick = null;
@@ -713,16 +713,16 @@
 		var layer = this.layer;
 
 		if (deviceIsAndroid) {
-			layer.removeEventListener('mouseover', this.onMouse, true);
-			layer.removeEventListener('mousedown', this.onMouse, true);
-			layer.removeEventListener('mouseup', this.onMouse, true);
+			layer.removeEventHashSetener('mouseover', this.onMouse, true);
+			layer.removeEventHashSetener('mousedown', this.onMouse, true);
+			layer.removeEventHashSetener('mouseup', this.onMouse, true);
 		}
 
-		layer.removeEventListener('click', this.onClick, true);
-		layer.removeEventListener('touchstart', this.onTouchStart, false);
-		layer.removeEventListener('touchmove', this.onTouchMove, false);
-		layer.removeEventListener('touchend', this.onTouchEnd, false);
-		layer.removeEventListener('touchcancel', this.onTouchCancel, false);
+		layer.removeEventHashSetener('click', this.onClick, true);
+		layer.removeEventHashSetener('touchstart', this.onTouchStart, false);
+		layer.removeEventHashSetener('touchmove', this.onTouchMove, false);
+		layer.removeEventHashSetener('touchend', this.onTouchEnd, false);
+		layer.removeEventHashSetener('touchcancel', this.onTouchCancel, false);
 	};
 
 

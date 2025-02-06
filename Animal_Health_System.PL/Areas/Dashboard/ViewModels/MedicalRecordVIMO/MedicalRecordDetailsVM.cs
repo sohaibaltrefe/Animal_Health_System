@@ -10,9 +10,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalRecordVIMO
         public string Name { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
-        public ICollection<Vaccine> Vaccines { get; set; } = new List<Vaccine>();
+        public ICollection<Vaccine> Vaccines { get; set; } = new HashSet<Vaccine>();
         public int AnimalId { get; set; }
         public Animal Animal { get; set; }
-        public ICollection<MedicalExamination> Examinations { get; set; } = new List<MedicalExamination>();
+        public ICollection<MedicalExamination> Examinations { get; set; } = new HashSet<MedicalExamination>();
     }
 }

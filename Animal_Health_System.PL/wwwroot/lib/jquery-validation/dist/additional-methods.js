@@ -98,7 +98,7 @@ $.validator.addMethod( "accept", function( value, element, param ) {
 				.replace( /,/g, "|" )
 				.replace( /\/\*/g, "/.*" );
 
-		// Check if the element has a FileList before checking each file
+		// Check if the element has a FileHashSet before checking each file
 		if ( element.files && element.files.length ) {
 			regex = new RegExp( ".?(" + typeParam + ")$", "i" );
 			for ( i = 0; i < element.files.length; i++ ) {
@@ -113,7 +113,7 @@ $.validator.addMethod( "accept", function( value, element, param ) {
 	}
 
 	// Either return true because we've validated each file, or because the
-	// browser does not support element.files and the FileList feature
+	// browser does not support element.files and the FileHashSet feature
 	return true;
 }, $.validator.format( "Please enter a value with a valid mimetype." ) );
 
@@ -898,7 +898,7 @@ $.validator.addMethod( "letterswithbasicpunc", function( value, element ) {
 	return this.optional( element ) || /^[a-z\-.,()'"\s]+$/i.test( value );
 }, "Letters or punctuation only please." );
 
-// Limit the number of files in a FileList.
+// Limit the number of files in a FileHashSet.
 $.validator.addMethod( "maxfiles", function( value, element, param ) {
 	if ( this.optional( element ) ) {
 		return true;
@@ -913,7 +913,7 @@ $.validator.addMethod( "maxfiles", function( value, element, param ) {
 	return true;
 }, $.validator.format( "Please select no more than {0} files." ) );
 
-// Limit the size of each individual file in a FileList.
+// Limit the size of each individual file in a FileHashSet.
 $.validator.addMethod( "maxsize", function( value, element, param ) {
 	if ( this.optional( element ) ) {
 		return true;
@@ -932,7 +932,7 @@ $.validator.addMethod( "maxsize", function( value, element, param ) {
 	return true;
 }, $.validator.format( "File size must not exceed {0} bytes each." ) );
 
-// Limit the size of all files in a FileList.
+// Limit the size of all files in a FileHashSet.
 $.validator.addMethod( "maxsizetotal", function( value, element, param ) {
 	if ( this.optional( element ) ) {
 		return true;

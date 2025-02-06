@@ -476,7 +476,7 @@
       resolved.supportsSelection = true
       return resolved
     } else if (words = cm.getHelper(cm.getCursor(), "hintWords")) {
-      return function(cm) { return CodeMirror.hint.fromList(cm, {words: words}) }
+      return function(cm) { return CodeMirror.hint.fromHashSet(cm, {words: words}) }
     } else if (CodeMirror.hint.anyword) {
       return function(cm, options) { return CodeMirror.hint.anyword(cm, options) }
     } else {
@@ -488,7 +488,7 @@
     resolve: resolveAutoHints
   });
 
-  CodeMirror.registerHelper("hint", "fromList", function(cm, options) {
+  CodeMirror.registerHelper("hint", "fromHashSet", function(cm, options) {
     var cur = cm.getCursor(), token = cm.getTokenAt(cur)
     var term, from = CodeMirror.Pos(cur.line, token.start), to = cur
     if (token.start < cur.ch && /\w/.test(token.string.charAt(cur.ch - token.start - 1))) {

@@ -3561,7 +3561,7 @@ var arrayEvents = ['push', 'pop', 'shift', 'splice', 'unshift'];
 
 /**
  * Hooks the array methods that add or remove values ('push', pop', 'shift', 'splice',
- * 'unshift') and notify the listener AFTER the array has been altered. Listeners are
+ * 'unshift') and notify the listener AFTER the array has been altered. HashSeteners are
  * called on the 'onData*' callbacks (e.g. onDataPush, etc.) with same arguments.
  */
 function listenArrayEvents(array, listener) {
@@ -7507,11 +7507,11 @@ function initCanvas(canvas, config) {
 }
 
 /**
- * Detects support for options object argument in addEventListener.
- * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Safely_detecting_option_support
+ * Detects support for options object argument in addEventHashSetener.
+ * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventHashSetener#Safely_detecting_option_support
  * @private
  */
-var supportsEventListenerOptions = (function() {
+var supportsEventHashSetenerOptions = (function() {
 	var supports = false;
 	try {
 		var options = Object.defineProperty({}, 'passive', {
@@ -7520,7 +7520,7 @@ var supportsEventListenerOptions = (function() {
 				supports = true;
 			}
 		});
-		window.addEventListener('e', null, options);
+		window.addEventHashSetener('e', null, options);
 	} catch (e) {
 		// continue regardless of error
 	}
@@ -7529,14 +7529,14 @@ var supportsEventListenerOptions = (function() {
 
 // Default passive to true as expected by Chrome for 'touchstart' and 'touchend' events.
 // https://github.com/chartjs/Chart.js/issues/4287
-var eventListenerOptions = supportsEventListenerOptions ? {passive: true} : false;
+var eventHashSetenerOptions = supportsEventHashSetenerOptions ? {passive: true} : false;
 
-function addListener(node, type, listener) {
-	node.addEventListener(type, listener, eventListenerOptions);
+function addHashSetener(node, type, listener) {
+	node.addEventHashSetener(type, listener, eventHashSetenerOptions);
 }
 
-function removeListener(node, type, listener) {
-	node.removeEventListener(type, listener, eventListenerOptions);
+function removeHashSetener(node, type, listener) {
+	node.removeEventHashSetener(type, listener, eventHashSetenerOptions);
 }
 
 function createEvent(type, chart, x, y, nativeEvent) {
@@ -7606,8 +7606,8 @@ function createResizer(handler) {
 		handler();
 	};
 
-	addListener(expand, 'scroll', onScroll.bind(expand, 'expand'));
-	addListener(shrink, 'scroll', onScroll.bind(shrink, 'shrink'));
+	addHashSetener(expand, 'scroll', onScroll.bind(expand, 'expand'));
+	addHashSetener(shrink, 'scroll', onScroll.bind(shrink, 'shrink'));
 
 	return resizer;
 }
@@ -7622,7 +7622,7 @@ function watchForRender(node, handler) {
 	};
 
 	helpers$1.each(ANIMATION_START_EVENTS, function(type) {
-		addListener(node, type, proxy);
+		addHashSetener(node, type, proxy);
 	});
 
 	// #4737: Chrome might skip the CSS animation when the CSS_RENDER_MONITOR class
@@ -7632,7 +7632,7 @@ function watchForRender(node, handler) {
 	// https://github.com/chartjs/Chart.js/issues/4737
 	expando.reflow = !!node.offsetParent;
 
-	node.classList.add(CSS_RENDER_MONITOR);
+	node.classHashSet.add(CSS_RENDER_MONITOR);
 }
 
 function unwatchForRender(node) {
@@ -7641,16 +7641,16 @@ function unwatchForRender(node) {
 
 	if (proxy) {
 		helpers$1.each(ANIMATION_START_EVENTS, function(type) {
-			removeListener(node, type, proxy);
+			removeHashSetener(node, type, proxy);
 		});
 
 		delete expando.renderProxy;
 	}
 
-	node.classList.remove(CSS_RENDER_MONITOR);
+	node.classHashSet.remove(CSS_RENDER_MONITOR);
 }
 
-function addResizeListener(node, listener, chart) {
+function addResizeHashSetener(node, listener, chart) {
 	var expando = node[EXPANDO_KEY] || (node[EXPANDO_KEY] = {});
 
 	// Let's keep track of this added resizer and thus avoid DOM query when removing it.
@@ -7687,7 +7687,7 @@ function addResizeListener(node, listener, chart) {
 	});
 }
 
-function removeResizeListener(node) {
+function removeResizeHashSetener(node) {
 	var expando = node[EXPANDO_KEY] || {};
 	var resizer = expando.resizer;
 
@@ -7816,11 +7816,11 @@ var platform_dom$2 = {
 		delete canvas[EXPANDO_KEY];
 	},
 
-	addEventListener: function(chart, type, listener) {
+	addEventHashSetener: function(chart, type, listener) {
 		var canvas = chart.canvas;
 		if (type === 'resize') {
 			// Note: the resize event is not supported on all browsers.
-			addResizeListener(canvas, listener, chart);
+			addResizeHashSetener(canvas, listener, chart);
 			return;
 		}
 
@@ -7830,14 +7830,14 @@ var platform_dom$2 = {
 			listener(fromNativeEvent(event, chart));
 		};
 
-		addListener(canvas, type, proxy);
+		addHashSetener(canvas, type, proxy);
 	},
 
-	removeEventListener: function(chart, type, listener) {
+	removeEventHashSetener: function(chart, type, listener) {
 		var canvas = chart.canvas;
 		if (type === 'resize') {
 			// Note: the resize event is not supported on all browsers.
-			removeResizeListener(canvas);
+			removeResizeHashSetener(canvas);
 			return;
 		}
 
@@ -7848,33 +7848,33 @@ var platform_dom$2 = {
 			return;
 		}
 
-		removeListener(canvas, type, proxy);
+		removeHashSetener(canvas, type, proxy);
 	}
 };
 
 // DEPRECATIONS
 
 /**
- * Provided for backward compatibility, use EventTarget.addEventListener instead.
- * EventTarget.addEventListener compatibility: Chrome, Opera 7, Safari, FF1.5+, IE9+
- * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+ * Provided for backward compatibility, use EventTarget.addEventHashSetener instead.
+ * EventTarget.addEventHashSetener compatibility: Chrome, Opera 7, Safari, FF1.5+, IE9+
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventHashSetener
  * @function Chart.helpers.addEvent
  * @deprecated since version 2.7.0
  * @todo remove at version 3
  * @private
  */
-helpers$1.addEvent = addListener;
+helpers$1.addEvent = addHashSetener;
 
 /**
- * Provided for backward compatibility, use EventTarget.removeEventListener instead.
- * EventTarget.removeEventListener compatibility: Chrome, Opera 7, Safari, FF1.5+, IE9+
- * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
+ * Provided for backward compatibility, use EventTarget.removeEventHashSetener instead.
+ * EventTarget.removeEventHashSetener compatibility: Chrome, Opera 7, Safari, FF1.5+, IE9+
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventHashSetener
  * @function Chart.helpers.removeEvent
  * @deprecated since version 2.7.0
  * @todo remove at version 3
  * @private
  */
-helpers$1.removeEvent = removeListener;
+helpers$1.removeEvent = removeHashSetener;
 
 // @TODO Make possible to select another platform at build time.
 var implementation = platform_dom$2._enabled ? platform_dom$2 : platform_basic;
@@ -7914,15 +7914,15 @@ var platform = helpers$1.extend({
 	 * @param {function} listener - Receives a notification (an object that implements
 	 * the {@link IEvent} interface) when an event of the specified type occurs.
 	 */
-	addEventListener: function() {},
+	addEventHashSetener: function() {},
 
 	/**
-	 * Removes the specified listener previously registered with addEventListener.
+	 * Removes the specified listener previously registered with addEventHashSetener.
 	 * @param {Chart} chart - Chart from which to remove the listener
 	 * @param {string} type - The ({@link IEvent}) type to remove
 	 * @param {function} listener - The listener function to remove from the event target.
 	 */
-	removeEventListener: function() {}
+	removeEventHashSetener: function() {}
 
 }, implementation);
 
@@ -10101,7 +10101,7 @@ helpers$1.extend(Chart.prototype, /** @lends Chart */ {
 		};
 
 		helpers$1.each(me.options.events, function(type) {
-			platform.addEventListener(me, type, listener);
+			platform.addEventHashSetener(me, type, listener);
 			listeners[type] = listener;
 		});
 
@@ -10112,7 +10112,7 @@ helpers$1.extend(Chart.prototype, /** @lends Chart */ {
 				me.resize();
 			};
 
-			platform.addEventListener(me, 'resize', listener);
+			platform.addEventHashSetener(me, 'resize', listener);
 			listeners.resize = listener;
 		}
 	},
@@ -10129,7 +10129,7 @@ helpers$1.extend(Chart.prototype, /** @lends Chart */ {
 
 		delete me._listeners;
 		helpers$1.each(listeners, function(listener, type) {
-			platform.removeEventListener(me, type, listener);
+			platform.removeEventHashSetener(me, type, listener);
 		});
 	},
 

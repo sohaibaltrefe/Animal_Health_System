@@ -40,6 +40,7 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.medicalRecords.Where(a => !a.IsDeleted).ToListAsync();
+
             }
             catch (Exception ex)
             {

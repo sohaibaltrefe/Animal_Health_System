@@ -14,7 +14,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO
         public string MedicalRecordDetails { get; set; } // Display relevant details of the medical record if necessary
 
         // Related data (e.g., vaccine histories)
-        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
+        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new HashSet<VaccineHistory>();
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }

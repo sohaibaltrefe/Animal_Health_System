@@ -79,7 +79,7 @@ CodeMirror.defineMode("r", function(config) {
         (ch == "-" && stream.match(/>>?/))
       ) {
       return "operator arrow";
-    } else if (ch == "=" && state.ctx.argList) {
+    } else if (ch == "=" && state.ctx.argHashSet) {
       return "arg-is";
     } else if (opChars.test(ch)) {
       if (ch == "$") return "operator dollar";
@@ -161,7 +161,7 @@ CodeMirror.defineMode("r", function(config) {
       if (curPunc == "{") push(state, "}", stream);
       else if (curPunc == "(") {
         push(state, ")", stream);
-        if (state.afterIdent) state.ctx.argList = true;
+        if (state.afterIdent) state.ctx.argHashSet = true;
       }
       else if (curPunc == "[") push(state, "]", stream);
       else if (curPunc == "block") push(state, "block", stream);

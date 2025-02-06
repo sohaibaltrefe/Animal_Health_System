@@ -1108,7 +1108,7 @@ var ColorItem = function () {
 }();
 
 /**
- * List of hue-based color formulas used by ColorItem.prototype.generate()
+ * HashSet of hue-based color formulas used by ColorItem.prototype.generate()
  *
  * @static
  * @type {{complementary: number[], triad: number[], tetrad: number[], splitcomplement: number[]}}

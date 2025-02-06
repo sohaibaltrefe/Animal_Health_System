@@ -469,7 +469,7 @@
          *
          * Having it in it's own function makes it easier to only set them once
          */
-        SearchPane.prototype._setListeners = function () {
+        SearchPane.prototype._setHashSeteners = function () {
             var _this = this;
             var rowData = this.s.rowData;
             var t0;
@@ -1059,7 +1059,7 @@
             this.s.dtPane.table().node().parentNode.scrollTop = this.s.scrollTop;
             this.adjustTopRow();
             if (!this.s.listSet) {
-                this._setListeners();
+                this._setHashSeteners();
                 this.s.listSet = true;
             }
             for (var _f = 0, selectedRows_1 = selectedRows; _f < selectedRows_1.length; _f++) {
@@ -1776,7 +1776,7 @@
                 page: 0,
                 paging: false,
                 panes: [],
-                selectionList: [],
+                selectionHashSet: [],
                 serverData: {},
                 stateRead: false,
                 updating: false
@@ -1793,7 +1793,7 @@
                     if (data.searchPanes_null === undefined) {
                         data.searchPanes_null = {};
                     }
-                    for (var _i = 0, _a = _this.s.selectionList; _i < _a.length; _i++) {
+                    for (var _i = 0, _a = _this.s.selectionHashSet; _i < _a.length; _i++) {
                         var selection = _a[_i];
                         var src = _this.s.dt.column(selection.index).dataSrc();
                         if (data.searchPanes[src] === undefined) {
@@ -1847,8 +1847,8 @@
                 $$1(this).trigger('input');
             });
             var returnArray = [];
-            // Clear the selectionList to prevent cascadePanes from reselecting rows
-            this.s.selectionList = [];
+            // Clear the selectionHashSet to prevent cascadePanes from reselecting rows
+            this.s.selectionHashSet = [];
             // For every pane, clear the selections in the pane
             for (var _i = 0, _a = this.s.panes; _i < _a.length; _i++) {
                 var pane = _a[_i];
@@ -1885,8 +1885,8 @@
                 pane.clearData();
                 returnArray.push(
                 // Pass a boolean to say whether this is the last choice made for maintaining selections when rebuilding
-                pane.rebuildPane(this.s.selectionList[this.s.selectionList.length - 1] !== undefined ?
-                    pane.s.index === this.s.selectionList[this.s.selectionList.length - 1].index :
+                pane.rebuildPane(this.s.selectionHashSet[this.s.selectionHashSet.length - 1] !== undefined ?
+                    pane.s.index === this.s.selectionHashSet[this.s.selectionHashSet.length - 1].index :
                     false, this.s.dt.page.info().serverSide ?
                     this.s.serverData :
                     undefined, null, maintainSelection));
@@ -1947,7 +1947,7 @@
                         if (pane.s.dtPane !== undefined) {
                             var selectLength = pane.s.dtPane.rows({ selected: true }).data().toArray().length;
                             if (selectLength === 0) {
-                                for (var _d = 0, _e = this.s.selectionList; _d < _e.length; _d++) {
+                                for (var _d = 0, _e = this.s.selectionHashSet; _d < _e.length; _d++) {
                                     var selection = _e[_d];
                                     if (selection.index === pane.s.index && selection.rows.length !== 0) {
                                         selectLength = selection.rows.length;
@@ -1972,14 +1972,14 @@
                     }
                 }
                 var deselectIdx = void 0;
-                var newSelectionList = [];
+                var newSelectionHashSet = [];
                 // Don't run this if it is due to the panes regenerating
                 if (!this.regenerating) {
                     for (var _f = 0, _g = this.s.panes; _f < _g.length; _f++) {
                         var pane = _g[_f];
                         // Identify the pane where a selection or deselection has been made and add it to the list.
                         if (pane.s.selectPresent) {
-                            this.s.selectionList.push({
+                            this.s.selectionHashSet.push({
                                 index: pane.s.index,
                                 protect: false,
                                 rows: pane.s.dtPane.rows({ selected: true }).data().toArray()
@@ -1990,7 +1990,7 @@
                             deselectIdx = pane.s.index;
                             var selectedData = pane.s.dtPane.rows({ selected: true }).data().toArray();
                             if (selectedData.length > 0) {
-                                this.s.selectionList.push({
+                                this.s.selectionHashSet.push({
                                     index: pane.s.index,
                                     protect: true,
                                     rows: selectedData
@@ -1998,33 +1998,33 @@
                             }
                         }
                     }
-                    if (this.s.selectionList.length > 0) {
-                        var last = this.s.selectionList[this.s.selectionList.length - 1].index;
+                    if (this.s.selectionHashSet.length > 0) {
+                        var last = this.s.selectionHashSet[this.s.selectionHashSet.length - 1].index;
                         for (var _h = 0, _j = this.s.panes; _h < _j.length; _h++) {
                             var pane = _j[_h];
                             pane.s.lastSelect = pane.s.index === last;
                         }
                     }
                     // Remove selections from the list from the pane where a deselect has taken place
-                    for (var i = 0; i < this.s.selectionList.length; i++) {
-                        if (this.s.selectionList[i].index !== deselectIdx || this.s.selectionList[i].protect === true) {
+                    for (var i = 0; i < this.s.selectionHashSet.length; i++) {
+                        if (this.s.selectionHashSet[i].index !== deselectIdx || this.s.selectionHashSet[i].protect === true) {
                             var further = false;
                             // Find out if this selection is the last one in the list for that pane
-                            for (var j = i + 1; j < this.s.selectionList.length; j++) {
-                                if (this.s.selectionList[j].index === this.s.selectionList[i].index) {
+                            for (var j = i + 1; j < this.s.selectionHashSet.length; j++) {
+                                if (this.s.selectionHashSet[j].index === this.s.selectionHashSet[i].index) {
                                     further = true;
                                 }
                             }
                             // If there are no selections for this pane in the list then just push this one
                             if (!further) {
-                                newSelectionList.push(this.s.selectionList[i]);
-                                this.s.selectionList[i].protect = false;
+                                newSelectionHashSet.push(this.s.selectionHashSet[i]);
+                                this.s.selectionHashSet[i].protect = false;
                             }
                         }
                     }
                     var solePane = -1;
-                    if (newSelectionList.length === 1 && selectTotal !== null && selectTotal !== 0) {
-                        solePane = newSelectionList[0].index;
+                    if (newSelectionHashSet.length === 1 && selectTotal !== null && selectTotal !== 0) {
+                        solePane = newSelectionHashSet[0].index;
                     }
                     // Update all of the panes to reflect the current state of the filters
                     for (var _k = 0, _l = this.s.panes; _k < _l.length; _k++) {
@@ -2043,15 +2043,15 @@
                     }
                     // If the length of the selections are different then some of them have been
                     // removed and a deselect has occured
-                    if (newSelectionList.length > 0 && (newSelectionList.length < this.s.selectionList.length || rebuild)) {
-                        this._cascadeRegen(newSelectionList, selectTotal);
-                        var last = newSelectionList[newSelectionList.length - 1].index;
+                    if (newSelectionHashSet.length > 0 && (newSelectionHashSet.length < this.s.selectionHashSet.length || rebuild)) {
+                        this._cascadeRegen(newSelectionHashSet, selectTotal);
+                        var last = newSelectionHashSet[newSelectionHashSet.length - 1].index;
                         for (var _m = 0, _o = this.s.panes; _m < _o.length; _m++) {
                             var pane = _o[_m];
                             pane.s.lastSelect = pane.s.index === last;
                         }
                     }
-                    else if (newSelectionList.length > 0) {
+                    else if (newSelectionHashSet.length > 0) {
                         // Update all of the other panes as you would just making a normal selection
                         for (var _p = 0, _q = this.s.panes; _p < _q.length; _p++) {
                             var paneUpdate = _q[_p];
@@ -2073,8 +2073,8 @@
                 }
                 else {
                     var solePane = -1;
-                    if (newSelectionList.length === 1 && selectTotal !== null && selectTotal !== 0) {
-                        solePane = newSelectionList[0].index;
+                    if (newSelectionHashSet.length === 1 && selectTotal !== null && selectTotal !== 0) {
+                        solePane = newSelectionHashSet[0].index;
                     }
                     for (var _r = 0, _s = this.s.panes; _r < _s.length; _r++) {
                         var pane = _s[_r];
@@ -2094,7 +2094,7 @@
                     this._updateFilterCount();
                 }
                 if (!filterActive || selectTotal === 0) {
-                    this.s.selectionList = [];
+                    this.s.selectionHashSet = [];
                 }
             }
         };
@@ -2173,7 +2173,7 @@
                 });
             }
             if (this.c.collapse) {
-                this._setCollapseListener();
+                this._setCollapseHashSetener();
             }
             this.dom.titleRow.appendTo(this.dom.container);
             // Attach the container for each individual pane to the overall container
@@ -2254,15 +2254,15 @@
         /**
          * Prepares the panes for selections to be made when cascade is active and a deselect has occured
          *
-         * @param newSelectionList the list of selections which are to be made
+         * @param newSelectionHashSet the list of selections which are to be made
          */
-        SearchPanes.prototype._cascadeRegen = function (newSelectionList, selectTotal) {
+        SearchPanes.prototype._cascadeRegen = function (newSelectionHashSet, selectTotal) {
             // Set this to true so that the actions taken do not cause this to run until it is finished
             this.regenerating = true;
             // If only one pane has been selected then take note of its index
             var solePane = -1;
-            if (newSelectionList.length === 1 && selectTotal !== null && selectTotal !== 0) {
-                solePane = newSelectionList[0].index;
+            if (newSelectionHashSet.length === 1 && selectTotal !== null && selectTotal !== 0) {
+                solePane = newSelectionHashSet[0].index;
             }
             // Let the pane know that a cascadeRegen is taking place to avoid unexpected behaviour
             // and clear all of the previous selections in the pane
@@ -2293,9 +2293,9 @@
                 pane.updatePane(true);
             }
             // Remake Selections
-            this._makeCascadeSelections(newSelectionList);
+            this._makeCascadeSelections(newSelectionHashSet);
             // Set the selection list property to be the list without the selections from the deselect pane
-            this.s.selectionList = newSelectionList;
+            this.s.selectionHashSet = newSelectionHashSet;
             // The regeneration of selections is over so set it back to false
             for (var _f = 0, _g = this.s.panes; _f < _g.length; _f++) {
                 var pane = _g[_f];
@@ -2370,29 +2370,29 @@
             }
         };
         /**
-         * Gets the selection list from the previous state and stores it in the selectionList Property
+         * Gets the selection list from the previous state and stores it in the selectionHashSet Property
          */
         SearchPanes.prototype._getState = function () {
             var loadedFilter = this.s.dt.state.loaded();
-            if (loadedFilter && loadedFilter.searchPanes && loadedFilter.searchPanes.selectionList !== undefined) {
-                this.s.selectionList = loadedFilter.searchPanes.selectionList;
+            if (loadedFilter && loadedFilter.searchPanes && loadedFilter.searchPanes.selectionHashSet !== undefined) {
+                this.s.selectionHashSet = loadedFilter.searchPanes.selectionHashSet;
             }
         };
         /**
          * Makes all of the selections when cascade is active
          *
-         * @param newSelectionList the list of selections to be made, in the order they were originally selected
+         * @param newSelectionHashSet the list of selections to be made, in the order they were originally selected
          */
-        SearchPanes.prototype._makeCascadeSelections = function (newSelectionList) {
+        SearchPanes.prototype._makeCascadeSelections = function (newSelectionHashSet) {
             // make selections in the order they were made previously,
             // excluding those from the pane where a deselect was made
-            for (var i = 0; i < newSelectionList.length; i++) {
+            for (var i = 0; i < newSelectionHashSet.length; i++) {
                 var _loop_1 = function (pane) {
-                    if (pane.s.index === newSelectionList[i].index && pane.s.dtPane !== undefined) {
+                    if (pane.s.index === newSelectionHashSet[i].index && pane.s.dtPane !== undefined) {
                         // When regenerating the cascade selections we need this flag so that
                         // the panes are only ignored if it
                         // is the last selection and the pane for that selection
-                        if (i === newSelectionList.length - 1) {
+                        if (i === newSelectionHashSet.length - 1) {
                             pane.s.lastCascade = true;
                         }
                         // if there are any selections currently in the pane then
@@ -2418,7 +2418,7 @@
                             }
                         };
                         // select every row in the pane that was selected previously
-                        for (var _i = 0, _a = newSelectionList[i].rows; _i < _a.length; _i++) {
+                        for (var _i = 0, _a = newSelectionHashSet[i].rows; _i < _a.length; _i++) {
                             var row = _a[_i];
                             _loop_2(row);
                         }
@@ -2513,7 +2513,7 @@
                 var pane = _a[_i];
                 // Identify the pane where a selection or deselection has been made and add it to the list.
                 if (pane.s.selectPresent) {
-                    this.s.selectionList.push({
+                    this.s.selectionHashSet.push({
                         index: pane.s.index,
                         protect: false,
                         rows: pane.s.dtPane.rows({ selected: true }).data().toArray()
@@ -2525,7 +2525,7 @@
                 else if (pane.s.deselect) {
                     var selectedData = pane.s.dtPane.rows({ selected: true }).data().toArray();
                     if (selectedData.length > 0) {
-                        this.s.selectionList.push({
+                        this.s.selectionHashSet.push({
                             index: pane.s.index,
                             protect: true,
                             rows: selectedData
@@ -2537,15 +2537,15 @@
             }
             // Build an updated list based on any selections or deselections added
             if (!selectPresent) {
-                this.s.selectionList = [];
+                this.s.selectionHashSet = [];
             }
             else {
-                var newSelectionList = [];
-                for (var i = 0; i < this.s.selectionList.length; i++) {
+                var newSelectionHashSet = [];
+                for (var i = 0; i < this.s.selectionHashSet.length; i++) {
                     var further = false;
                     // Find out if this selection is the last one in the list for that pane
-                    for (var j = i + 1; j < this.s.selectionList.length; j++) {
-                        if (this.s.selectionList[j].index === this.s.selectionList[i].index) {
+                    for (var j = i + 1; j < this.s.selectionHashSet.length; j++) {
+                        if (this.s.selectionHashSet[j].index === this.s.selectionHashSet[i].index) {
                             further = true;
                         }
                     }
@@ -2554,21 +2554,21 @@
                         var push = false;
                         for (var _b = 0, _c = this.s.panes; _b < _c.length; _b++) {
                             var pane = _c[_b];
-                            if (pane.s.index === this.s.selectionList[i].index &&
+                            if (pane.s.index === this.s.selectionHashSet[i].index &&
                                 pane.s.dtPane.rows({ selected: true }).data().toArray().length > 0) {
                                 push = true;
                             }
                         }
                         if (push) {
-                            newSelectionList.push(this.s.selectionList[i]);
+                            newSelectionHashSet.push(this.s.selectionHashSet[i]);
                         }
                     }
                 }
-                this.s.selectionList = newSelectionList;
+                this.s.selectionHashSet = newSelectionHashSet;
             }
             var initIdx = -1;
             // If there has been a deselect and only one pane has a selection then update everything
-            if (deselectPresent && this.s.selectionList.length === 1) {
+            if (deselectPresent && this.s.selectionHashSet.length === 1) {
                 for (var _d = 0, _e = this.s.panes; _d < _e.length; _d++) {
                     var pane = _e[_d];
                     pane.s.lastSelect = false;
@@ -2579,8 +2579,8 @@
                 }
             }
             // Otherwise if there are more 1 selections then find the last one and set it to not update that pane
-            else if (this.s.selectionList.length > 0) {
-                var last = this.s.selectionList[this.s.selectionList.length - 1].index;
+            else if (this.s.selectionHashSet.length > 0) {
+                var last = this.s.selectionHashSet[this.s.selectionHashSet.length - 1].index;
                 for (var _f = 0, _g = this.s.panes; _f < _g.length; _f++) {
                     var pane = _g[_f];
                     pane.s.lastSelect = pane.s.index === last;
@@ -2588,7 +2588,7 @@
                 }
             }
             // Otherwise if there are no selections then find where that took place and do not update to maintain scrolling
-            else if (this.s.selectionList.length === 0) {
+            else if (this.s.selectionHashSet.length === 0) {
                 for (var _h = 0, _j = this.s.panes; _h < _j.length; _h++) {
                     var pane = _j[_h];
                     // pane.s.lastSelect = (pane.s.deselect === true);
@@ -2604,7 +2604,7 @@
                     pane.rebuildPane(undefined, this.s.dt.page.info().serverSide ? this.s.serverData : undefined, pane.s.index === initIdx ? true : null, true);
                 }
                 else {
-                    pane._setListeners();
+                    pane._setHashSeteners();
                 }
                 // append all of the panes and enable select
                 this.dom.panes.append(pane.dom.container);
@@ -2620,7 +2620,7 @@
          * Sets the listeners for the collapse and show all buttons
          * Also sets and performs checks on current panes to see if they are collapsed
          */
-        SearchPanes.prototype._setCollapseListener = function () {
+        SearchPanes.prototype._setCollapseHashSetener = function () {
             var _this = this;
             this.dom.collapseAll.on('click.dtsps', function () {
                 _this._collapseAll();
@@ -2731,9 +2731,9 @@
                 if (data.searchPanes === undefined) {
                     data.searchPanes = {};
                 }
-                data.searchPanes.selectionList = _this.s.selectionList;
+                data.searchPanes.selectionHashSet = _this.s.selectionHashSet;
             });
-            // Listener for paging on main table
+            // HashSetener for paging on main table
             table.off('page');
             table.on('page', function () {
                 _this.s.paging = true;
@@ -2820,8 +2820,8 @@
                             pane.clearData(); // Clears all of the bins and will mean that the data has to be re-read
                             // Pass a boolean to say whether this is the last choice made for maintaining selections
                             // when rebuilding
-                            pane.rebuildPane(_this.s.selectionList[_this.s.selectionList.length - 1] !== undefined ?
-                                pane.s.index === _this.s.selectionList[_this.s.selectionList.length - 1].index :
+                            pane.rebuildPane(_this.s.selectionHashSet[_this.s.selectionHashSet.length - 1] !== undefined ?
+                                pane.s.index === _this.s.selectionHashSet[_this.s.selectionHashSet.length - 1].index :
                                 false, undefined, undefined, true);
                             _this.dom.panes.append(pane.dom.container);
                         }
@@ -2865,16 +2865,16 @@
                     pane.updateTable();
                 }
             }
-            if (this.s.selectionList !== undefined && this.s.selectionList.length > 0) {
-                var last = this.s.selectionList[this.s.selectionList.length - 1].index;
+            if (this.s.selectionHashSet !== undefined && this.s.selectionHashSet.length > 0) {
+                var last = this.s.selectionHashSet[this.s.selectionHashSet.length - 1].index;
                 for (var _k = 0, _l = this.s.panes; _k < _l.length; _k++) {
                     var pane = _l[_k];
                     pane.s.lastSelect = pane.s.index === last;
                 }
             }
             // If cascadePanes is active then make the previous selections in the order they were previously
-            if (this.s.selectionList.length > 0 && this.c.cascadePanes) {
-                this._cascadeRegen(this.s.selectionList, this.s.selectionList.length);
+            if (this.s.selectionHashSet.length > 0 && this.c.cascadePanes) {
+                this._cascadeRegen(this.s.selectionHashSet, this.s.selectionHashSet.length);
             }
             // Update the title bar to show how many filters have been selected
             this._updateFilterCount();
@@ -2892,7 +2892,7 @@
                 _this.clearSelections();
             });
             if (this.c.collapse) {
-                this._setCollapseListener();
+                this._setCollapseHashSetener();
             }
             // When the clear All button has been pressed clear all of the selections in the panes
             if (this.c.clear) {
@@ -2965,14 +2965,14 @@
             }
         };
         /**
-         * Updates the selectionList when cascade is not in place
+         * Updates the selectionHashSet when cascade is not in place
          */
         SearchPanes.prototype._updateSelection = function () {
-            this.s.selectionList = [];
+            this.s.selectionHashSet = [];
             for (var _i = 0, _a = this.s.panes; _i < _a.length; _i++) {
                 var pane = _a[_i];
                 if (pane.s.dtPane !== undefined) {
-                    this.s.selectionList.push({
+                    this.s.selectionHashSet.push({
                         index: pane.s.index,
                         protect: false,
                         rows: pane.s.dtPane.rows({ selected: true }).data().toArray()

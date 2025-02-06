@@ -52,10 +52,10 @@
       var context = inner.mode.xmlCurrentContext ? inner.mode.xmlCurrentContext(inner.state) : []
       var inner = context.length && context[context.length - 1]
       var curTag = inner && tags[inner]
-      var childList = inner ? curTag && curTag.children : tags["!top"];
-      if (childList && tagType != "close") {
-        for (var i = 0; i < childList.length; ++i) if (!prefix || matches(childList[i], prefix, matchInMiddle))
-          result.push("<" + childList[i]);
+      var childHashSet = inner ? curTag && curTag.children : tags["!top"];
+      if (childHashSet && tagType != "close") {
+        for (var i = 0; i < childHashSet.length; ++i) if (!prefix || matches(childHashSet[i], prefix, matchInMiddle))
+          result.push("<" + childHashSet[i]);
       } else if (tagType != "close") {
         for (var name in tags)
           if (tags.hasOwnProperty(name) && name != "!top" && name != "!attrs" && (!prefix || matches(name, prefix, matchInMiddle)))

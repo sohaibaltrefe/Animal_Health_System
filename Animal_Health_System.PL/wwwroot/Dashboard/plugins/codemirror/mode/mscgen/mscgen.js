@@ -83,7 +83,7 @@
     return {
       inComment : false,
       inString : false,
-      inAttributeList : false,
+      inAttributeHashSet : false,
       inScript : false
     };
   }
@@ -92,7 +92,7 @@
     return {
       inComment : pState.inComment,
       inString : pState.inString,
-      inAttributeList : pState.inAttributeList,
+      inAttributeHashSet : pState.inAttributeHashSet,
       inScript : pState.inScript
     };
   }
@@ -153,16 +153,16 @@
         return "variable";
 
       /* attribute lists */
-      if (!pConfig.inAttributeList && !!pConfig.attributes && pStream.match('[', true, true)) {
-        pConfig.inAttributeList = true;
+      if (!pConfig.inAttributeHashSet && !!pConfig.attributes && pStream.match('[', true, true)) {
+        pConfig.inAttributeHashSet = true;
         return "bracket";
       }
-      if (pConfig.inAttributeList) {
+      if (pConfig.inAttributeHashSet) {
         if (pConfig.attributes !== null && pStream.match(wordRegexpBoundary(pConfig.attributes), true, true)) {
           return "attribute";
         }
         if (pStream.match(']', true, true)) {
-          pConfig.inAttributeList = false;
+          pConfig.inAttributeHashSet = false;
           return "bracket";
         }
       }

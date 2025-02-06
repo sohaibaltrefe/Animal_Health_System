@@ -79,7 +79,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 MedicalRecord = new SelectList(medicalRecords, "Id", "Name"),
                 Animal = new SelectList(animals, "Id", "Name"),
                 Veterinarian = new SelectList(veterinarians, "Id", "FullName"),
-                SelectedMedications = new List<int>()
+                SelectedMedications = new HashSet<int>()
             };
 
             ViewBag.Medications = new SelectList(medications, "Id", "Name");
@@ -122,8 +122,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
-            ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
+            var medicationsHashSet = await unitOfWork.medicationRepository.GetAllAsync();
+            ViewBag.Medications = new SelectList(medicationsHashSet, "Id", "Name");
 
             return View(vm);
         }
@@ -144,7 +144,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             vm.MedicalRecord = new SelectList(medicalRecords, "Id", "Name", medicalExamination.MedicalRecordId);
             vm.Animal = new SelectList(animals, "Id", "Name", medicalExamination.AnimalId);
             vm.Veterinarian = new SelectList(veterinarians, "Id", "FullName", medicalExamination.VeterinarianId);
-            vm.SelectedMedications = medicalExamination.Medications.Select(m => m.Id).ToList();
+            vm.SelectedMedications = medicalExamination.Medications.Select(m => m.Id).ToHashSet();
 
             ViewBag.Medications = new SelectList(medications, "Id", "Name");
 
@@ -157,8 +157,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
-                ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
+                var medicationsHashSet = await unitOfWork.medicationRepository.GetAllAsync();
+                ViewBag.Medications = new SelectList(medicationsHashSet, "Id", "Name");
                 return View(vm);
             }
 
@@ -166,8 +166,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             if (animal == null || !await unitOfWork.medicalRecordRepository.AnyAsync(r => r.AnimalId == animal.Id))
             {
                 ModelState.AddModelError("MedicalRecordId", "There is no medical record for this animal.");
-                var medicationsList = await unitOfWork.medicationRepository.GetAllAsync();
-                ViewBag.Medications = new SelectList(medicationsList, "Id", "Name");
+                var medicationsHashSet = await unitOfWork.medicationRepository.GetAllAsync();
+                ViewBag.Medications = new SelectList(medicationsHashSet, "Id", "Name");
                 return View(vm);
             }
 

@@ -52,7 +52,7 @@
     <script>
         const elements = document.querySelectorAll(".delete-btn");
         elements.forEach(function (button) {
-            button.addEventListener("click", async () => {
+            button.addEventHashSetener("click", async () => {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success",

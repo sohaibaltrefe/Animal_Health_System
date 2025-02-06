@@ -515,9 +515,9 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 						var tick = document.createElement('div');
 						tick.className = 'slider-tick';
 						if (this.options.ticks_tooltip) {
-							var tickListenerReference = this._addTickListener();
-							var enterCallback = tickListenerReference.addMouseEnter(this, tick, i);
-							var leaveCallback = tickListenerReference.addMouseLeave(this, tick);
+							var tickHashSetenerReference = this._addTickHashSetener();
+							var enterCallback = tickHashSetenerReference.addMouseEnter(this, tick, i);
+							var leaveCallback = tickHashSetenerReference.addMouseLeave(this, tick);
 
 							this.ticksCallbackMap[i] = {
 								mouseEnter: enterCallback,
@@ -747,30 +747,30 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 			this.setValue(this._state.value);
 
 			/******************************************
-   				Bind Event Listeners
+   				Bind Event HashSeteners
    	******************************************/
 
 			// Bind keyboard handlers
 			this.handle1Keydown = this._keydown.bind(this, 0);
-			this.handle1.addEventListener("keydown", this.handle1Keydown, false);
+			this.handle1.addEventHashSetener("keydown", this.handle1Keydown, false);
 
 			this.handle2Keydown = this._keydown.bind(this, 1);
-			this.handle2.addEventListener("keydown", this.handle2Keydown, false);
+			this.handle2.addEventHashSetener("keydown", this.handle2Keydown, false);
 
 			this.mousedown = this._mousedown.bind(this);
 			this.touchstart = this._touchstart.bind(this);
 			this.touchmove = this._touchmove.bind(this);
 
 			if (this.touchCapable) {
-				this.sliderElem.addEventListener("touchstart", this.touchstart, false);
-				this.sliderElem.addEventListener("touchmove", this.touchmove, false);
+				this.sliderElem.addEventHashSetener("touchstart", this.touchstart, false);
+				this.sliderElem.addEventHashSetener("touchmove", this.touchmove, false);
 			}
 
-			this.sliderElem.addEventListener("mousedown", this.mousedown, false);
+			this.sliderElem.addEventHashSetener("mousedown", this.mousedown, false);
 
 			// Bind window handlers
 			this.resize = this._resize.bind(this);
-			window.addEventListener("resize", this.resize, false);
+			window.addEventHashSetener("resize", this.resize, false);
 
 			// Bind tooltip-related handlers
 			if (this.options.tooltip === 'hide') {
@@ -785,7 +785,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 				this.hideTooltip = this._hideTooltip.bind(this);
 
 				if (this.options.ticks_tooltip) {
-					var callbackHandle = this._addTickListener();
+					var callbackHandle = this._addTickHashSetener();
 					//create handle1 listeners and store references in map
 					var mouseEnter = callbackHandle.addMouseEnter(this, this.handle1);
 					var mouseLeave = callbackHandle.addMouseLeave(this, this.handle1);
@@ -801,30 +801,30 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 						mouseLeave: mouseLeave
 					};
 				} else {
-					this.sliderElem.addEventListener("mouseenter", this.showTooltip, false);
-					this.sliderElem.addEventListener("mouseleave", this.hideTooltip, false);
+					this.sliderElem.addEventHashSetener("mouseenter", this.showTooltip, false);
+					this.sliderElem.addEventHashSetener("mouseleave", this.hideTooltip, false);
 
 					if (this.touchCapable) {
-						this.sliderElem.addEventListener("touchstart", this.showTooltip, false);
-						this.sliderElem.addEventListener("touchmove", this.showTooltip, false);
-						this.sliderElem.addEventListener("touchend", this.hideTooltip, false);
+						this.sliderElem.addEventHashSetener("touchstart", this.showTooltip, false);
+						this.sliderElem.addEventHashSetener("touchmove", this.showTooltip, false);
+						this.sliderElem.addEventHashSetener("touchend", this.hideTooltip, false);
 					}
 				}
 
-				this.handle1.addEventListener("focus", this.showTooltip, false);
-				this.handle1.addEventListener("blur", this.hideTooltip, false);
+				this.handle1.addEventHashSetener("focus", this.showTooltip, false);
+				this.handle1.addEventHashSetener("blur", this.hideTooltip, false);
 
-				this.handle2.addEventListener("focus", this.showTooltip, false);
-				this.handle2.addEventListener("blur", this.hideTooltip, false);
+				this.handle2.addEventHashSetener("focus", this.showTooltip, false);
+				this.handle2.addEventHashSetener("blur", this.hideTooltip, false);
 
 				if (this.touchCapable) {
-					this.handle1.addEventListener("touchstart", this.showTooltip, false);
-					this.handle1.addEventListener("touchmove", this.showTooltip, false);
-					this.handle1.addEventListener("touchend", this.hideTooltip, false);
+					this.handle1.addEventHashSetener("touchstart", this.showTooltip, false);
+					this.handle1.addEventHashSetener("touchmove", this.showTooltip, false);
+					this.handle1.addEventHashSetener("touchend", this.hideTooltip, false);
 
-					this.handle2.addEventListener("touchstart", this.showTooltip, false);
-					this.handle2.addEventListener("touchmove", this.showTooltip, false);
-					this.handle2.addEventListener("touchend", this.hideTooltip, false);
+					this.handle2.addEventHashSetener("touchstart", this.showTooltip, false);
+					this.handle2.addEventHashSetener("touchmove", this.showTooltip, false);
+					this.handle2.addEventHashSetener("touchend", this.hideTooltip, false);
 				}
 			}
 
@@ -1079,27 +1079,27 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
    - Place it underneath this comment block and write its signature like so:
    		_fnName : function() {...}
    	********************************/
-			_removeTooltipListener: function _removeTooltipListener(event, handler) {
-				this.handle1.removeEventListener(event, handler, false);
-				this.handle2.removeEventListener(event, handler, false);
+			_removeTooltipHashSetener: function _removeTooltipHashSetener(event, handler) {
+				this.handle1.removeEventHashSetener(event, handler, false);
+				this.handle2.removeEventHashSetener(event, handler, false);
 			},
 			_removeSliderEventHandlers: function _removeSliderEventHandlers() {
 				// Remove keydown event listeners
-				this.handle1.removeEventListener("keydown", this.handle1Keydown, false);
-				this.handle2.removeEventListener("keydown", this.handle2Keydown, false);
+				this.handle1.removeEventHashSetener("keydown", this.handle1Keydown, false);
+				this.handle2.removeEventHashSetener("keydown", this.handle2Keydown, false);
 
 				//remove the listeners from the ticks and handles if they had their own listeners
 				if (this.options.ticks_tooltip) {
 					var ticks = this.ticksContainer.getElementsByClassName('slider-tick');
 					for (var i = 0; i < ticks.length; i++) {
-						ticks[i].removeEventListener('mouseenter', this.ticksCallbackMap[i].mouseEnter, false);
-						ticks[i].removeEventListener('mouseleave', this.ticksCallbackMap[i].mouseLeave, false);
+						ticks[i].removeEventHashSetener('mouseenter', this.ticksCallbackMap[i].mouseEnter, false);
+						ticks[i].removeEventHashSetener('mouseleave', this.ticksCallbackMap[i].mouseLeave, false);
 					}
 					if (this.handleCallbackMap.handle1 && this.handleCallbackMap.handle2) {
-						this.handle1.removeEventListener('mouseenter', this.handleCallbackMap.handle1.mouseEnter, false);
-						this.handle2.removeEventListener('mouseenter', this.handleCallbackMap.handle2.mouseEnter, false);
-						this.handle1.removeEventListener('mouseleave', this.handleCallbackMap.handle1.mouseLeave, false);
-						this.handle2.removeEventListener('mouseleave', this.handleCallbackMap.handle2.mouseLeave, false);
+						this.handle1.removeEventHashSetener('mouseenter', this.handleCallbackMap.handle1.mouseEnter, false);
+						this.handle2.removeEventHashSetener('mouseenter', this.handleCallbackMap.handle2.mouseEnter, false);
+						this.handle1.removeEventHashSetener('mouseleave', this.handleCallbackMap.handle1.mouseLeave, false);
+						this.handle2.removeEventHashSetener('mouseleave', this.handleCallbackMap.handle2.mouseLeave, false);
 					}
 				}
 
@@ -1107,50 +1107,50 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 				this.ticksCallbackMap = null;
 
 				if (this.showTooltip) {
-					this._removeTooltipListener("focus", this.showTooltip);
+					this._removeTooltipHashSetener("focus", this.showTooltip);
 				}
 				if (this.hideTooltip) {
-					this._removeTooltipListener("blur", this.hideTooltip);
+					this._removeTooltipHashSetener("blur", this.hideTooltip);
 				}
 
 				// Remove event listeners from sliderElem
 				if (this.showTooltip) {
-					this.sliderElem.removeEventListener("mouseenter", this.showTooltip, false);
+					this.sliderElem.removeEventHashSetener("mouseenter", this.showTooltip, false);
 				}
 				if (this.hideTooltip) {
-					this.sliderElem.removeEventListener("mouseleave", this.hideTooltip, false);
+					this.sliderElem.removeEventHashSetener("mouseleave", this.hideTooltip, false);
 				}
 
-				this.sliderElem.removeEventListener("mousedown", this.mousedown, false);
+				this.sliderElem.removeEventHashSetener("mousedown", this.mousedown, false);
 
 				if (this.touchCapable) {
 					// Remove touch event listeners from handles
 					if (this.showTooltip) {
-						this.handle1.removeEventListener("touchstart", this.showTooltip, false);
-						this.handle1.removeEventListener("touchmove", this.showTooltip, false);
-						this.handle2.removeEventListener("touchstart", this.showTooltip, false);
-						this.handle2.removeEventListener("touchmove", this.showTooltip, false);
+						this.handle1.removeEventHashSetener("touchstart", this.showTooltip, false);
+						this.handle1.removeEventHashSetener("touchmove", this.showTooltip, false);
+						this.handle2.removeEventHashSetener("touchstart", this.showTooltip, false);
+						this.handle2.removeEventHashSetener("touchmove", this.showTooltip, false);
 					}
 					if (this.hideTooltip) {
-						this.handle1.removeEventListener("touchend", this.hideTooltip, false);
-						this.handle2.removeEventListener("touchend", this.hideTooltip, false);
+						this.handle1.removeEventHashSetener("touchend", this.hideTooltip, false);
+						this.handle2.removeEventHashSetener("touchend", this.hideTooltip, false);
 					}
 
 					// Remove event listeners from sliderElem
 					if (this.showTooltip) {
-						this.sliderElem.removeEventListener("touchstart", this.showTooltip, false);
-						this.sliderElem.removeEventListener("touchmove", this.showTooltip, false);
+						this.sliderElem.removeEventHashSetener("touchstart", this.showTooltip, false);
+						this.sliderElem.removeEventHashSetener("touchmove", this.showTooltip, false);
 					}
 					if (this.hideTooltip) {
-						this.sliderElem.removeEventListener("touchend", this.hideTooltip, false);
+						this.sliderElem.removeEventHashSetener("touchend", this.hideTooltip, false);
 					}
 
-					this.sliderElem.removeEventListener("touchstart", this.touchstart, false);
-					this.sliderElem.removeEventListener("touchmove", this.touchmove, false);
+					this.sliderElem.removeEventHashSetener("touchstart", this.touchstart, false);
+					this.sliderElem.removeEventHashSetener("touchmove", this.touchmove, false);
 				}
 
 				// Remove window event listener
-				window.removeEventListener("resize", this.resize, false);
+				window.removeEventHashSetener("resize", this.resize, false);
 			},
 			_bindNonQueryEventHandler: function _bindNonQueryEventHandler(evt, callback) {
 				if (this.eventToCallbackMap[evt] === undefined) {
@@ -1225,7 +1225,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 					keyCtrl: this._state.keyCtrl
 				};
 			},
-			_addTickListener: function _addTickListener() {
+			_addTickHashSetener: function _addTickHashSetener() {
 				return {
 					addMouseEnter: function addMouseEnter(reference, element, index) {
 						var enter = function enter() {
@@ -1247,14 +1247,14 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 							reference._setToolTipOnMouseOver(tempState);
 							reference._showTooltip();
 						};
-						element.addEventListener("mouseenter", enter, false);
+						element.addEventHashSetener("mouseenter", enter, false);
 						return enter;
 					},
 					addMouseLeave: function addMouseLeave(reference, element) {
 						var leave = function leave() {
 							reference._hideTooltip();
 						};
-						element.addEventListener("mouseleave", leave, false);
+						element.addEventHashSetener("mouseleave", leave, false);
 						return leave;
 					}
 				};
@@ -1551,15 +1551,15 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 				this._state.percentage[this._state.dragged] = percentage;
 
 				if (this.touchCapable) {
-					document.removeEventListener("touchmove", this.mousemove, false);
-					document.removeEventListener("touchend", this.mouseup, false);
+					document.removeEventHashSetener("touchmove", this.mousemove, false);
+					document.removeEventHashSetener("touchend", this.mouseup, false);
 				}
 
 				if (this.mousemove) {
-					document.removeEventListener("mousemove", this.mousemove, false);
+					document.removeEventHashSetener("mousemove", this.mousemove, false);
 				}
 				if (this.mouseup) {
-					document.removeEventListener("mouseup", this.mouseup, false);
+					document.removeEventHashSetener("mouseup", this.mouseup, false);
 				}
 
 				this.mousemove = this._mousemove.bind(this);
@@ -1567,12 +1567,12 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 
 				if (this.touchCapable) {
 					// Touch: Bind touch events:
-					document.addEventListener("touchmove", this.mousemove, false);
-					document.addEventListener("touchend", this.mouseup, false);
+					document.addEventHashSetener("touchmove", this.mousemove, false);
+					document.addEventHashSetener("touchend", this.mouseup, false);
 				}
 				// Bind mouse events:
-				document.addEventListener("mousemove", this.mousemove, false);
-				document.addEventListener("mouseup", this.mouseup, false);
+				document.addEventHashSetener("mousemove", this.mousemove, false);
+				document.addEventHashSetener("mouseup", this.mouseup, false);
 
 				this._state.inDrag = true;
 				var newValue = this._calculateValue();
@@ -1752,12 +1752,12 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 
 				if (this.touchCapable) {
 					// Touch: Unbind touch event handlers:
-					document.removeEventListener("touchmove", this.mousemove, false);
-					document.removeEventListener("touchend", this.mouseup, false);
+					document.removeEventHashSetener("touchmove", this.mousemove, false);
+					document.removeEventHashSetener("touchend", this.mouseup, false);
 				}
 				// Unbind mouse event handlers:
-				document.removeEventListener("mousemove", this.mousemove, false);
-				document.removeEventListener("mouseup", this.mouseup, false);
+				document.removeEventHashSetener("mousemove", this.mousemove, false);
+				document.removeEventHashSetener("mouseup", this.mouseup, false);
 
 				this._state.inDrag = false;
 				if (this._state.over === false) {

@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<AppointmentHistoryVM>
 
 @{
-    ViewData["Title"] = "Appointment History List";
+    ViewData["Title"] = "Appointment History HashSet";
 }
 
 @section Header {
-    Appointment History List
+    Appointment History HashSet
 }
 
 @section loc {
@@ -81,7 +81,7 @@
     <script>
         const elements = document.querySelectorAll(".delete-btn");
         elements.forEach(function (button) {
-            button.addEventListener("click", async () => {
+            button.addEventHashSetener("click", async () => {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success",

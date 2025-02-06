@@ -131,10 +131,7 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey(me => me.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in MedicalExamination
 
             // MedicalExamination -> FarmStaff (Many-to-One)
-            modelBuilder.Entity<MedicalExamination>()
-                .HasOne(me => me.FarmStaff )  // MedicalExamination has one FarmStaff
-                .WithMany(fs => fs.MedicalExaminations) // FarmStaff has many MedicalExaminations
-                .HasForeignKey(me => me.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in MedicalExamination
+          
 
             // MedicalExamination -> Veterinarian (Many-to-One)
             modelBuilder.Entity<MedicalExamination>()
@@ -190,11 +187,7 @@ namespace Animal_Health_System.DAL.Data
                 .WithMany(a => a.ProductionRecords)
                 .HasForeignKey(pr => pr.AnimalId).OnDelete(DeleteBehavior.Restrict);
 
-            // ProductionRecord -> FarmStaff (Many-to-One)
-            modelBuilder.Entity<ProductionRecord>()
-                .HasOne(pr => pr.FarmStaff )
-                .WithMany(fs => fs.ProductionRecords)
-                .HasForeignKey(pr => pr.FarmStaffId).OnDelete(DeleteBehavior.Restrict);
+           
 
             // Prescription -> MedicalExamination (Many-to-One)
             modelBuilder.Entity<Prescription>()
@@ -275,11 +268,7 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey(m => m.FemaleAnimalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Animal -> Farm (Many-to-One)
-            modelBuilder.Entity<Mating>()
-                .HasOne(a => a.farm)  // Animal has one Farm
-                .WithMany(f => f.Matings) // Farm has many Animals
-                .HasForeignKey(a => a.FarmId).OnDelete(DeleteBehavior.Restrict);
+        
             //------------unique  --------------
 
 

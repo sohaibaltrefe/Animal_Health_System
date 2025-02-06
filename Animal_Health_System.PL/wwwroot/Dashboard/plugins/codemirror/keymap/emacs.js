@@ -371,7 +371,7 @@
                     cm.getRange(leftStart, leftEnd), leftStart, rightEnd);
   };
 
-  cmds.backwardUpList = repeated(toEnclosingExpr);
+  cmds.backwardUpHashSet = repeated(toEnclosingExpr);
 
   cmds.justOneSpace = function(cm) {
     var pos = cm.getCursor(), from = pos.ch;
@@ -496,7 +496,7 @@
     "Ctrl-Alt-B": "backwardSexp",
     "Shift-Ctrl-Alt-2": "markSexp",
     "Ctrl-Alt-T": "transposeSexps",
-    "Ctrl-Alt-U": "backwardUpList",
+    "Ctrl-Alt-U": "backwardUpHashSet",
     "Alt-Space": "justOneSpace",
     "Ctrl-O": "openLine",
     "Ctrl-T": "transposeCharsRepeatable",

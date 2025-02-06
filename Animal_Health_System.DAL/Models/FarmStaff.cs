@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,8 +20,9 @@ namespace Animal_Health_System.DAL.Models
         public string Email { get; set; } 
 
         public decimal salary { get; set; }
-      
-        public int? FarmId { get; set; }
+        [ForeignKey(nameof(Farm))]
+
+        public int  FarmId { get; set; }
         public Farm Farm { get; set; }
 
         public DateTime? DateHired { get; set; }  // Date when the staff member was hired
@@ -32,12 +34,10 @@ namespace Animal_Health_System.DAL.Models
             }
         }
 
-        public virtual ICollection<Appointment> Appointments { get; set; } 
-        public virtual ICollection<MedicalExamination> MedicalExaminations { get; set; }
-        public virtual ICollection<Notification> Notifications { get; set; } 
-        public virtual ICollection<ProductionRecord> ProductionRecords { get; set; } 
-        public virtual ICollection<HealthReport> HealthReports { get; set; } 
-        public virtual ICollection<VaccineHistory> VaccineHistories { get; set; }
+        public   ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
+         public   ICollection<Notification> Notifications { get; set; } = new List <Notification>();
+        public   ICollection<HealthReport> HealthReports { get; set; } = new List <HealthReport>();
+        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
     }
 
 

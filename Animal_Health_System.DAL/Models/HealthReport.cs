@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,12 +23,16 @@ namespace Animal_Health_System.DAL.Models
 
         public string ReportSummary { get; set; }
 
+        [ForeignKey(nameof(Farm))]
+        public int  FarmId { get; set; }
 
-        public int? FarmId { get; set; }
+        [ForeignKey(nameof(FarmStaff))]
+        public int  FarmStaffId { get; set; }
+
+
         public Farm Farm  { get; set; }
 
 
-        public int? FarmStaffId { get; set; }
         public FarmStaff FarmStaff  { get; set; }
     }
 }

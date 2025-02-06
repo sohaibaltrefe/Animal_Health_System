@@ -12,10 +12,10 @@
   "use strict";
 
   var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]))(\s*)/,
-      emptyListRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]|[*+-]|(\d+)[.)])(\s*)$/,
-      unorderedListRE = /[*+-]\s/;
+      emptyHashSetRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]|[*+-]|(\d+)[.)])(\s*)$/,
+      unorderedHashSetRE = /[*+-]\s/;
 
-  CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
+  CodeMirror.commands.newlineAndIndentContinueMarkdownHashSet = function(cm) {
     if (cm.getOption("disableInput")) return CodeMirror.Pass;
     var ranges = cm.listSelections(), replacements = [];
     for (var i = 0; i < ranges.length; i++) {
@@ -31,19 +31,19 @@
         eolState = inner.state;
       }
 
-      var inList = eolState.list !== false;
+      var inHashSet = eolState.list !== false;
       var inQuote = eolState.quote !== 0;
 
       var line = cm.getLine(pos.line), match = listRE.exec(line);
       var cursorBeforeBullet = /^\s*$/.test(line.slice(0, pos.ch));
-      if (!ranges[i].empty() || (!inList && !inQuote) || !match || cursorBeforeBullet) {
+      if (!ranges[i].empty() || (!inHashSet && !inQuote) || !match || cursorBeforeBullet) {
         cm.execCommand("newlineAndIndent");
         return;
       }
-      if (emptyListRE.test(line)) {
+      if (emptyHashSetRE.test(line)) {
         var endOfQuote = inQuote && />\s*$/.test(line)
-        var endOfList = !/>\s*$/.test(line)
-        if (endOfQuote || endOfList) cm.replaceRange("", {
+        var endOfHashSet = !/>\s*$/.test(line)
+        if (endOfQuote || endOfHashSet) cm.replaceRange("", {
           line: pos.line, ch: 0
         }, {
           line: pos.line, ch: pos.ch + 1
@@ -51,11 +51,11 @@
         replacements[i] = "\n";
       } else {
         var indent = match[1], after = match[5];
-        var numbered = !(unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0);
+        var numbered = !(unorderedHashSetRE.test(match[2]) || match[2].indexOf(">") >= 0);
         var bullet = numbered ? (parseInt(match[3], 10) + 1) + match[4] : match[2].replace("x", " ");
         replacements[i] = "\n" + indent + bullet + after;
 
-        if (numbered) incrementRemainingMarkdownListNumbers(cm, pos);
+        if (numbered) incrementRemainingMarkdownHashSetNumbers(cm, pos);
       }
     }
 
@@ -64,7 +64,7 @@
 
   // Auto-updating Markdown list numbers when a new item is added to the
   // middle of a list
-  function incrementRemainingMarkdownListNumbers(cm, pos) {
+  function incrementRemainingMarkdownHashSetNumbers(cm, pos) {
     var startLine = pos.line, lookAhead = 0, skipCount = 0;
     var startItem = listRE.exec(cm.getLine(startLine)), startIndent = startItem[1];
 

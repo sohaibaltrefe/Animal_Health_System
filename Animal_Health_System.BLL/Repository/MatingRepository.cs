@@ -54,7 +54,7 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 return await context.matings
-                    .Include(f => f.farm)
+                    
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)

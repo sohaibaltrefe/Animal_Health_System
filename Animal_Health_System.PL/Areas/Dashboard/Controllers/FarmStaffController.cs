@@ -32,8 +32,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var farmStaffList = await unitOfWork.farmStaffRepository.GetAllAsync();
-                var farmStaffVm = mapper.Map<IEnumerable<FarmStaffVM>>(farmStaffList);
+                var farmStaffHashSet = await unitOfWork.farmStaffRepository.GetAllAsync();
+                var farmStaffVm = mapper.Map<IEnumerable<FarmStaffVM>>(farmStaffHashSet);
                 return View(farmStaffVm);
             }
             catch (Exception ex)

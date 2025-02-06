@@ -191,7 +191,7 @@ CodeMirror.defineMode("haxe", function(config, parserConfig) {
     pass.apply(null, arguments);
     return true;
   }
-  function inList(name, list) {
+  function inHashSet(name, list) {
     for (var v = list; v; v = v.next)
       if (v.name == name) return true;
     return false;
@@ -200,10 +200,10 @@ CodeMirror.defineMode("haxe", function(config, parserConfig) {
     var state = cx.state;
     if (state.context) {
       cx.marked = "def";
-      if (inList(varname, state.localVars)) return;
+      if (inHashSet(varname, state.localVars)) return;
       state.localVars = {name: varname, next: state.localVars};
     } else if (state.globalVars) {
-      if (inList(varname, state.globalVars)) return;
+      if (inHashSet(varname, state.globalVars)) return;
       state.globalVars = {name: varname, next: state.globalVars};
     }
   }

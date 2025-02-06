@@ -121,10 +121,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var animalsList = await unitOfWork.animalRepository.GetAllAsync();
-                var medicalRecordsList = await unitOfWork.medicalRecordRepository.GetAllAsync();
-                vm.Animals = new SelectList(animalsList, "Id", "Name", vm.AnimalId);
-                vm.MedicalRecords = new SelectList(medicalRecordsList, "Id", "Name", vm.MedicalRecordiD);
+                var animalsHashSet = await unitOfWork.animalRepository.GetAllAsync();
+                var medicalRecordsHashSet = await unitOfWork.medicalRecordRepository.GetAllAsync();
+                vm.Animals = new SelectList(animalsHashSet, "Id", "Name", vm.AnimalId);
+                vm.MedicalRecords = new SelectList(medicalRecordsHashSet, "Id", "Name", vm.MedicalRecordiD);
                 return View(vm);
             }
             catch (Exception ex)
@@ -176,10 +176,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var animalsList = await unitOfWork.animalRepository.GetAllAsync();
-                    var medicalRecordsList = await unitOfWork.medicalRecordRepository.GetAllAsync();
-                    vm.Animals = new SelectList(animalsList, "Id", "Name", vm.AnimalId);
-                    vm.MedicalRecords = new SelectList(medicalRecordsList, "Id", "Name", vm.MedicalRecordiD);
+                    var animalsHashSet = await unitOfWork.animalRepository.GetAllAsync();
+                    var medicalRecordsHashSet = await unitOfWork.medicalRecordRepository.GetAllAsync();
+                    vm.Animals = new SelectList(animalsHashSet, "Id", "Name", vm.AnimalId);
+                    vm.MedicalRecords = new SelectList(medicalRecordsHashSet, "Id", "Name", vm.MedicalRecordiD);
                     return View(vm);
                 }
 

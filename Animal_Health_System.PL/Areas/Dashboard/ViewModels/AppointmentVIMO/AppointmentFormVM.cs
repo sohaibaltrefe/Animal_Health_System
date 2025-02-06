@@ -35,7 +35,7 @@
         public SelectList Owner { get; set; }
 
         // For the dropdown of Status
-        public SelectList StatusList { get; set; }
+        public SelectList StatusHashSet { get; set; }
 
         // Other properties
         public int? FarmStaffId { get; set; }

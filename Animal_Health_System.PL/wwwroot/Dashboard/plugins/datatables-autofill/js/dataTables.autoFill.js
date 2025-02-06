@@ -161,7 +161,7 @@ $.extend( AutoFill.prototype, {
 
 		this.s.enabled = true;
 
-		this._focusListener();
+		this._focusHashSetener();
 
 		this.dom.handle.on( 'mousedown', function (e) {
 			that._mousedown( e );
@@ -175,7 +175,7 @@ $.extend( AutoFill.prototype, {
 	{
 		this.s.enabled = false;
 
-		this._focusListenerRemove();
+		this._focusHashSetenerRemove();
 
 		return this;
 	},
@@ -213,7 +213,7 @@ $.extend( AutoFill.prototype, {
 		}
 
 		dt.on( 'destroy.autoFill', function () {
-			that._focusListenerRemove();
+			that._focusHashSetenerRemove();
 		} );
 	},
 
@@ -515,7 +515,7 @@ $.extend( AutoFill.prototype, {
 	 *
 	 * @private
 	 */
-	_focusListener: function ()
+	_focusHashSetener: function ()
 	{
 		var that = this;
 		var dt = this.s.dt;
@@ -564,7 +564,7 @@ $.extend( AutoFill.prototype, {
 	},
 
 
-	_focusListenerRemove: function ()
+	_focusHashSetenerRemove: function ()
 	{
 		var dt = this.s.dt;
 

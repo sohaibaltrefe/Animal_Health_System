@@ -326,7 +326,7 @@ ZeroClipboard_TableTools.Client.prototype = {
 		}
 	},
 
-	addEventListener: function(eventName, func) {
+	addEventHashSetener: function(eventName, func) {
 		// add user event listener for event
 		// event types: load, queueStart, fileStart, fileComplete, queueComplete, progress, error, cancel
 		eventName = eventName.toString().toLowerCase().replace(/^on/, '');
@@ -653,7 +653,7 @@ var flashButton = {
 		var flash = new ZeroClipboard_TableTools.Client();
 
 		flash.setHandCursor( true );
-		flash.addEventListener('mouseDown', function(client) {
+		flash.addEventHashSetener('mouseDown', function(client) {
 			config._fromFlash = true;
 			dt.button( button[0] ).trigger();
 			config._fromFlash = false;

@@ -32,7 +32,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
             foreach (var record in medicalRecords)
             {
-                if (record.Animal?.Farm != null)
+                if (record.Animal .Farm != null)
                 {
                     Console.WriteLine($"Farm Name: {record.Animal.Farm.Name}");
                 }
@@ -92,8 +92,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var animalsList = await unitOfWork.animalRepository.GetAllAsync();
-            vm.Animal = new SelectList(animalsList, "Id", "Name");
+            var animalsHashSet = await unitOfWork.animalRepository.GetAllAsync();
+            vm.Animal = new SelectList(animalsHashSet, "Id", "Name");
             return View(vm);
         }
 

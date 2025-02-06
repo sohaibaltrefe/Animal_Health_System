@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Animal_Health_System.DAL.Models
         public string Name { get; set; } 
 
         public int? PregnancyId { get; set; }
-        public virtual Pregnancy Pregnancy { get; set; }
+        public   Pregnancy Pregnancy { get; set; }
 
         public DateTime BirthDate { get; set; }
 
@@ -21,11 +22,15 @@ namespace Animal_Health_System.DAL.Models
 
         public string BirthCondition { get; set; }
 
-        public int? AnimalId { get; set; }
-        public virtual Animal Animal { get; set; } 
+        [ForeignKey(nameof(Animal))]
+        public int AnimalId { get; set; }
 
-        public int? FarmId { get; set; }
-        public virtual Farm Farm { get; set; }
+        [ForeignKey(nameof(Farm))]
+        public int FarmId { get; set; }
+
+        public   Animal Animal { get; set; } 
+
+        public   Farm Farm { get; set; }
     }
 
 }

@@ -13,9 +13,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO
         public DateTime? UpdatedAt { get; set; }
         public bool IsDeleted { get; set; }
 
-        public ICollection<Farm> Farms { get; set; } = new List<Farm>();
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public ICollection<Farm> Farms { get; set; } = new HashSet<Farm>();
+        public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();
+        public ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
     }
 
 

@@ -15,7 +15,7 @@
          public int AvailableQuantity { get; set; }
 
 
-        public virtual ICollection<Medication> Medications { get; set; }
+        public ICollection<Medication> Medications { get; set; } = new List <Medication>();
 
 
       

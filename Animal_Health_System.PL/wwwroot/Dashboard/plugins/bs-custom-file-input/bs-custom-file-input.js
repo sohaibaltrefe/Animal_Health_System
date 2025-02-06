@@ -90,12 +90,12 @@
   }
 
   function handleFormReset() {
-    var customFileList = [].slice.call(this.querySelectorAll(Selector.INPUT)).filter(function (input) {
+    var customFileHashSet = [].slice.call(this.querySelectorAll(Selector.INPUT)).filter(function (input) {
       return !!input.bsCustomFileInput;
     });
 
-    for (var i = 0, len = customFileList.length; i < len; i++) {
-      restoreDefaultText(customFileList[i]);
+    for (var i = 0, len = customFileHashSet.length; i < len; i++) {
+      restoreDefaultText(customFileHashSet[i]);
     }
   }
 
@@ -114,11 +114,11 @@
         formSelector = Selector.FORM;
       }
 
-      var customFileInputList = [].slice.call(document.querySelectorAll(inputSelector));
-      var formList = [].slice.call(document.querySelectorAll(formSelector));
+      var customFileInputHashSet = [].slice.call(document.querySelectorAll(inputSelector));
+      var formHashSet = [].slice.call(document.querySelectorAll(formSelector));
 
-      for (var i = 0, len = customFileInputList.length; i < len; i++) {
-        var input = customFileInputList[i];
+      for (var i = 0, len = customFileInputHashSet.length; i < len; i++) {
+        var input = customFileInputHashSet[i];
         Object.defineProperty(input, customProperty, {
           value: {
             defaultText: getDefaultText(input)
@@ -126,37 +126,37 @@
           writable: true
         });
         handleInputChange.call(input);
-        input.addEventListener(Event.INPUTCHANGE, handleInputChange);
+        input.addEventHashSetener(Event.INPUTCHANGE, handleInputChange);
       }
 
-      for (var _i = 0, _len = formList.length; _i < _len; _i++) {
-        formList[_i].addEventListener(Event.FORMRESET, handleFormReset);
+      for (var _i = 0, _len = formHashSet.length; _i < _len; _i++) {
+        formHashSet[_i].addEventHashSetener(Event.FORMRESET, handleFormReset);
 
-        Object.defineProperty(formList[_i], customProperty, {
+        Object.defineProperty(formHashSet[_i], customProperty, {
           value: true,
           writable: true
         });
       }
     },
     destroy: function destroy() {
-      var formList = [].slice.call(document.querySelectorAll(Selector.FORM)).filter(function (form) {
+      var formHashSet = [].slice.call(document.querySelectorAll(Selector.FORM)).filter(function (form) {
         return !!form.bsCustomFileInput;
       });
-      var customFileInputList = [].slice.call(document.querySelectorAll(Selector.INPUT)).filter(function (input) {
+      var customFileInputHashSet = [].slice.call(document.querySelectorAll(Selector.INPUT)).filter(function (input) {
         return !!input.bsCustomFileInput;
       });
 
-      for (var i = 0, len = customFileInputList.length; i < len; i++) {
-        var input = customFileInputList[i];
+      for (var i = 0, len = customFileInputHashSet.length; i < len; i++) {
+        var input = customFileInputHashSet[i];
         restoreDefaultText(input);
         input[customProperty] = undefined;
-        input.removeEventListener(Event.INPUTCHANGE, handleInputChange);
+        input.removeEventHashSetener(Event.INPUTCHANGE, handleInputChange);
       }
 
-      for (var _i2 = 0, _len2 = formList.length; _i2 < _len2; _i2++) {
-        formList[_i2].removeEventListener(Event.FORMRESET, handleFormReset);
+      for (var _i2 = 0, _len2 = formHashSet.length; _i2 < _len2; _i2++) {
+        formHashSet[_i2].removeEventHashSetener(Event.FORMRESET, handleFormReset);
 
-        formList[_i2][customProperty] = undefined;
+        formHashSet[_i2][customProperty] = undefined;
       }
     }
   };

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,27 +22,32 @@ namespace Animal_Health_System.DAL.Models
 
         public string ExaminationType { get; set; }
 
-      
+        [ForeignKey(nameof(Animal))]
+        public int  AnimalId { get; set; }
 
-        public int? AnimalId { get; set; }
+        [ForeignKey(nameof(MedicalRecord))]
+        public int  MedicalRecordId { get; set; }
+
+       
+
+        [ForeignKey(nameof(Veterinarian))]
+        public int  VeterinarianId { get; set; }
+
         public Animal Animal  { get; set; }
 
-        public int? MedicalRecordId { get; set; }
         public MedicalRecord MedicalRecord  { get; set; }
 
-        public int? FarmStaffId { get; set; }
-        public FarmStaff FarmStaff  { get; set; }
+     
 
-        public int? VeterinarianId { get; set; }
         public Veterinarian Veterinarian  { get; set; }
 
-        public virtual ICollection<Medication> Medications { get; set; } = new List<Medication>();
+        public   ICollection<Medication> Medications { get; set; } = new List <Medication>();
 
-        public virtual ICollection<TreatmentPlan> TreatmentPlans { get; set; } = new List<TreatmentPlan>();
+        public   ICollection<TreatmentPlan> TreatmentPlans { get; set; } = new List <TreatmentPlan>();
 
       
 
-        public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public   ICollection<Prescription> Prescriptions { get; set; } = new List <Prescription>();
 
        
     }

@@ -24,7 +24,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             this.logger = logger;
         }
 
-        // List all owners
+        // HashSet all owners
         public async Task<IActionResult> Index()
         {
             try
@@ -37,7 +37,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 logger.LogError(ex, "Error occurred while fetching owners.");
                 TempData["ErrorMessage"] = "An error occurred while fetching the owners.";
-                return View(new List<OwnerVM>());
+                return View(new HashSet<OwnerVM>());
             }
         }
 

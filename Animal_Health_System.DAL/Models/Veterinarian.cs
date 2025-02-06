@@ -24,13 +24,13 @@ namespace Animal_Health_System.DAL.Models
 
         public decimal salary { get; set; }
 
-        public virtual ICollection<Appointment> Appointments { get; set; }
+        public   ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
 
-        public virtual ICollection<MedicalExamination> MedicalExaminations { get; set; }
+        public   ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List <MedicalExamination>();
 
-        public virtual ICollection<VaccineHistory> VaccineHistories { get; set; }
+        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
 
-        public virtual ICollection<Notification> Notifications { get; set; }
+        public   ICollection<Notification> Notifications { get; set; } = new List <Notification>();
 
 
     }

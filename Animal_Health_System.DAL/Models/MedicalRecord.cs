@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -13,13 +14,14 @@ namespace Animal_Health_System.DAL.Models
 
         public string Name { get; set; }
 
-   
-        public int? AnimalId { get; set; }
+        [ForeignKey(nameof(Animal))]
+
+        public int  AnimalId { get; set; }
         public Animal Animal  { get; set; }
 
-        public virtual ICollection<MedicalExamination> Examinations { get; set; } = new List<MedicalExamination>();
+        public   ICollection<MedicalExamination> Examinations { get; set; } = new List <MedicalExamination>();
 
-        public virtual ICollection<Vaccine> Vaccines { get; set; } = new List<Vaccine>();
+        public   ICollection<Vaccine> Vaccines { get; set; } = new List <Vaccine>();
 
 
     }

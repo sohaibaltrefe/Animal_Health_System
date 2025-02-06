@@ -23,7 +23,7 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
   var sChar = "\\\\[abefnrtv0%?'\"\\\\]";
   var uChar = "([^\\u0027\\u005C\\uD800-\\uDFFF]|[\\uD800-\\uDFFF][\\uDC00-\\uDFFF])";
 
-  var asciiOperatorsList = [
+  var asciiOperatorsHashSet = [
     "[<>]:", "[<>=]=", "<<=?", ">>>?=?", "=>", "--?>", "<--[->]?", "\\/\\/",
     "\\.{2,3}", "[\\.\\\\%*+\\-<>!\\/^|&]=?", "\\?", "\\$", "~", ":"
   ];
@@ -41,34 +41,34 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
 
   var chars = wordRegexp([octChar, hexChar, sChar, uChar], "'");
 
-  var openersList = ["begin", "function", "type", "struct", "immutable", "let",
+  var openersHashSet = ["begin", "function", "type", "struct", "immutable", "let",
         "macro", "for", "while", "quote", "if", "else", "elseif", "try",
         "finally", "catch", "do"];
 
-  var closersList = ["end", "else", "elseif", "catch", "finally"];
+  var closersHashSet = ["end", "else", "elseif", "catch", "finally"];
 
-  var keywordsList = ["if", "else", "elseif", "while", "for", "begin", "let",
+  var keywordsHashSet = ["if", "else", "elseif", "while", "for", "begin", "let",
         "end", "do", "try", "catch", "finally", "return", "break", "continue",
         "global", "local", "const", "export", "import", "importall", "using",
         "function", "where", "macro", "module", "baremodule", "struct", "type",
         "mutable", "immutable", "quote", "typealias", "abstract", "primitive",
         "bitstype"];
 
-  var builtinsList = ["true", "false", "nothing", "NaN", "Inf"];
+  var builtinsHashSet = ["true", "false", "nothing", "NaN", "Inf"];
 
-  CodeMirror.registerHelper("hintWords", "julia", keywordsList.concat(builtinsList));
+  CodeMirror.registerHelper("hintWords", "julia", keywordsHashSet.concat(builtinsHashSet));
 
-  var openers = wordRegexp(openersList);
-  var closers = wordRegexp(closersList);
-  var keywords = wordRegexp(keywordsList);
-  var builtins = wordRegexp(builtinsList);
+  var openers = wordRegexp(openersHashSet);
+  var closers = wordRegexp(closersHashSet);
+  var keywords = wordRegexp(keywordsHashSet);
+  var builtins = wordRegexp(builtinsHashSet);
 
   var macro = /^@[_A-Za-z\u00A1-\uFFFF][\w\u00A1-\uFFFF]*!*/;
   var symbol = /^:[_A-Za-z\u00A1-\uFFFF][\w\u00A1-\uFFFF]*!*/;
   var stringPrefixes = /^(`|([_A-Za-z\u00A1-\uFFFF]*"("")?))/;
 
-  var macroOperators = wordRegexp(asciiOperatorsList, "", "@");
-  var symbolOperators = wordRegexp(asciiOperatorsList, "", ":");
+  var macroOperators = wordRegexp(asciiOperatorsHashSet, "", "@");
+  var symbolOperators = wordRegexp(asciiOperatorsHashSet, "", ":");
 
   function inArray(state) {
     return (state.nestedArrays > 0);

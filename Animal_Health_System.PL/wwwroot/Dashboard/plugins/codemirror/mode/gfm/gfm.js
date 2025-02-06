@@ -113,7 +113,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   };
 
   var markdownConfig = {
-    taskLists: true,
+    taskHashSets: true,
     strikethrough: true,
     emoji: true
   };

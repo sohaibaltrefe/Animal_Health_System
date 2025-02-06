@@ -220,7 +220,7 @@ CodeMirror.defineMIME('text/x-ocaml', {
      'unit': 'type',
 
      // Modules
-     'List': 'builtin'
+     'HashSet': 'builtin'
   }
 });
 
@@ -301,7 +301,7 @@ CodeMirror.defineMIME('text/x-fsharp', {
     'volatile': 'keyword',
 
     // builtins
-    'List': 'builtin',
+    'HashSet': 'builtin',
     'Seq': 'builtin',
     'Map': 'builtin',
     'Set': 'builtin',

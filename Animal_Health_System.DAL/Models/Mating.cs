@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,20 +17,23 @@ namespace Animal_Health_System.DAL.Models
         public DateTime MatingDate { get; set; }  
 
         public string Notes { get; set; }
+        // العلاقة مع المزرعة
+        [ForeignKey(nameof(Farm))]
+        public int  FarmId { get; set; }
+        public Farm Farm { get; set; }
 
-        public int? FarmId { get; set; }
-        public Farm farm { get; set; }
-
-        public int? MaleAnimalId { get; set; } 
+        // العلاقة مع الحيوان الذكر
+        [ForeignKey(nameof(MaleAnimal))]
+        public int  MaleAnimalId { get; set; }
         public Animal MaleAnimal { get; set; }
 
-        public int? FemaleAnimalId { get; set; }  
-
+        // العلاقة مع الحيوان الأنثى
+        [ForeignKey(nameof(FemaleAnimal))]
+        public int  FemaleAnimalId { get; set; }
         public Animal FemaleAnimal { get; set; }
 
-        public virtual ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
-
-
+        // التقارير المرتبطة بالتزاوج
+        public ICollection<BreedingReport> BreedingReports { get; set; } = new List <BreedingReport>();
     }
 
 }

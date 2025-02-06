@@ -73,13 +73,13 @@
             if (this.s.dt.settings()[0]._bInitComplete) {
                 // Fixed Columns Initialisation
                 this._addStyles();
-                this._setKeyTableListener();
+                this._setKeyTableHashSetener();
             }
             else {
                 table.one('preInit.dt', function () {
                     // Fixed Columns Initialisation
                     _this._addStyles();
-                    _this._setKeyTableListener();
+                    _this._setKeyTableHashSetener();
                 });
             }
             // Make class available through dt object
@@ -378,7 +378,7 @@
                     };
             }
         };
-        FixedColumns.prototype._setKeyTableListener = function () {
+        FixedColumns.prototype._setKeyTableHashSetener = function () {
             var _this = this;
             this.s.dt.on('key-focus', function (e, dt, cell) {
                 var cellPos = $(cell.node()).offset();
