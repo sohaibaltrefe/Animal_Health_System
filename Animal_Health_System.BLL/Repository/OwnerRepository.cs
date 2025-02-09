@@ -25,14 +25,14 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-    
+
                 context.owners.Add(owner);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while adding the owner.");
-                throw new Exception("Error occurred while adding the owner", ex);
+                throw;
             }
         }
 
@@ -47,7 +47,7 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while fetching owners.");
-                throw new Exception("Error occurred while fetching owners", ex);
+                throw;
             }
         }
 
@@ -63,7 +63,7 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error occurred while fetching the owner with ID {id}.");
-                throw new Exception($"Error occurred while fetching the owner with ID {id}", ex);
+                throw;
             }
         }
 
@@ -71,13 +71,23 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                 context.owners.Update(owner);
+                var existingOwner = await context.owners.FindAsync(owner.Id);
+                if (existingOwner == null)
+                {
+                    throw new KeyNotFoundException("Owner not found");
+                }
+
+                // Update only the modified fields
+                existingOwner.FullName = owner.FullName;
+                existingOwner.PhoneNumber = owner.PhoneNumber;
+                existingOwner.Email = owner.Email;
+
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating the owner.");
-                throw new Exception("Error occurred while updating the owner", ex);
+                throw;
             }
         }
 
@@ -86,18 +96,21 @@ namespace Animal_Health_System.BLL.Repository
             try
             {
                 var owner = await context.owners.FindAsync(id);
-                if (owner != null)
+                if (owner == null || owner.IsDeleted)
                 {
-                    owner.IsDeleted = true;
-                     await context.SaveChangesAsync();
+                    throw new KeyNotFoundException($"Owner with ID {id} not found or already deleted.");
                 }
+
+                owner.IsDeleted = true;
+                await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error occurred while deleting the owner with ID {id}.");
-                throw new Exception($"Error occurred while deleting the owner with ID {id}", ex);
+                throw;
             }
         }
+
         public async Task SaveChangesAsync()
         {
             try
@@ -107,7 +120,7 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
+                throw;
             }
         }
     }

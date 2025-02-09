@@ -6,21 +6,11 @@
 
 @section loc {
     Create
-}               
+}
+
 @{
     var successMessage = TempData["SuccessMessage"];
     var errorMessage = TempData["ErrorMessage"];
-
-
-    if (successMessage != null)
-    {
-        <div class="alert alert-success">@successMessage</div>
-    }
-
-    if (errorMessage != null)
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
 }
 
 <div class="col-md-8 offset-md-2">
@@ -36,8 +26,6 @@
                     <span asp-validation-for="FullName" class="text-danger"></span>
                 </div>
 
-             
-
                 <div class="form-group">
                     <label asp-for="PhoneNumber" class="font-weight-bold"></label>
                     <input asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
@@ -50,7 +38,6 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-               
             </div>
             <div class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Save</button>

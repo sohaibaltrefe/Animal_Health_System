@@ -3,31 +3,38 @@
 @section Header {
     Farm
 }
+
 @section loc {
     Details
 }
-
+<form id="deleteForm">
+    @Html.AntiForgeryToken()
+</form>
 <div class="col-md-12">
     <div class="card shadow-sm">
         <div class="card-header">
             <h3 class="card-title">Farm Details</h3>
         </div>
         <div class="card-body">
+            <!-- Farm Name -->
             <div class="form-group">
                 <label for="Name">Farm Name</label>
                 <input asp-for="Name" class="form-control" id="Name" readonly />
             </div>
 
+            <!-- Farm Location -->
             <div class="form-group">
                 <label for="Location">Location</label>
                 <input asp-for="Location" class="form-control" id="Location" readonly />
             </div>
 
+            <!-- Farm Owner -->
             <div class="form-group">
                 <label for="OwnerName">Owner</label>
-                <input asp-for="OwnerFullName" class="form-control" id="OwnerName" readonly />
+                <input asp-for="owner.FullName" class="form-control" id="OwnerName" readonly />
             </div>
 
+            <!-- Farm Status -->
             <div class="form-group">
                 <label for="IsDeleted">Status</label>
                 <span class="form-control">
@@ -42,6 +49,7 @@
                 </span>
             </div>
 
+            <!-- Animals List -->
             <h4 class="mt-4">Animals on this Farm:</h4>
             @if (Model.Animals.Any())
             {
@@ -56,7 +64,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var animal in Model.Animals.ToHashSet())
+                        @foreach (var animal in Model.Animals)
                         {
                             <tr>
                                 <td>@animal.Name</td>
@@ -80,9 +88,10 @@
             }
             else
             {
-                <p class="text-muted">No animals available for this farm yet.</p> <!-- Clear message when no animals exist -->
+                <p class="text-muted">No animals available for this farm yet.</p>
             }
 
+            <!-- Action Buttons -->
             <div class="form-group mt-4">
                 <a asp-controller="Farm" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
                     <i class="fas fa-edit"></i> Edit
@@ -90,7 +99,66 @@
                 <a asp-action="Index" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Index
                 </a>
+
+                <!-- Delete Button -->
+                <button class="btn btn-danger" id="deleteBtn">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+@section script {
+    <script>
+        document.getElementById('deleteBtn').addEventListener('click', async () => {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const id = @Model.Id; // Getting the ID of the farm
+
+                    // Get the anti-forgery token
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    const token = tokenInput ? tokenInput.value : '';
+
+                    if (!token) {
+                        Swal.fire("Error!", "Anti-forgery token is missing.", "error");
+                        return;
+                    }
+
+                    // Send the request with the token
+                    const response = await fetch(`/Dashboard/Farm/DeleteConfirmed`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "RequestVerificationToken": token
+                        },
+                        body: new URLSearchParams({ id: id }) // Sending the farm ID as form data
+                    });
+
+                    if (response.ok) {
+                        Swal.fire("Deleted!", "The farm has been deleted.", "success");
+                        window.location.href = '/Dashboard/Farm/Index'; // Redirecting after deletion
+                    } else {
+                        Swal.fire("Error!", "Unable to delete the farm.", "error");
+                    }
+                }
+            });
+        });
+    </script>
+}

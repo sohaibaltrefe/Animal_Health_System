@@ -22,7 +22,7 @@ namespace Animal_Health_System.BLL.Repository
             this.logger = logger;
         }
 
-        public async Task<int> AddAsync(FarmStaff  farmStaff)
+        public async Task<int> AddAsync(FarmStaff farmStaff)
         {
             try
             {
@@ -31,8 +31,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while adding farm Staff.");
-                throw new Exception("Error occurred while adding farm Staff.", ex);
+                logger.LogError(ex, "Error occurred while adding farm staff.");
+                throw;
             }
         }
 
@@ -40,12 +40,12 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.farmStaff.Include(f => f.Farm).Where(a => !a.IsDeleted).ToListAsync();
+                return await context.farmStaff.Where(a => !a.IsDeleted).Include(f => f.Farm).ToListAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving farm Staff.");
-                throw new Exception("Error occurred while retrieving farm Staff.", ex);
+                logger.LogError(ex, "Error occurred while retrieving farm staff.");
+                throw;
             }
         }
 
@@ -59,12 +59,13 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving farm Staff.");
-                throw new Exception("Error occurred while retrieving farmS taff.", ex);
+                logger.LogError(ex, "Error occurred while retrieving farm staff.");
+                throw;
             }
         }
 
-        public async Task<int> UpdateAsync(FarmStaff  farmStaff)
+
+        public async Task<int> UpdateAsync(FarmStaff farmStaff)
         {
             try
             {
@@ -73,8 +74,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while updating farm Staff.");
-                throw new Exception("Error occurred while updating farm Staff.", ex);
+                logger.LogError(ex, "Error occurred while updating farm staff.");
+                throw;
             }
         }
 
@@ -82,7 +83,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                var farmStaff = await context.farmStaff.FindAsync(id);
+                var farmStaff = await context.farmStaff.FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
                 if (farmStaff != null)
                 {
                     farmStaff.IsDeleted = true;
@@ -91,8 +92,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while deleting farm Staff.");
-                throw new Exception("Error occurred while deleting farm Staff.", ex);
+                logger.LogError(ex, "Error occurred while deleting farm staff.");
+                throw;
             }
         }
 

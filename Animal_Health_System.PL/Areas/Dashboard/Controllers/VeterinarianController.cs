@@ -59,6 +59,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     TempData["SuccessMessage"] = "Veterinarian created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
+
                 return View(vm);
             }
             catch (Exception ex)
@@ -79,6 +80,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 {
                     return NotFound();
                 }
+
                 var veterinarianVm = mapper.Map<VeterinarianFormVM>(veterinarian);
                 return View(veterinarianVm);
             }
@@ -117,6 +119,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return View(vm);
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)

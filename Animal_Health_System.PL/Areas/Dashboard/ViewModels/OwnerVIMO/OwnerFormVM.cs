@@ -7,18 +7,20 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Full name is required.")]
-        [StringLength(100, ErrorMessage = "Full name can't be longer than 100 characters.")]
+
+        [Required(ErrorMessage = "Full Name is required.")]
+        [StringLength(100, ErrorMessage = "Full Name cannot exceed 100 characters.")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Full Name must only contain letters and spaces.")]
         public string FullName { get; set; }
 
+     
+
         [Required(ErrorMessage = "Phone number is required.")]
-        [Phone(ErrorMessage = "Invalid phone number.")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
-
-        public bool IsDeleted { get; set; }
     }
 }

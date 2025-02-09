@@ -38,6 +38,8 @@ namespace Animal_Health_System.PL
             builder.Services.AddScoped<IFarmStaffRepository, FarmStaffRepository>();
             builder.Services.AddScoped<IFarmVeterinarianRepository, FarmVeterinarianRepository>();
             builder.Services.AddScoped<IHealthReportRepository, HealthReportRepository>();
+            builder.Services.AddScoped<IHealthStatusLogRepository, HealthStatusLogRepository>();
+
             builder.Services.AddScoped<IMatingRepository, MatingRepository>();
             builder.Services.AddScoped<IMedicalExaminationRepository, MedicalExaminationRepository>();
             builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();

@@ -1,6 +1,7 @@
 ﻿using Animal_Health_System.BLL.Interface;
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -44,13 +45,17 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Create GET action
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             try
             {
-                var vm = new FarmStaffFormVM();
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
+                var vm = new FarmStaffFormVM
+                {
+                    Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList()
+                };
+
                 return View(vm);
             }
             catch (Exception ex)
@@ -61,13 +66,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Create POST action
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FarmStaffFormVM vm)
         {
             if (!ModelState.IsValid)
             {
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return View(vm);
             }
@@ -75,16 +82,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             try
             {
                 var farmStaff = mapper.Map<FarmStaff>(vm);
-               
                 await unitOfWork.farmStaffRepository.AddAsync(farmStaff);
-
-                TempData["SuccessMessage"] = "Farm staff added successfully.";
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "farmstaff added successfully.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while adding the farm staff.");
-                TempData["ErrorMessage"] = "An error occurred while adding the farm staff.";
+                logger.LogError(ex, "Error occurred while adding the farmStaff.");
+                TempData["ErrorMessage"] = "An error occurred while adding the farmStaff.";
                 return View(vm);
             }
         }
@@ -98,18 +103,21 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var farmStaff = await unitOfWork.farmStaffRepository.GetAsync(id);
                 if (farmStaff == null)
                 {
-                    TempData["ErrorMessage"] = "Farm staff not found.";
-                    return RedirectToAction("Index");
+                    TempData["ErrorMessage"] = "farmStaff not found.";
+                    return RedirectToAction(nameof(Index));
                 }
 
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
                 var vm = mapper.Map<FarmStaffFormVM>(farmStaff);
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
                 return View(vm);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while preparing the edit view.");
                 TempData["ErrorMessage"] = "An error occurred while preparing the form.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -120,6 +128,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return View(vm);
             }
@@ -129,40 +140,65 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var farmStaff = await unitOfWork.farmStaffRepository.GetAsync(vm.Id);
                 if (farmStaff == null)
                 {
-                    TempData["ErrorMessage"] = "Farm staff not found.";
-                    return RedirectToAction("Index");
+                    TempData["ErrorMessage"] = "Animal not found.";
+                    return RedirectToAction(nameof(Index));
                 }
 
                 mapper.Map(vm, farmStaff);
- 
                 await unitOfWork.farmStaffRepository.UpdateAsync(farmStaff);
-
-                TempData["SuccessMessage"] = "Farm staff updated successfully.";
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "farmStaff updated successfully.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while updating the farm staff.");
-                TempData["ErrorMessage"] = "An error occurred while updating the farm staff.";
+                logger.LogError(ex, "Error occurred while updating the farmStaff.");
+                TempData["ErrorMessage"] = "An error occurred while updating the farmStaff.";
                 return View(vm);
             }
         }
 
-        // Soft delete FarmStaff
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                await unitOfWork.farmStaffRepository.DeleteAsync(id);
-                TempData["SuccessMessage"] = "Farm staff deleted successfully.";
-                return RedirectToAction("Index");
+                var farmstaff = await unitOfWork.farmStaffRepository.GetAsync(id);
+                if (farmstaff == null)
+                {
+                    TempData["ErrorMessage"] = "farmstaff not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var farmstaffVm = mapper.Map<FarmStaffDetailsVM>(farmstaff);
+                return View(farmstaffVm);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while deleting farm staff.");
-                TempData["ErrorMessage"] = "An error occurred while deleting the farm staff.";
-                return RedirectToAction("Index");
+                logger.LogError(ex, "Error occurred while retrieving farmstaff details.");
+                TempData["ErrorMessage"] = "An error occurred while fetching farmstaff details.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        // Soft delete farmstaff
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var farmstaff = await unitOfWork.farmStaffRepository.GetAsync(id);
+                if (farmstaff == null)
+                {
+                    return Json(new { success = false, message = "farmstaff not found." });
+                }
+
+                await unitOfWork.farmStaffRepository.DeleteAsync(id);
+                return Json(new { success = true, message = "farmstaff deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while deleting the farmstaff.");
+                return Json(new { success = false, message = "An error occurred while deleting the farmstaff." });
             }
         }
     }

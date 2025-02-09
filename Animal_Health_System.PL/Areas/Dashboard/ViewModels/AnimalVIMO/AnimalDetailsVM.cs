@@ -2,6 +2,7 @@
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalHealthHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineHistoryVIMO;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
 {
@@ -11,18 +12,24 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public string Name { get; set; }
         public string Species { get; set; }
         public string Breed { get; set; }
-        public string Gender { get; set; }
-
-        public DateTime DateOfBirth { get; set; }
-
+        public decimal Weight { get; set; }
         public string Age { get; set; }
         public HealthStatus CurrentHealthStatus { get; set; }
-        public string FarmName { get; set; }
-        public bool IsDeleted { get; set; }
-
-        public IEnumerable<AnimalHealthHistoryVM> AnimalHealthHistories { get; set; }
-        public IEnumerable<AppointmentVM> Appointments { get; set; }
-        public IEnumerable<VaccineHistoryVM> VaccineHistories { get; set; }
+        public Gender Gender { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int FarmId { get; set; }
+        public Farm Farm { get; set; }
+        public int MedicalRecordId { get; set; }
+        public MedicalRecord MedicalRecord { get; set; }
+        public ICollection<AnimalHealthHistory> AnimalHealthHistories { get; set; } = new List<AnimalHealthHistory>();
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
+        public ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List<MedicalExamination>();
+        public ICollection<Pregnancy> Pregnancies { get; set; } = new List<Pregnancy>();
+        public ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
+        public ICollection<Notification> PregnancyNotifications { get; set; } = new List<Notification>();
+        public ICollection<ProductionRecord> ProductionRecords { get; set; } = new List<ProductionRecord>();
+        public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();
 
     }
 }

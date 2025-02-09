@@ -13,7 +13,10 @@ namespace Animal_Health_System.DAL.Models
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; }
 
-
+        public void SetCreatedAt(DateTime createdAt)
+        {
+            CreatedAt = createdAt;
+        }
         public void UpdateTimestamp()
         {
             UpdatedAt = DateTime.UtcNow;

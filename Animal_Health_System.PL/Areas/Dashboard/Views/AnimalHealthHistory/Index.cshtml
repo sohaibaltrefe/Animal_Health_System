@@ -34,11 +34,11 @@
 
             @if (Model == null || !Model.Any())
             {
-                <div class="alert alert-warning" role="alert">
+                <div class="alert alert-warning  text-center" role="alert">
                     No animal health history records available.
                 </div>
             }
-
+            else{
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
                     <tr>
@@ -61,11 +61,12 @@
                         </tr>
                     }
                 </tbody>
-            </table>
+                </table>
+            }
         </div>
     </div>
 </div>
-
+           
 @section script {
     <script>
         const elements = document.querySelectorAll(".delete-btn");

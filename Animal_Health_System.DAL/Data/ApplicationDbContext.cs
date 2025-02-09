@@ -41,8 +41,8 @@ namespace Animal_Health_System.DAL.Data
 
         public DbSet<FarmStaff>  farmStaff { get; set; }
         public DbSet<FarmVeterinarian> farmVeterinarians { get; set; }
+        public DbSet<HealthStatusLog>  healthStatusLogs { get; set; }
 
-        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -3,6 +3,7 @@
 @section Header {
     Edit Farm
 }
+
 @section loc {
     Edit
 }
@@ -22,14 +23,14 @@
                 <div class="form-group">
                     <label asp-for="Name">Farm Name</label>
                     <input asp-for="Name" class="form-control" placeholder="Enter Farm Name" />
-                    <span asp-validation-for="Name" class="text-danger"></span> <!-- Inline error message -->
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <!-- Farm Location -->
                 <div class="form-group">
                     <label asp-for="Location">Farm Location</label>
                     <input asp-for="Location" class="form-control" placeholder="Enter Farm Location" />
-                    <span asp-validation-for="Location" class="text-danger"></span> <!-- Inline error message -->
+                    <span asp-validation-for="Location" class="text-danger"></span>
                 </div>
 
                 <!-- Farm Owner Selector -->
@@ -38,15 +39,11 @@
                     <select asp-for="OwnerId" class="form-control" asp-items="Model.Owners">
                         <option value="">Select an Owner</option>
                     </select>
-                    <span asp-validation-for="OwnerId" class="text-danger"></span> <!-- Inline error message -->
+                    <span asp-validation-for="OwnerId" class="text-danger"></span>
                 </div>
 
                 <!-- Farm Status -->
-                <div class="form-group">
-                    <label asp-for="IsDeleted">Status</label>
-                    <input asp-for="IsDeleted" type="checkbox" />
-                    <span asp-validation-for="IsDeleted" class="text-danger"></span> <!-- Inline error message -->
-                </div>
+               
             </div>
 
             <!-- Action Buttons -->

@@ -12,6 +12,9 @@
     var successMessage = TempData["SuccessMessage"];
     var errorMessage = TempData["ErrorMessage"];
 }
+<form id="deleteForm">
+    @Html.AntiForgeryToken()
+</form>
 
 <div class="col-md-12">
     @if (successMessage != null)
@@ -47,91 +50,116 @@
                 <input value="@Model.Email" class="form-control" readonly />
             </div>
 
-            <!-- Status -->
-            <div class="form-group">
-                <label>Status</label>
-                <span class="form-control">
-                    @if (Model.IsDeleted)
-                    {
-                        <span class="text-danger">Deleted</span>
-                    }
-                    else
-                    {
-                        <span class="text-success">Active</span>
-                    }
-                </span>
-            </div>
-
             <!-- Farms -->
             <div class="form-group">
                 <label>Farms</label>
                 <ul>
                     @if (Model.Farms.Any())
-                    {<div class="row">
-                        @foreach (var farm in Model.Farms)
-                        {
-                            <div class="col-md-4 border-1">
-
-                            <li> the farm name: @farm.Name</li>
-                            <li>the farm count an animal :@farm.Animals.Count</li>
-                                </div>
-
-                        }     
-                        </div>
-
+                    {
+                        <div class="row">
+                            @foreach (var farm in Model.Farms)
+                            {
+                                <div class="col-md-4">
+                            <li>Farm Name: @farm.Name</li>
+                            <li>Animal Count: @farm.Animals.Count</li>
+                    </div>
+                            }
+            </div>
                     }
                     else
                     {
-                        <li>No farms available</li>
+            <li>No farms available</li>
                     }
-                </ul>
-            </div>
+        </ul>
+    </div>
 
-            <!-- Appointments -->
-            <div class="form-group">
-                <label>Appointments</label>
-                <ul>
-                    @if (Model.Appointments.Any())
-                    {
-                        @foreach (var appointment in Model.Appointments)
-                        {
-                            <li>@appointment.AppointmentDate.ToString("dd MMM yyyy")</li>
-                        }
-                    }
-                    else
-                    {
-                        <li>No appointments available</li>
-                    }
-                </ul>
-            </div>
-
-            <!-- Notifications -->
-            <div class="form-group">
-                <label>Notifications</label>
-                <ul>
+    <!-- Notifications -->
+    <div class="form-group">
+        <label>Notifications</label>
+        <ul>
                     @if (Model.Notifications.Any())
                     {
                         @foreach (var notification in Model.Notifications)
                         {
-                            <li>@notification.Message</li>
+                    <li>@notification.Message</li>
                         }
                     }
                     else
                     {
-                        <li>No notifications available</li>
+                <li>No notifications available</li>
                     }
-                </ul>
-            </div>
+        </ul>
+    </div>
 
-            <!-- Action Buttons -->
-            <div class="form-group mt-4">
-                <a asp-controller="Owner" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <a asp-action="Index" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Index
-                </a>
-            </div>
-        </div>
+    <!-- Action Buttons -->
+    <div class="form-group mt-4">
+        <a asp-controller="Veterinarian" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Index
+        </a>
+
+        <!-- Add Delete Button -->
+        <button class="btn btn-danger" id="deleteBtn">
+            <i class="fas fa-trash"></i> Delete
+        </button>
     </div>
 </div>
+    </div>
+</div>
+
+@section script {
+    <script>
+              document.getElementById('deleteBtn').addEventListener('click', async () => {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const id = @Model.Id; // الحصول على ID الطبيب البيطري
+
+                    // ✅ جلب التوكن من الفورم المخفي
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    const token = tokenInput ? tokenInput.value : '';
+
+                    if (!token) {
+                        Swal.fire("Error!", "Anti-forgery token is missing.", "error");
+                        return;
+                    }
+
+                    // ✅ إرسال الطلب مع التوكن
+                    const response = await fetch(`/Dashboard/Veterinarian/DeleteConfirmed`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "RequestVerificationToken": token
+                        },
+                        body: new URLSearchParams({ id: id }) // إرسال ID كـ FormData
+                    });
+
+                    if (response.ok) {
+                        Swal.fire("Deleted!", "The veterinarian has been deleted.", "success");
+                        window.location.href = '/Dashboard/Owner/Index'; // توجيه المستخدم بعد الحذف
+                    } else {
+                        Swal.fire("Error!", "Unable to delete the veterinarian.", "error");
+                    }
+                }
+            });
+        });
+
+    </script>
+}

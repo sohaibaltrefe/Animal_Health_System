@@ -4,6 +4,7 @@ using Animal_Health_System.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
@@ -19,17 +20,43 @@ namespace Animal_Health_System.BLL.Repository
             this.logger = logger;
         }
 
-        public async Task<int> AddAsync(Farm  farm)
+        public async Task<int> AddAsync(Farm farm)
         {
             try
             {
+                bool exists = await context.farms.AnyAsync(f => f.Name == farm.Name && !f.IsDeleted);
+                if (exists)
+                {
+                    throw new Exception("A farm with the same name already exists.");
+                }
+
                 await context.farms.AddAsync(farm);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while adding farm.");
-                throw new Exception("Error occurred while adding farm.", ex);
+                throw;
+            }
+        }
+
+        public async Task<int> UpdateAsync(Farm farm)
+        {
+            try
+            {
+                bool exists = await context.farms.AnyAsync(f => f.Name == farm.Name && f.Id != farm.Id && !f.IsDeleted);
+                if (exists)
+                {
+                    throw new Exception("A farm with the same name already exists.");
+                }
+
+                context.farms.Update(farm);
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating farm.");
+                throw;
             }
         }
 
@@ -37,12 +64,15 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.farms.ToListAsync();
+                return await context.farms
+                    .Include(f => f.Owner)  // تأكد من تضمين المالك مع المزرعة
+                    .Where(f => !f.IsDeleted)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving farm.");
-                throw new Exception("Error occurred while retrieving farm.", ex);
+                logger.LogError(ex, "Error occurred while retrieving farms.");
+                throw;
             }
         }
 
@@ -50,28 +80,14 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.farms
-                   
+                return await context.farms.Include(f => f.Owner)  // تأكد من تضمين المالك مع المزرعة
+                    .Where(f => !f.IsDeleted)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while retrieving farm.");
-                throw new Exception("Error occurred while retrieving farm.", ex);
-            }
-        }
-
-        public async Task<int> UpdateAsync(Farm  farm)
-        {
-            try
-            {
-                context.farms.Update(farm);
-                return await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while updating farm.");
-                throw new Exception("Error occurred while updating farm.", ex);
+                throw;
             }
         }
 
@@ -89,10 +105,10 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while deleting farm.");
-                throw new Exception("Error occurred while deleting farm.", ex);
+                throw;
             }
-        }
 
+        }
         public async Task SaveChangesAsync()
         {
             try

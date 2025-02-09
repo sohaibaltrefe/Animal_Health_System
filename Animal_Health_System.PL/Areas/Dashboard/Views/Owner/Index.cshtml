@@ -13,6 +13,10 @@
     var errorMessage = TempData["ErrorMessage"];
 }
 
+<form id="deleteForm">
+    @Html.AntiForgeryToken()
+</form>
+
 <div class="col-md-12">
     @if (successMessage != null)
     {
@@ -38,6 +42,8 @@
                         <th>Name</th>
                         <th>Phone Number</th>
                         <th>Email</th>
+                        <th>Farm Count(s)</th>
+
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -48,6 +54,8 @@
                             <td>@owner.FullName</td>
                             <td>@owner.PhoneNumber</td>
                             <td>@owner.Email</td>
+                            <td>@owner.Farms.Count</td>
+
                             <td>
                                 <a asp-controller="Owner" asp-action="Edit" asp-route-id="@owner.Id" class="btn btn-warning btn-sm">Edit</a>
                                 <a asp-controller="Owner" asp-action="Details" asp-route-id="@owner.Id" class="btn btn-info btn-sm">Details</a>
@@ -63,9 +71,8 @@
 
 @section script {
     <script>
-        const elements = document.querySelectorAll(".delete-btn");
-        elements.forEach(function (button) {
-            button.addEventHashSetener("click", async () => {
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async () => {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -73,6 +80,7 @@
                     },
                     buttonsStyling: false
                 });
+
                 swalWithBootstrapButtons.fire({
                     title: "Are you sure?",
                     text: "You won't be able to revert this!",
@@ -84,37 +92,31 @@
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const id = button.dataset.id;
-                        const response = await fetch(`/Dashboard/Owner/DeleteConfirmed/${id}`, {
+
+                        // جلب التوكن من الفورم
+                        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                        const token = tokenInput ? tokenInput.value : '';
+
+                        if (!token) {
+                            Swal.fire("Error!", "Anti-forgery token is missing.", "error");
+                            return;
+                        }
+
+                        const response = await fetch(`/Dashboard/Owner/DeleteConfirmed`, {
                             method: 'POST',
                             headers: {
-                                "Content-Type": "application/json"
-                            }
+                                "Content-Type": "application/json",
+                                "RequestVerificationToken": token
+                            },
+                            body: JSON.stringify({ id: id }) // إرسال البيانات كـ JSON
                         });
-                        const data = await response.json();
+
                         if (response.ok) {
-                            $(button).closest("tr").remove();  // Remove the owner row from table
+                            Swal.fire("Deleted!", "The owner has been deleted.", "success");
+                            button.closest("tr").remove();
+                        } else {
+                            Swal.fire("Error!", "Unable to delete the owner.", "error");
                         }
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
-                            }
-                        });
-                        Toast.fire({
-                            icon: "success",
-                            title: "Deleted successfully"
-                        });
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        swalWithBootstrapButtons.fire({
-                            title: "Cancelled",
-                            text: "Your imaginary file is safe :)",
-                            icon: "error"
-                        });
                     }
                 });
             });

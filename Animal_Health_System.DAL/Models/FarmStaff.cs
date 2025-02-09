@@ -26,15 +26,37 @@ namespace Animal_Health_System.DAL.Models
         public Farm Farm { get; set; }
 
         public DateTime? DateHired { get; set; }  // Date when the staff member was hired
-        public TimeSpan? TimeWorked
+        public string TimeWorked
         {
             get
             {
-                return DateHired.HasValue ? DateTime.Today - DateHired.Value : (TimeSpan?)null;
+                if (!DateHired.HasValue)
+                    return "N/A"; // في حالة عدم توفر تاريخ التوظيف
+
+                var hireDate = DateHired.Value;
+                var today = DateTime.Today;
+
+                int years = today.Year - hireDate.Year;
+                int months = today.Month - hireDate.Month;
+                int days = today.Day - hireDate.Day;
+
+                if (days < 0)
+                {
+                    months--;
+                    days += DateTime.DaysInMonth(today.Year, today.Month - 1);
+                }
+                if (months < 0)
+                {
+                    years--;
+                    months += 12;
+                }
+
+                return $"{years} years, {months} months, {days} days";
             }
         }
 
-        public   ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
+
+        public ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
          public   ICollection<Notification> Notifications { get; set; } = new List <Notification>();
         public   ICollection<HealthReport> HealthReports { get; set; } = new List <HealthReport>();
         public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();

@@ -3,6 +3,8 @@ using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalHealthHistoryVIMO
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
 using AutoMapper;
@@ -34,6 +36,16 @@ namespace Animal_Health_System.PL.Mapping
             CreateMap<AnimalHealthHistory, AnimalHealthHistoryFormVM>()
                 .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => src.EventType));
 
+            //************  Farm  ***************
+            CreateMap<Farm, FarmVM>()
+      
+      .ReverseMap();
+
+            CreateMap<Farm, FarmDetailsVM>()
+              
+                .ReverseMap();
+
+            CreateMap<FarmFormVM, Farm>().ReverseMap();
             //************  Appointment  ***************
             CreateMap<Appointment, AppointmentVM>().ReverseMap();
             CreateMap<AppointmentVM, Appointment>().ReverseMap();
@@ -44,7 +56,11 @@ namespace Animal_Health_System.PL.Mapping
             CreateMap<AppointmentHistoryVM, AppointmentHistory>().ReverseMap();
             CreateMap<AppointmentHistory, AppointmentHistoryVM>().ReverseMap();
 
+            //************  FarmStaff  ***************
 
+            CreateMap<FarmStaff, FarmStaffVM>().ReverseMap();
+            CreateMap<FarmStaff, FarmStaffFormVM>().ReverseMap();
+            CreateMap<FarmStaff, FarmStaffDetailsVM>().ReverseMap();
 
             // ************** Veterinarian ***********
             CreateMap<Veterinarian, VeterinarianDetailsVM>().ReverseMap();
@@ -53,21 +69,10 @@ namespace Animal_Health_System.PL.Mapping
 
             //Owner
 
-            CreateMap<Owner, OwnerVM>()
-              .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-              .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
-
-            CreateMap<OwnerFormVM, Owner>()
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
-
-            CreateMap<Owner, OwnerFormVM>()
-                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted));
-
+            CreateMap<Owner, OwnerVM>().ReverseMap();
+            CreateMap<OwnerFormVM, Owner>().ReverseMap();
             CreateMap<Owner, OwnerDetailsVM>().ReverseMap();
+
         }
     }
 }

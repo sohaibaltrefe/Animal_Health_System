@@ -1,21 +1,19 @@
 ﻿using Animal_Health_System.DAL.Models;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO
 {
     public class OwnerDetailsVM
     {
-
         public int Id { get; set; }
         public string FullName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
-        public ICollection<Farm> Farms { get; set; } = new HashSet<Farm>();
-        public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();
-        public ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 
 

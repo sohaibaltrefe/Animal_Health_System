@@ -21,17 +21,18 @@ namespace Animal_Health_System.BLL.Repository
             this.logger = logger;
         }
 
+
         public async Task<int> AddAsync(Veterinarian veterinarian)
         {
             try
             {
-                 await context.veterinarians.AddAsync(veterinarian);
+                await context.veterinarians.AddAsync(veterinarian);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while adding a veterinarian.");
-                throw;
+                throw new Exception("Error adding veterinarian to the database.", ex);
             }
         }
 
@@ -47,7 +48,7 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while retrieving all veterinarians.");
-                throw;
+                throw new Exception("Error retrieving veterinarians from the database.", ex);
             }
         }
 
@@ -63,7 +64,7 @@ namespace Animal_Health_System.BLL.Repository
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while retrieving veterinarian with ID {Id}.", id);
-                throw;
+                throw new Exception($"Error retrieving veterinarian with ID {id}.", ex);
             }
         }
 
@@ -71,13 +72,13 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                 context.veterinarians.Update(veterinarian);
+                context.veterinarians.Update(veterinarian);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating veterinarian with ID {Id}.", veterinarian.Id);
-                throw;
+                throw new Exception($"Error updating veterinarian with ID {veterinarian.Id}.", ex);
             }
         }
 
@@ -89,13 +90,13 @@ namespace Animal_Health_System.BLL.Repository
                 if (veterinarian != null)
                 {
                     veterinarian.IsDeleted = true; // Soft delete
-                     await context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while deleting veterinarian with ID {Id}.", id);
-                throw;
+                throw new Exception($"Error deleting veterinarian with ID {id}.", ex);
             }
         }
 
@@ -111,6 +112,5 @@ namespace Animal_Health_System.BLL.Repository
                 throw new Exception("Error occurred while saving changes.", ex);
             }
         }
-
     }
 }

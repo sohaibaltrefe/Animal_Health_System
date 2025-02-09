@@ -52,16 +52,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                // Fetching all farms
                 var farms = await unitOfWork.farmRepository.GetAllAsync();
-
-                // Prepare the view model and populate the farms dropdown
                 var vm = new AnimalFormVM
                 {
-                    Farms = new SelectList(farms, "Id", "Name")
+                    Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList()
                 };
 
-                // Return the view with the prepared view model
                 return View(vm);
             }
             catch (Exception ex)
@@ -72,32 +68,25 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Create Animal (POST)
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AnimalFormVM vm)
         {
             if (!ModelState.IsValid)
             {
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return View(vm);
             }
 
             try
             {
-                // Mapping the view model to the animal entity
                 var animal = mapper.Map<Animal>(vm);
-
-
-              
-
-                // Add the animal to the database
                 await unitOfWork.animalRepository.AddAsync(animal);
-
-                // Success message
                 TempData["SuccessMessage"] = "Animal added successfully.";
-
-                // Redirect to the Index action
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -108,31 +97,23 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Edit Animal (GET)
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                // Fetch the animal by ID
                 var animal = await unitOfWork.animalRepository.GetAsync(id);
-
                 if (animal == null)
                 {
                     TempData["ErrorMessage"] = "Animal not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Fetch all farms for the dropdown
                 var farms = await unitOfWork.farmRepository.GetAllAsync();
-
-                // Mapping the animal entity to the view model
                 var vm = mapper.Map<AnimalFormVM>(animal);
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
 
-                // Prepare the farms dropdown and set the selected farm
-                vm.Farms = new SelectList(farms, "Id", "Name", animal.FarmId);
-
-                // Return the view with the populated view model
                 return View(vm);
             }
             catch (Exception ex)
@@ -143,40 +124,31 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Edit Animal (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AnimalFormVM vm)
         {
             if (!ModelState.IsValid)
             {
+                var farms = await unitOfWork.farmRepository.GetAllAsync();
+                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return View(vm);
             }
 
             try
             {
-                // Fetch the animal by ID
                 var animal = await unitOfWork.animalRepository.GetAsync(vm.Id);
-
                 if (animal == null)
                 {
                     TempData["ErrorMessage"] = "Animal not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Mapping the updated view model to the animal entity
                 mapper.Map(vm, animal);
-
-                // Set UpdatedAt timestamp
-
-                // Update the animal in the database
                 await unitOfWork.animalRepository.UpdateAsync(animal);
-
-                // Success message
                 TempData["SuccessMessage"] = "Animal updated successfully.";
-
-                // Redirect to the Index action
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

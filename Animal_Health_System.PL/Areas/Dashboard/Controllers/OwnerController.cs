@@ -1,4 +1,5 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.BLL.Repository;
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO;
 using AutoMapper;
@@ -13,23 +14,23 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
     [Area("Dashboard")]
     public class OwnerController : Controller
     {
-        private readonly IOwnerRepository ownerRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger<OwnerController> logger;
 
-        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper, ILogger<OwnerController> logger)
+        public OwnerController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<OwnerController> logger)
         {
-            this.ownerRepository = ownerRepository;
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.logger = logger;
         }
 
-        // HashSet all owners
+
         public async Task<IActionResult> Index()
         {
             try
             {
-                var owners = await ownerRepository.GetAllAsync();
+                var owners = await unitOfWork.ownerRepository.GetAllAsync();
                 var ownerModels = mapper.Map<IEnumerable<OwnerVM>>(owners);
                 return View(ownerModels);
             }
@@ -41,14 +42,12 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
         }
 
-        // Show create page
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // Save new owner
         [HttpPost]
         public async Task<IActionResult> Create(OwnerFormVM ownerVM)
         {
@@ -61,7 +60,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 }
 
                 var owner = mapper.Map<Owner>(ownerVM);
-                await ownerRepository.AddAsync(owner);
+                await unitOfWork.ownerRepository.AddAsync(owner);
 
                 TempData["SuccessMessage"] = "Owner added successfully!";
                 return RedirectToAction("Index");
@@ -79,7 +78,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var owner = await ownerRepository.GetAsync(id);
+                var owner = await unitOfWork.ownerRepository.GetAsync(id);
                 if (owner == null)
                 {
                     TempData["ErrorMessage"] = "Owner not found.";
@@ -92,12 +91,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error occurred while fetching the owner with ID {id}.");
-                TempData["ErrorMessage"] = "An error occurred while fetching the owner.";
                 return RedirectToAction("Index");
             }
         }
 
-        // Save updates
         [HttpPost]
         public async Task<IActionResult> Edit(OwnerFormVM ownerVM)
         {
@@ -109,21 +106,15 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     return View(ownerVM);
                 }
 
-                var owner = await ownerRepository.GetAsync(ownerVM.Id);
+                var owner = await unitOfWork.ownerRepository.GetAsync(ownerVM.Id);
                 if (owner == null)
                 {
                     TempData["ErrorMessage"] = "Owner not found.";
-                    logger.LogWarning($"Owner with ID {ownerVM.Id} not found.");
                     return RedirectToAction("Index");
                 }
 
-                // Update fields
-                owner.FullName = ownerVM.FullName;
-                owner.PhoneNumber = ownerVM.PhoneNumber;
-                owner.Email = ownerVM.Email;
-                owner.IsDeleted = ownerVM.IsDeleted;
-
-                await ownerRepository.UpdateAsync(owner);
+                mapper.Map(ownerVM, owner);
+                await unitOfWork.ownerRepository.UpdateAsync(owner);
 
                 TempData["SuccessMessage"] = "Owner updated successfully!";
                 return RedirectToAction("Index");
@@ -131,59 +122,65 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating the owner.");
-                TempData["ErrorMessage"] = "An error occurred while updating the owner.";
                 return View(ownerVM);
             }
         }
 
-        // Show owner details
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             try
             {
-                var owner = await ownerRepository.GetAsync(id);
+                // الحصول على المالك باستخدام الـ id
+                var owner = await unitOfWork.ownerRepository.GetAsync(id);
                 if (owner == null)
                 {
-                    TempData["ErrorMessage"] = "Owner not found.";
-                    return RedirectToAction("Index");
+                    return NotFound();
                 }
 
+                // تحويل الكائن من Owner إلى OwnerDetailsVM
                 var ownerModel = mapper.Map<OwnerDetailsVM>(owner);
+
+                // عرض تفاصيل المالك
                 return View(ownerModel);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error occurred while fetching details for owner ID {id}.");
-                TempData["ErrorMessage"] = "An error occurred while fetching the owner's details.";
-                return RedirectToAction("Index");
+                // تسجيل الخطأ في حال حدوث استثناء
+                logger.LogError(ex, "Error occurred while fetching owner details.");
+
+                // إظهار رسالة خطأ للمستخدم
+                TempData["ErrorMessage"] = "An error occurred while fetching owner details. Please try again later.";
+
+                // العودة إلى صفحة Index
+                return RedirectToAction(nameof(Index));
             }
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                var owner = await ownerRepository.GetAsync(id);
-                if (owner == null || owner.IsDeleted)
+                var owner = await unitOfWork.ownerRepository.GetAsync(id);
+                if (owner == null)
                 {
-                    TempData["ErrorMessage"] = "Owner not found or already deleted.";
-                    logger.LogWarning($"Owner with ID {id} not found or already deleted.");
-                    return RedirectToAction(nameof(Index));
+                    return NotFound();
                 }
 
-                await ownerRepository.DeleteAsync(id);
-
-                TempData["SuccessMessage"] = "Owner deleted successfully!";
-                return RedirectToAction("Index");
+                await unitOfWork.ownerRepository.DeleteAsync(id);
+                TempData["SuccessMessage"] = "owner deleted successfully.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while deleting the owner.");
-                TempData["ErrorMessage"] = "An error occurred while deleting the owner.";
-                return RedirectToAction("Index");
+                logger.LogError(ex, "Error occurred while deleting owner.");
+                TempData["ErrorMessage"] = "An error occurred while deleting the owner. Please try again later.";
+                return RedirectToAction(nameof(Index));
             }
         }
+
+
     }
 }
