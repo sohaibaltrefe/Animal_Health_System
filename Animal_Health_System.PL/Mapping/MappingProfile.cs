@@ -5,6 +5,7 @@ using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalRecordVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
 using AutoMapper;
@@ -72,7 +73,11 @@ namespace Animal_Health_System.PL.Mapping
             CreateMap<Owner, OwnerVM>().ReverseMap();
             CreateMap<OwnerFormVM, Owner>().ReverseMap();
             CreateMap<Owner, OwnerDetailsVM>().ReverseMap();
+            //************  MedicalRecord  ***************
 
+            CreateMap<MedicalRecord, MedicalRecordVM>().ReverseMap();
+            CreateMap<MedicalRecord, MedicalRecordFormVM>().ReverseMap();
+            CreateMap<MedicalRecord, MedicalRecordDetailsVM>().ReverseMap();
         }
     }
 }
