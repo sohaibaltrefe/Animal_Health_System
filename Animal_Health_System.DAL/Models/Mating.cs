@@ -33,7 +33,6 @@ namespace Animal_Health_System.DAL.Models
         public Animal FemaleAnimal { get; set; }
 
         // التقارير المرتبطة بالتزاوج
-        public ICollection<BreedingReport> BreedingReports { get; set; } = new List <BreedingReport>();
     }
 
 }

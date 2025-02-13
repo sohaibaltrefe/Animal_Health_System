@@ -24,15 +24,7 @@ namespace Animal_Health_System.DAL.Models
 
         public decimal salary { get; set; }
 
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
-        public bool IsDeleted { get; set; }
-
-        public void UpdateTimestamp()
-        {
-            UpdatedAt = DateTime.UtcNow;
-        }
-
+       
         public   ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
 
         public   ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List <MedicalExamination>();

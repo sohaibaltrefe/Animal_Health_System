@@ -64,11 +64,9 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Birth> Births { get; set; } = new List<Birth>();
 
-        public ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
 
         public ICollection<Notification> PregnancyNotifications { get; set; } = new List<Notification>();
 
-        public ICollection<ProductionRecord> ProductionRecords { get; set; } = new List<ProductionRecord>();
 
         public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();
     }

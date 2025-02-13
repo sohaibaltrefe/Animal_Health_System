@@ -31,9 +31,6 @@ namespace Animal_Health_System.DAL.Models
 
         public MedicalExamination MedicalExamination { get; set; }
 
-        [ForeignKey(nameof(TreatmentPlan))]
-        public int? TreatmentPlanId { get; set; }  // رابط لخطة العلاج في حال كان هناك علاج مرتبط
-
-        public TreatmentPlan TreatmentPlan { get; set; }
+        
     }
 }

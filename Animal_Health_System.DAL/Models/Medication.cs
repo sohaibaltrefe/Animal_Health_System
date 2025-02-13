@@ -26,18 +26,13 @@ namespace Animal_Health_System.DAL.Models
         [ForeignKey(nameof(MedicalExamination))]
         public int  MedicalExaminationId { get; set; }
 
-        [ForeignKey(nameof(MedicationStock))]
-        public int  MedicationStockId { get; set; }
 
-        [ForeignKey(nameof(Prescription))]
-        public int  PrescriptionId { get; set; }
+        
 
 
         public MedicalExamination MedicalExamination  { get; set; }
 
-        public MedicationStock MedicationStock  { get; set; }
 
-        public Prescription Prescription  { get; set; }
 
 
     }

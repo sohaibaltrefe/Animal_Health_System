@@ -26,9 +26,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
         public ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List<MedicalExamination>();
         public ICollection<Pregnancy> Pregnancies { get; set; } = new List<Pregnancy>();
-        public ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
         public ICollection<Notification> PregnancyNotifications { get; set; } = new List<Notification>();
-        public ICollection<ProductionRecord> ProductionRecords { get; set; } = new List<ProductionRecord>();
         public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();
 
     }

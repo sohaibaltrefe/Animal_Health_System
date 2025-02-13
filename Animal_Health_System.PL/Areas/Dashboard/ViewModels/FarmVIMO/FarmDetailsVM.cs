@@ -23,7 +23,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
         // Breeding reports related to the farm
-        public ICollection<BreedingReport> BreedingReports { get; set; } = new List<BreedingReport>();
 
         // Mating related to the farm
         public ICollection<Mating> Matings { get; set; } = new List<Mating>();

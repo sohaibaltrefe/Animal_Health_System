@@ -29,7 +29,6 @@ namespace Animal_Health_System.PL
             builder.Services.AddScoped<IAppointmentHistoryRepository, AppointmentHistoryRepository>();
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IBirthRepository, BirthRepository>();
-            builder.Services.AddScoped<IBreedingReportRepository, BreedingReportRepository>();
 
 
 
@@ -37,21 +36,16 @@ namespace Animal_Health_System.PL
             builder.Services.AddScoped<IFarmRepository, FarmRepository>();
             builder.Services.AddScoped<IFarmStaffRepository, FarmStaffRepository>();
             builder.Services.AddScoped<IFarmVeterinarianRepository, FarmVeterinarianRepository>();
-            builder.Services.AddScoped<IHealthReportRepository, HealthReportRepository>();
             builder.Services.AddScoped<IHealthStatusLogRepository, HealthStatusLogRepository>();
 
             builder.Services.AddScoped<IMatingRepository, MatingRepository>();
             builder.Services.AddScoped<IMedicalExaminationRepository, MedicalExaminationRepository>();
             builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
             builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
-            builder.Services.AddScoped<IMedicationStockRepository, MedicationStockRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
             builder.Services.AddScoped<IPregnancyRepository, PregnancyRepository>();
-            builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
-            builder.Services.AddScoped<IProductionRecordRepository, ProductionRecordRepository>();
             builder.Services.AddScoped<IVaccineHistoryRepository, VaccineHistoryRepository>();
-            builder.Services.AddScoped<IVaccineReminderRepository, VaccineReminderRepository>();
             builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
             builder.Services.AddScoped<IVeterinarianRepository, VeterinarianRepository>();
 
@@ -78,7 +72,7 @@ var app = builder.Build();
             app.UseAuthorization();
             app.MapControllerRoute(
                  name: "areas",
-            pattern: "{area:exists}/{controller=Animal}/{action=Index}/{id?}"
+            pattern: "{area:exists}/{controller=Farm}/{action=Index}/{id?}"
             );
             app.MapControllerRoute(
                 name: "default",

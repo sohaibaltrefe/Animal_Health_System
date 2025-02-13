@@ -29,7 +29,7 @@ namespace Animal_Health_System.DAL.Models
         [ForeignKey(nameof(Veterinarian))]
         public int VeterinarianId { get; set; }
 
-        [ForeignKey(nameof(AnimalHealthHistory))]
+        [ForeignKey(nameof(Animal))]
         public int AnimalId { get; set; }
 
         [ForeignKey(nameof(Vaccine))]

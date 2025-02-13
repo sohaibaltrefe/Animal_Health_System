@@ -35,8 +35,6 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Medication> Medications { get; set; } = new List<Medication>();
 
-        public ICollection<TreatmentPlan> TreatmentPlans { get; set; } = new List<TreatmentPlan>();
 
-        public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
     }
 }
