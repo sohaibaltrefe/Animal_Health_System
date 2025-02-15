@@ -107,5 +107,20 @@ namespace Animal_Health_System.BLL.Repository
                 throw new Exception("Error occurred while saving changes.", ex);
             }
         }
+        public async Task<IEnumerable<Animal>> GetAnimalsByFarmIdAsync(int farmId)
+        {
+            try
+            {
+                return await context.animals
+                    .Where(a => a.FarmId == farmId && !a.IsDeleted)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving animals for FarmId {FarmId}", farmId);
+                throw new Exception($"Error occurred while retrieving animals for FarmId {farmId}.", ex);
+            }
+        }
+
     }
 }

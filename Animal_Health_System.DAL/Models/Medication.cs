@@ -23,14 +23,8 @@ namespace Animal_Health_System.DAL.Models
 
         public int Quantity { get; set; }
 
-        [ForeignKey(nameof(MedicalExamination))]
-        public int  MedicalExaminationId { get; set; }
+        public ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List<MedicalExamination>();
 
-
-        
-
-
-        public MedicalExamination MedicalExamination  { get; set; }
 
 
 

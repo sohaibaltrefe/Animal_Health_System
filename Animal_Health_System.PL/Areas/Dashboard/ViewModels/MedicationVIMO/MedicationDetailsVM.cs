@@ -12,5 +12,29 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationVIMO
         public DateTime ProductionDate { get; set; }
         public bool IsDeleted { get; set; }
         public int Quantity { get; set; }
+
+
+        // خاصية لحساب الأيام المتبقية حتى انتهاء الصلاحية
+        public string FormattedDaysUntilExpiry
+        {
+            get
+            {
+                var today = DateTime.UtcNow.Date;
+                if (ExpiryDate <= today)
+                    return "Expired";
+
+                var totalDays = (ExpiryDate - today).Days;
+                var years = totalDays / 365;
+                var months = (totalDays % 365) / 30;
+                var days = (totalDays % 365) % 30;
+
+                if (years > 0)
+                    return $"{years} year(s), {months} month(s), {days} day(s)";
+                else if (months > 0)
+                    return $"{months} month(s), {days} day(s)";
+                else
+                    return $"{days} day(s)";
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Animal_Health_System.BLL.Repository
@@ -30,8 +31,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while adding medicalRecord.");
-                throw new Exception("Error occurred while adding medicalRecord.", ex);
+                logger.LogError(ex, "Failed to add medical record.");
+                throw;
             }
         }
 
@@ -39,13 +40,15 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.medicalRecords.Where(a => !a.IsDeleted).ToListAsync();
-
+                return await context.medicalRecords
+                    .Where(a => !a.IsDeleted)
+                    .AsNoTracking()
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving medicalRecords.");
-                throw new Exception("Error occurred while retrieving medicalRecords.", ex);
+                logger.LogError(ex, "Failed to retrieve medical records.");
+                throw;
             }
         }
 
@@ -57,12 +60,13 @@ namespace Animal_Health_System.BLL.Repository
                     .Include(m => m.Animal)
                     .Include(m => m.Examinations)
                     .Include(m => m.Vaccines)
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving medicalRecord.");
-                throw new Exception("Error occurred while retrieving medicalRecord.", ex);
+                logger.LogError(ex, $"Failed to retrieve medical record with ID {id}.");
+                throw;
             }
         }
 
@@ -75,8 +79,8 @@ namespace Animal_Health_System.BLL.Repository
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while updating medicalRecord.");
-                throw new Exception("Error occurred while updating medicalRecord.", ex);
+                logger.LogError(ex, "Failed to update medical record.");
+                throw;
             }
         }
 
@@ -84,30 +88,35 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                var medicalRecord = await context.medicalRecords.FindAsync(id);
-                if (medicalRecord != null)
-                {
-                    medicalRecord.IsDeleted = true;
-                    await context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while deleting medicalRecord.");
-                throw new Exception("Error occurred while deleting medicalRecord.", ex);
-            }
-        }
+                var medicalRecord = await context.medicalRecords
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
 
-        public async Task SaveChangesAsync()
-        {
-            try
-            {
+                if (medicalRecord == null)
+                {
+                    logger.LogWarning($"Medical record ID {id} not found for deletion.");
+                    return;
+                }
+
+                medicalRecord.IsDeleted = true;
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
+                logger.LogError(ex, "Failed to delete medical record.");
+                throw;
+            }
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<MedicalRecord, bool>> predicate)
+        {
+            try
+            {
+                return await context.medicalRecords.AsNoTracking().AnyAsync(predicate);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error checking medical record existence.");
+                throw;
             }
         }
 
@@ -119,25 +128,26 @@ namespace Animal_Health_System.BLL.Repository
                     .Include(m => m.Animal)
                     .Include(m => m.Examinations)
                     .Include(m => m.Vaccines)
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(m => m.AnimalId == animalId && !m.IsDeleted);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving medical record by animal ID.");
-                throw new Exception("Error occurred while retrieving medical record by animal ID.", ex);
+                logger.LogError(ex, $"Failed to retrieve medical record for AnimalId {animalId}.");
+                throw;
             }
         }
 
-        public async Task<bool> AnyAsync(Func<MedicalRecord, bool> predicate)
+        public async Task SaveChangesAsync()
         {
             try
             {
-                return await Task.Run(() => context.medicalRecords.Any(predicate));
+                await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while checking if any medical record exists.");
-                throw new Exception("Error occurred while checking if any medical record exists.", ex);
+                logger.LogError(ex, "Failed to save changes.");
+                throw;
             }
         }
     }

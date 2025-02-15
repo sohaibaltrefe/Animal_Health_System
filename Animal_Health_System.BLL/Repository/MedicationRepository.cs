@@ -22,17 +22,23 @@ namespace Animal_Health_System.BLL.Repository
             this.logger = logger;
         }
 
-        public async Task<int> AddAsync(Medication  medication)
+        public async Task<int> AddAsync(Medication medication)
         {
             try
             {
+                bool exists = await context.medications.AnyAsync(m => m.Name == medication.Name && !m.IsDeleted);
+                if (exists)
+                {
+                    throw new Exception("A medication with the same name already exists.");
+                }
+
                 await context.medications.AddAsync(medication);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while adding medication.");
-                throw new Exception("Error occurred while adding medication.", ex);
+                throw;
             }
         }
 
@@ -53,9 +59,10 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.medications
-                  
-                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+                var medication = await context.medications
+                    .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
+
+                return medication ?? throw new Exception("Medication not found.");
             }
             catch (Exception ex)
             {
@@ -64,30 +71,38 @@ namespace Animal_Health_System.BLL.Repository
             }
         }
 
+
         public async Task<int> UpdateAsync(Medication medication)
         {
             try
             {
+                bool exists = await context.medications.AnyAsync(m => m.Name == medication.Name && m.Id != medication.Id && !m.IsDeleted);
+                if (exists)
+                {
+                    throw new Exception("A medication with the same name already exists.");
+                }
+
                 context.medications.Update(medication);
                 return await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating medication.");
-                throw new Exception("Error occurred while updating medication.", ex);
+                throw;
             }
         }
-
         public async Task DeleteAsync(int id)
         {
             try
             {
-                var medication = await context.medications.FindAsync(id);
-                if (medication != null)
+                var medication = await context.medications.FirstOrDefaultAsync(m => m.Id == id);
+                if (medication == null || medication.IsDeleted)
                 {
-                    medication.IsDeleted = true;
-                    await context.SaveChangesAsync();
+                    throw new Exception("Medication not found or already deleted.");
                 }
+
+                medication.IsDeleted = true;
+                await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

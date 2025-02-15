@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<MedicalRecordVM>
 
 @section Header {
-    MedicalRecord
+        MedicalRecord
 }
+
 @section loc {
-    show
+        show
 }
 
 <div class="col-md-12">
@@ -16,34 +17,31 @@
             <div class="d-flex justify-content-center mb-3">
                 <a asp-controller="MedicalRecord" asp-action="Create" class="btn btn-light btn-outline-primary">Create Medical Record</a>
             </div>
-           
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Farm</th>
+                        <th>Animal</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
                         <tr>
-                            <th>Name</th>
-                            <th>Farm</th>
-                            <th>Animal</th>
-                            <th>Actions</th>
+                            <td>@item.Name</td>
+                            <td>@item.Animal?.Farm?.Name</td>
+                            <td>@item.Animal?.Name</td>
+                            <td>
+                                <a asp-controller="MedicalRecord" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-controller="MedicalRecord" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                                <a href="javascript:void(0)" data-id="@item.Id" class="btn btn-danger btn-sm delete-btn">Delete</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.Name</td>
-                                <td>@item.Animal?.Farm ?.Name </td>
-                                <td>@item.Animal?.Name </td>
-                                <td>
-                                    <a asp-controller="MedicalRecord" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                    <a asp-controller="MedicalRecord" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
-                                    <a href="javascript:void(0)" data-id="@item.Id" class="btn btn-danger btn-sm delete-btn">Delete</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-           
-            
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -52,7 +50,7 @@
     <script>
         const elements = document.querySelectorAll(".delete-btn");
         elements.forEach(function (button) {
-            button.addEventHashSetener("click", async () => {
+            button.addEventListener("click", async () => { // Fixed this typo
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -72,7 +70,7 @@
                     if (result.isConfirmed) {
                         const id = button.dataset.id;
                         const response = await fetch(`/Dashboard/MedicalRecord/DeleteConfirmed/${id}`, {
-                            method: 'POST', Headers: {
+                            method: 'POST', headers: { // Corrected 'Headers' to lowercase
                                 "Content-Type": "application/json"
                             }
                         });
@@ -95,9 +93,7 @@
                             icon: "success",
                             title: "Deleted successfully"
                         });
-                    } else if (
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
                         swalWithBootstrapButtons.fire({
                             title: "Cancelled",
                             text: "Your file is safe :)",
@@ -105,7 +101,7 @@
                         });
                     }
                 });
-            })
-        })
+            });
+        });
     </script>
 }

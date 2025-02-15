@@ -1,17 +1,26 @@
 ﻿@model MedicalRecordFormVM
 
 @section Header {
-    Edit Medical Record
+        Edit Medical Record
 }
 @section loc {
-    Edit
+        edit
 }
-@if (ViewData["ErrorMessage"] != null)
+
+@if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-danger">
-        @ViewData["ErrorMessage"]
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
     </div>
 }
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="col-md-12">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -22,14 +31,24 @@
             <div class="card-body">
                 <div class="form-group">
                     <label asp-for="Name">Medical Record Name</label>
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Name" class="form-control" readonly />
                 </div>
+
+                <div class="form-group">
+                    <label for="FarmId">Farm</label>
+                    <select asp-for="FarmId" class="form-control" asp-items="Model.Farm" disabled>
+                        <option value="">Select a Farm</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label for="AnimalId">Animal</label>
-                    <select asp-for="AnimalId" class="form-control" asp-items="Model.Animal"></select>
-                    <span asp-validation-for="AnimalId" class="text-danger"></span>
+                    <select asp-for="AnimalId" class="form-control" asp-items="Model.Animal" disabled>
+                        <option value="">Select an Animal</option>
+                    </select>
                 </div>
             </div>
+
             <div class="card-footer">
                 <button type="submit" class="btn btn-success btn-block">Save Changes</button>
                 <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
@@ -37,3 +56,27 @@
         </form>
     </div>
 </div>
+@section script {
+    <script>
+        function updateAnimals(farmSelect) {
+            var farmId = farmSelect.value;
+            var animalSelect = document.getElementById("AnimalId");
+
+            // مسح الخيارات القديمة
+            animalSelect.innerHTML = '<option value="">Select an Animal</option>';
+
+            if (farmId) {
+                fetch(`/MedicalRecord/GetAnimalsByFarm?farmId=${farmId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(animal => {
+                            var option = new Option(animal.name, animal.id);
+                            animalSelect.add(option);
+                        });
+                    })
+                    .catch(error => console.error("Error fetching animals:", error));
+            }
+        }
+    </script>
+
+}

@@ -4,6 +4,7 @@ using Animal_Health_System.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Animal_Health_System.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250214062938_a")]
+    partial class a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -625,7 +628,7 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -636,9 +639,6 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsUnique();
 
                     b.HasIndex("FarmId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("medicalRecords");
                 });
@@ -668,6 +668,9 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MedicalExaminationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -682,6 +685,8 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MedicalExaminationId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -998,21 +1003,6 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("veterinarians");
-                });
-
-            modelBuilder.Entity("MedicalExaminationMedication", b =>
-                {
-                    b.Property<int>("MedicalExaminationsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MedicationsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MedicalExaminationsId", "MedicationsId");
-
-                    b.HasIndex("MedicationsId");
-
-                    b.ToTable("MedicalExamination_Medication", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1465,6 +1455,17 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Farm");
                 });
 
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.Medication", b =>
+                {
+                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
+                        .WithMany("Medications")
+                        .HasForeignKey("MedicalExaminationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MedicalExamination");
+                });
+
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Notification", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
@@ -1563,21 +1564,6 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Vaccine");
 
                     b.Navigation("Veterinarian");
-                });
-
-            modelBuilder.Entity("MedicalExaminationMedication", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", null)
-                        .WithMany()
-                        .HasForeignKey("MedicalExaminationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Medication", null)
-                        .WithMany()
-                        .HasForeignKey("MedicationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1682,6 +1668,11 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Notifications");
 
                     b.Navigation("VaccineHistories");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalExamination", b =>
+                {
+                    b.Navigation("Medications");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalRecord", b =>

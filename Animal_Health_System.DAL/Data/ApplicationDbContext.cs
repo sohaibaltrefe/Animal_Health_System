@@ -195,13 +195,13 @@ namespace Animal_Health_System.DAL.Data
                 .WithMany(o => o.Notifications)
                 .HasForeignKey(n => n.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
-           
+
 
             // Medication -> MedicalExamination (Many-to-One)
-            modelBuilder.Entity<Medication>()
-                .HasOne(m => m.MedicalExamination )
-                .WithMany(me => me.Medications)
-                .HasForeignKey(m => m.MedicalExaminationId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<MedicalExamination>()
+      .HasMany(me => me.Medications)  // الفحص الطبي يمكن أن يحتوي على أكثر من دواء
+      .WithMany(m => m.MedicalExaminations)  // الدواء يمكن أن يكون مرتبطًا بعدة فحوصات طبية
+      .UsingEntity(j => j.ToTable("MedicalExamination_Medication"));
 
             // FarmHealthSummary -> Farm (Many-to-One)
             modelBuilder.Entity<FarmHealthSummary>()
@@ -285,7 +285,9 @@ namespace Animal_Health_System.DAL.Data
             modelBuilder.Entity<MedicalRecord>()
                 .HasIndex(mr => mr.AnimalId)
                 .IsUnique();
-
+            modelBuilder.Entity<MedicalRecord>()
+                .HasIndex(mr => mr.Name)
+                .IsUnique();
             modelBuilder.Entity<Medication>()
                 .HasIndex(m => m.Name)
                 .IsUnique();

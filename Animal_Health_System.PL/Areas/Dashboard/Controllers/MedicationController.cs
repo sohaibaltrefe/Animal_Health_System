@@ -46,10 +46,50 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return View(vm);
             }
 
-            var medication = mapper.Map<Medication>(vm);
-            await unitOfWork.medicationRepository.AddAsync(medication);
-            await unitOfWork.medicationRepository.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // فحص تواريخ الإنتاج والانتهاء
+            if (vm.ProductionDate < new DateTime(2022, 1, 1) || vm.ProductionDate > DateTime.UtcNow.Date)
+            {
+                ModelState.AddModelError("ProductionDate", "Production date must be between 2022 and today's date.");
+            }
+
+            if (vm.ExpiryDate <= vm.ProductionDate)
+            {
+                ModelState.AddModelError("ExpiryDate", "Expiry date must be later than production date.");
+            }
+
+            if (vm.ExpiryDate > new DateTime(2030, 12, 31))
+            {
+                ModelState.AddModelError("ExpiryDate", "Expiry date cannot be later than December 31, 2030.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            try
+            {
+                var medication = mapper.Map<Medication>(vm);
+                await unitOfWork.medicationRepository.AddAsync(medication);
+                await unitOfWork.medicationRepository.SaveChangesAsync();
+                TempData["Success"] = "Medication added successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding medication.");
+
+                if (ex.Message.Contains("already exists"))
+                {
+                    ModelState.AddModelError("Name", "A medication with the same name already exists.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+
+                return View(vm);
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -73,17 +113,58 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return View(vm);
             }
 
-            var medication = await unitOfWork.medicationRepository.GetAsync(vm.Id);
-            if (medication == null)
+            // فحص تواريخ الإنتاج والانتهاء
+            if (vm.ProductionDate < new DateTime(2022, 1, 1) || vm.ProductionDate > DateTime.UtcNow.Date)
             {
-                return NotFound();
+                ModelState.AddModelError("ProductionDate", "Production date must be between 2022 and today's date.");
             }
 
-            mapper.Map(vm, medication);
-            await unitOfWork.medicationRepository.UpdateAsync(medication);
-            await unitOfWork.medicationRepository.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (vm.ExpiryDate <= vm.ProductionDate)
+            {
+                ModelState.AddModelError("ExpiryDate", "Expiry date must be later than production date.");
+            }
+
+            if (vm.ExpiryDate > new DateTime(2030, 12, 31))
+            {
+                ModelState.AddModelError("ExpiryDate", "Expiry date cannot be later than December 31, 2030.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            try
+            {
+                var medication = await unitOfWork.medicationRepository.GetAsync(vm.Id);
+                if (medication == null)
+                {
+                    return NotFound();
+                }
+
+                mapper.Map(vm, medication);
+                await unitOfWork.medicationRepository.UpdateAsync(medication);
+                await unitOfWork.medicationRepository.SaveChangesAsync();
+                TempData["Success"] = "Medication updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating medication.");
+
+                if (ex.Message.Contains("already exists"))
+                {
+                    ModelState.AddModelError("Name", "A medication with the same name already exists.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+
+                return View(vm);
+            }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)

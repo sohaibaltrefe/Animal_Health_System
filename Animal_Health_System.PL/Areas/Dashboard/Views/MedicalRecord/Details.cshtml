@@ -1,9 +1,11 @@
 ﻿@model MedicalRecordDetailsVM
+
 @section Header {
-    Medical Record
+        Medical Record
 }
+
 @section loc {
-    Details
+        Details
 }
 
 <div class="col-md-12">
@@ -12,35 +14,29 @@
             <h3 class="card-title">Medical Record Details</h3>
         </div>
         <div class="card-body">
+            <!-- Diagnosis -->
             <div class="form-group">
                 <label for="Name" class="font-weight-bold">Diagnosis</label>
                 <input asp-for="Name" class="form-control" id="Name" readonly />
             </div>
 
+            <!-- Animal Name -->
             <div class="form-group">
                 <label for="Animal" class="font-weight-bold">Animal</label>
                 <input asp-for="Animal.Name" class="form-control" id="Animal" readonly />
             </div>
 
+            <!-- Status -->
             <div class="form-group">
-                <label for="Status" class="font-weight-bold">Status</label>
-                <span class="form-control">
-                    @if (Model.IsDeleted)
-                    {
-                        <span class="text-danger">Deleted</span>
-                    }
-                    else
-                    {
-                        <span class="text-success">Active</span>
-                    }
-                </span>
-            </div>
+             
 
+            <!-- Created At -->
             <div class="form-group">
                 <label for="CreatedAt" class="font-weight-bold">Created At</label>
                 <input asp-for="CreatedAt" class="form-control" id="CreatedAt" readonly />
             </div>
 
+            <!-- Vaccines -->
             <div class="form-group">
                 <label for="Vaccines" class="font-weight-bold">Vaccines</label>
                 @if (Model.Vaccines != null && Model.Vaccines.Any())
@@ -62,6 +58,7 @@
                 }
             </div>
 
+            <!-- Examinations -->
             <div class="form-group">
                 <label for="Examinations" class="font-weight-bold">Examinations</label>
                 @if (Model.Examinations != null && Model.Examinations.Any())
@@ -103,6 +100,7 @@
                 }
             </div>
 
+            <!-- Action Buttons -->
             <div class="form-group mt-4">
                 <a asp-controller="MedicalRecord" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
                     <i class="fas fa-edit"></i> Edit
