@@ -58,7 +58,7 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
          public   ICollection<Notification> Notifications { get; set; } = new List <Notification>();
-        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
+      
     }
 
 

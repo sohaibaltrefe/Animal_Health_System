@@ -1,11 +1,11 @@
 ﻿@model VaccineFormVM
 
 @section Header {
-    Vaccine
+        Vaccine
 }
 
 @section loc {
-    create
+        create
 }
 
 @{
@@ -33,22 +33,32 @@
                 <div class="form-group">
                     <label asp-for="Name">Vaccine Name</label>
                     <input asp-for="Name" class="form-control" placeholder="Enter Vaccine Name" />
-                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Dose">Dose</label>
                     <input asp-for="Dose" class="form-control" placeholder="Enter Dose" />
-                    @Html.ValidationMessageFor(model => model.Dose, "", new { @class = "text-danger" })
+                    <span asp-validation-for="Dose" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="MedicalRecordId">Medical Record</label>
-                    <select asp-for="MedicalRecordId" class="form-control" asp-items="Model.MedicalRecords"></select>
-                    @Html.ValidationMessageFor(model => model.MedicalRecordId, "", new { @class = "text-danger" })
+                    <label asp-for="Description">Description</label>
+                    <input asp-for="Description" class="form-control" placeholder="Enter Medication Description" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="VeterinarianId">Veterinarian</label>
-                    <select asp-for="VeterinarianId" class="form-control" asp-items="Model.Veterinarians"></select>
-                    @Html.ValidationMessageFor(model => model.VeterinarianId, "", new { @class = "text-danger" })
+                    <label asp-for="ProductionDate">Production Date</label>
+                    <input asp-for="ProductionDate" type="date" class="form-control" />
+                    <span asp-validation-for="ProductionDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ExpiryDate">Expiry Date</label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
+                    <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Quantity">Quantity</label>
+                    <input asp-for="Quantity" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
             </div>
             <div class="card-footer">

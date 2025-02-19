@@ -14,6 +14,8 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> AddAsync(Medication medication);
         Task<int> UpdateAsync(Medication medication);
         Task DeleteAsync(int id);
+        Task<IEnumerable<Medication>> FindAsync(Func<Medication, bool> predicate);
+
         Task SaveChangesAsync();
     }
 }

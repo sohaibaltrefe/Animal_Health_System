@@ -5,11 +5,15 @@ using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalRecordVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineHistoryVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace Animal_Health_System.PL.Mapping
@@ -76,15 +80,48 @@ namespace Animal_Health_System.PL.Mapping
             CreateMap<Owner, OwnerDetailsVM>().ReverseMap();
             //************  MedicalRecord  ***************
 
-            CreateMap<MedicalRecord, MedicalRecordVM>().ReverseMap();
-            CreateMap<MedicalRecord, MedicalRecordFormVM>().ReverseMap();
-            CreateMap<MedicalRecord, MedicalRecordDetailsVM>().ReverseMap();
-
+            CreateMap<MedicalRecordFormVM, MedicalRecord>()
+    .ForMember(dest => dest.AnimalId, opt => opt.MapFrom(src => src.AnimalId.Value))
+    .ReverseMap();
+            CreateMap<MedicalRecord, MedicalRecordVM>()
+                .ForMember(dest => dest.Farm, opt => opt.MapFrom(src => src.Animal.Farm));
+CreateMap<MedicalRecord, MedicalRecordDetailsVM>()
+    .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+    .ReverseMap();
             //************  Medication  ***************
 
             CreateMap<Medication, MedicationVM>().ReverseMap();
             CreateMap<Medication, MedicationFormVM>().ReverseMap();
             CreateMap<Medication, MedicationDetailsVM>().ReverseMap();
+
+            //************  Vaccine  ***************
+
+            CreateMap<Vaccine, VaccineVM>().ReverseMap();
+            CreateMap<Vaccine, VaccineFormVM>().ReverseMap();
+            CreateMap<Vaccine, VaccineDetailsVM>().ReverseMap();
+
+            //************  VaccineHistory  ***************
+
+            CreateMap<VaccineHistory, VaccineHistoryVM>().ReverseMap();
+            CreateMap<VaccineHistory, VaccineHistoryFormVM>().ReverseMap();
+            CreateMap<VaccineHistory, VaccineHistoryDetailsVM>().ReverseMap();
+
+            //************  MedicalExamination  ***************
+
+            CreateMap<MedicalExamination, MedicalExaminationVM>().ReverseMap();
+
+            CreateMap<MedicalExamination, MedicalExaminationFormVM>()
+                .ForMember(dest => dest.Animal, opt => opt.Ignore()) // تجنب محاولة تحويل Animal إلى SelectList
+                .ForMember(dest => dest.MedicalRecord, opt => opt.Ignore()) // نفس المشكلة مع MedicalRecord
+                .ForMember(dest => dest.MedicationsList, opt => opt.Ignore()) // تجاهل SelectList الأخرى
+                .ForMember(dest => dest.Veterinarian, opt => opt.Ignore())
+                .ForMember(dest => dest.Farm, opt => opt.Ignore())
+                .ReverseMap();
+
+
+            CreateMap<MedicalExamination, MedicalExaminationDetailsVM>()
+                
+                .ReverseMap();
         }
     }
 }

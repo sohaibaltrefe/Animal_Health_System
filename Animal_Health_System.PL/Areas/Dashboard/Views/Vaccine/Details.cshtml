@@ -1,11 +1,11 @@
 ﻿@model VaccineDetailsVM
 
 @section Header {
-    Vaccine
+        Vaccine
 }
 
 @section loc {
-    Details
+        Details
 }
 
 @{
@@ -27,6 +27,17 @@
     <div class="card shadow-sm">
         <div class="card-header">
             <h3 class="card-title">Vaccine Details</h3>
+            <div>
+                <a asp-controller="Vaccine" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <button class="btn btn-danger" onclick="confirmDelete(@Model.Id)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
         </div>
         <div class="card-body">
             <div class="form-group">
@@ -40,18 +51,32 @@
             </div>
 
             <div class="form-group">
-                <label for="AdministrationDate">Administration Date</label>
-                <input asp-for="AdministrationDate" class="form-control" id="AdministrationDate" readonly value="@Model.AdministrationDate.ToString("yyyy-MM-dd")" />
+                <label for="ProductionDate">Production Date</label>
+                <input asp-for="ProductionDate" type="text" class="form-control" id="ProductionDate" readonly value="@Model.ProductionDate.ToString("yyyy-MM-dd")" />
             </div>
 
             <div class="form-group">
-                <label for="MedicalRecord">Medical Record</label>
-                <input value="@Model.MedicalRecordDetails" class="form-control" id="MedicalRecord" readonly />
+                <label for="ExpiryDate">Expiry Date</label>
+                <input asp-for="ExpiryDate" type="text" class="form-control" id="ExpiryDate" readonly value="@Model.ExpiryDate.ToString("yyyy-MM-dd")" />
             </div>
 
             <div class="form-group">
-                <label for="Veterinarian">Veterinarian</label>
-                <input value="@Model.VeterinarianName" class="form-control" id="Veterinarian" readonly />
+                <label for="Quantity">Quantity</label>
+                <input asp-for="Quantity" class="form-control" id="Quantity" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <input asp-for="Description" class="form-control" id="Description" readonly />
+            </div>
+            <div class="form-group">
+                <label for="CreatedAt">Created At</label>
+                <input asp-for="CreatedAt" type="text" class="form-control" id="CreatedAt" readonly value="@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")" />
+            </div>
+
+            <div class="form-group">
+                <label for="UpdatedAt">Updated At</label>
+                <input asp-for="UpdatedAt" type="text" class="form-control" id="UpdatedAt" readonly value="@(Model.UpdatedAt.HasValue ? Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")" />
             </div>
 
             <div class="form-group mt-4">
@@ -65,3 +90,38 @@
         </div>
     </div>
 </div>
+
+@section Script {
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will not be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteVaccine(id);
+                }
+            });
+        }
+
+        function deleteVaccine(id) {
+            $.ajax({
+                url: "/Dashboard/Vaccine/DeleteConfirmed/" + id,
+                type: "POST",
+                success: function (response) {
+                    Swal.fire("Deleted!", response.message, "success").then(() => {
+                        window.location.href = "/Dashboard/Vaccine/Index";
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire("Error!", "An error occurred while deleting.", "error");
+                }
+            });
+        }
+    </script>
+}

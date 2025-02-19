@@ -1,7 +1,7 @@
 ﻿@model MedicalRecordDetailsVM
 
 @section Header {
-        Medical Record
+        Medical Record Details
 }
 
 @section loc {
@@ -26,9 +26,11 @@
                 <input asp-for="Animal.Name" class="form-control" id="Animal" readonly />
             </div>
 
-            <!-- Status -->
+            <!-- Farm Name -->
             <div class="form-group">
-             
+                <label for="Farm" class="font-weight-bold">Farm</label>
+                <input asp-for="Animal.Farm.Name" class="form-control" id="Farm" readonly />
+            </div>
 
             <!-- Created At -->
             <div class="form-group">
@@ -39,15 +41,14 @@
             <!-- Vaccines -->
             <div class="form-group">
                 <label for="Vaccines" class="font-weight-bold">Vaccines</label>
-                @if (Model.Vaccines != null && Model.Vaccines.Any())
+                @if (Model.vaccineHistories != null && Model.vaccineHistories.Any())
                 {
-                    @for (int i = 0; i < Model.Vaccines.Count; i++)
+                    @for (int i = 0; i < Model.vaccineHistories.Count; i++)
                     {
-                        var vaccine = Model.Vaccines.ElementAt(i);
+                        var vaccine = Model.vaccineHistories.ElementAt(i);
                         <div class="mb-3 p-3 border rounded bg-light">
                             <strong class="text-primary">@Ordinal(i + 1) Vaccine:</strong>
                             <div><strong>Name:</strong> @vaccine.Name</div>
-                            <div><strong>Dose:</strong> @vaccine.Dose</div>
                             <div><strong>Administration Date:</strong> @vaccine.AdministrationDate.ToString("yyyy-MM-dd")</div>
                         </div>
                     }
@@ -108,6 +109,13 @@
                 <a asp-action="Index" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Index
                 </a>
+                <form asp-controller="MedicalRecord" asp-action="DeleteConfirmed" asp-route-id="Id" method="post" class="d-inline delete-form">
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="@Model.Id">
+
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -138,4 +146,59 @@
                 return number + "th";
         }
     }
+}
+@section script {
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const id = button.getAttribute("data-id"); // جلب ID من الزر
+
+                        // جلب التوكين المضاد للهجمات CSRF
+                        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                        const token = tokenInput ? tokenInput.value : '';
+
+                        if (!token) {
+                            Swal.fire("Error!", "Anti-forgery token is missing.", "error");
+                            return;
+                        }
+
+                        // إرسال الطلب
+                        const response = await fetch(`/Dashboard/MedicalRecord/DeleteConfirmed`, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "RequestVerificationToken": token
+                            },
+                            body: new URLSearchParams({ id: id })
+                        });
+
+                        if (response.ok) {
+                            Swal.fire("Deleted!", "The MedicalRecord has been deleted.", "success")
+                                .then(() => window.location.href = '/Dashboard/MedicalRecord/Index'); // إعادة التوجيه بعد الحذف
+                        } else {
+                            Swal.fire("Error!", "Unable to delete the MedicalRecord.", "error");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 }

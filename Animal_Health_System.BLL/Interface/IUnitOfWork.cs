@@ -28,6 +28,7 @@ namespace Animal_Health_System.BLL.Interface
         public IVaccineHistoryRepository vaccineHistoryRepository { get; }
         public IVaccineRepository vaccineRepository { get; }
         public IVeterinarianRepository veterinarianRepository { get; }
-     
+        Task SaveChangesAsync();
+
     }
 }

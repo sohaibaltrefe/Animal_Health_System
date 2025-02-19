@@ -124,30 +124,28 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey<MedicalRecord>(mr => mr.AnimalId).OnDelete(DeleteBehavior.Restrict);// Foreign key in MedicalRecord
 
             // VaccineHistory -> Animal (Many-to-One)
-            modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.Animal )  // VaccineHistory has one Animal
-                .WithMany(a => a.VaccineHistories) // Animal has many VaccineHistories
-                .HasForeignKey(vh => vh.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
+           
 
             // VaccineHistory -> Vaccine (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.Vaccine )  // VaccineHistory has one Vaccine
+                .HasOne(vh => vh.vaccine )  // VaccineHistory has one Vaccine
                 .WithMany(v => v.VaccineHistories) // Vaccine has many VaccineHistories
                 .HasForeignKey(vh => vh.VaccineId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
 
             // VaccineHistory -> Veterinarian (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.Veterinarian)  // VaccineHistory has one Veterinarian
+                .HasOne(vh => vh.veterinarian)  // VaccineHistory has one Veterinarian
                 .WithMany(v => v.VaccineHistories) // Veterinarian has many VaccineHistories
                 .HasForeignKey(vh => vh.VeterinarianId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
+            
 
-            // VaccineHistory -> FarmStaff (Many-to-One)
             modelBuilder.Entity<VaccineHistory>()
-                .HasOne(vh => vh.FarmStaff )  // VaccineHistory has one FarmStaff
-                .WithMany(fs => fs.VaccineHistories) // FarmStaff has many VaccineHistories
-                .HasForeignKey(vh => vh.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in VaccineHistory
+    .HasOne(vh => vh.medicalRecord)
+    .WithMany(mr => mr.vaccineHistories)
+    .HasForeignKey(vh => vh.medicalRecordId)
+    .OnDelete(DeleteBehavior.Restrict);
 
-            // AppointmentHistory -> Appointment (Many-to-One)
+
             modelBuilder.Entity<AppointmentHistory>()
                 .HasOne(ah => ah.Appointment )
                 .WithMany(a => a.AppointmentHistories)
@@ -285,6 +283,7 @@ namespace Animal_Health_System.DAL.Data
             modelBuilder.Entity<MedicalRecord>()
                 .HasIndex(mr => mr.AnimalId)
                 .IsUnique();
+
             modelBuilder.Entity<MedicalRecord>()
                 .HasIndex(mr => mr.Name)
                 .IsUnique();
@@ -292,6 +291,9 @@ namespace Animal_Health_System.DAL.Data
                 .HasIndex(m => m.Name)
                 .IsUnique();
 
+            modelBuilder.Entity<Vaccine>()
+               .HasIndex(m => m.Name)
+               .IsUnique();
 
             modelBuilder.Entity<Notification>()
                 .HasIndex(n => n.Name)
@@ -312,13 +314,7 @@ namespace Animal_Health_System.DAL.Data
 
           
 
-            modelBuilder.Entity<Vaccine>()
-                .HasIndex(v => new { v.Name, v.AdministrationDate })
-                .IsUnique();
-
-            modelBuilder.Entity<VaccineHistory>()
-                .HasIndex(vh => new { vh.AnimalId, vh.VaccineId, vh.AdministrationDate })
-                .IsUnique();
+          
 
           
             modelBuilder.Entity<Veterinarian>()

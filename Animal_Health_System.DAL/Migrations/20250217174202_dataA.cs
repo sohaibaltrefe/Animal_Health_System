@@ -5,25 +5,25 @@
 namespace Animal_Health_System.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class aa : Migration
+    public partial class dataA : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CurrentHealthStatus",
-                table: "animals");
+                name: "Namsse",
+                table: "vaccineHistories");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "CurrentHealthStatus",
-                table: "animals",
-                type: "int",
+            migrationBuilder.AddColumn<string>(
+                name: "Namsse",
+                table: "vaccineHistories",
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: "");
         }
     }
 }

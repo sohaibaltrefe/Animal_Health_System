@@ -110,6 +110,19 @@ namespace Animal_Health_System.BLL.Repository
                 throw new Exception("Error occurred while deleting medication.", ex);
             }
         }
+        public async Task<IEnumerable<Medication>> FindAsync(Func<Medication, bool> predicate)
+        {
+            try
+            {
+                // استخدام LINQ للبحث بناءً على الشرط المرسل في `predicate`
+                return await Task.Run(() => context.medications.Where(predicate).ToList());
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while searching for medications.");
+                throw new Exception("Error occurred while searching for medications.", ex);
+            }
+        }
 
         public async Task SaveChangesAsync()
         {

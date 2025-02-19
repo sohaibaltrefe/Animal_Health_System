@@ -3,7 +3,7 @@ using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,33 +35,16 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error page or message
-                TempData["Error"] = "An error occurred while fetching vaccines: " + ex.Message;
-                return RedirectToAction("Error", "Home"); // Redirect to an error page
+                logger.LogError(ex, "Error occurred while fetching vaccines.");
+                TempData["ErrorMessage"] = "An error occurred while fetching vaccines.";
+                return RedirectToAction("Error", "Home");
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            try
-            {
-                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
-                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
-
-                var vm = new VaccineFormVM
-                {
-                    MedicalRecords = new SelectList(medicalRecords, "Id", "Name"),
-                    Veterinarians = new SelectList(veterinarians, "Id", "FullName")
-                };
-                return View(vm);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while preparing the vaccine creation form: " + ex.Message;
-                return RedirectToAction("Error", "Home");
-            }
+            return View();
         }
 
         [HttpPost]
@@ -72,26 +55,47 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    
-                    var vaccine = mapper.Map<Vaccine>(vm);
+                    if (await unitOfWork.vaccineRepository.ExistsByNameAsync(vm.Name))
+                    {
+                        ModelState.AddModelError("Name", "This vaccine already exists.");
+                        return View(vm);
+                    }
 
+                    if (vm.ProductionDate < new DateTime(2025, 2, 10) || vm.ProductionDate > DateTime.UtcNow.Date)
+            {
+                        ModelState.AddModelError("ProductionDate", "Production date must be between 2025/2/10 and today's date.");
+                    }
+
+                    if (vm.ExpiryDate <= vm.ProductionDate)
+                    {
+                        ModelState.AddModelError("ExpiryDate", "Expiry date must be later than production date.");
+                    }
+
+                    if (vm.ExpiryDate > new DateTime(2025, 5, 1))
+                    {
+                        ModelState.AddModelError("ExpiryDate", "Expiry date cannot be later than 2025/5/1.");
+                    }
+
+                    // Map the ViewModel to the Entity
+                    var vaccine = mapper.Map<Vaccine>(vm);
+                    vm.UpdatedAt = DateTime.UtcNow;
+
+                    // Add the vaccine to the database
                     await unitOfWork.vaccineRepository.AddAsync(vaccine);
                     await unitOfWork.vaccineRepository.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Vaccine created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
-                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
-
-                vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
-                vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
+                // If ModelState is invalid, return the view with validation errors
                 return View(vm);
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while creating the vaccine: " + ex.Message;
-                return RedirectToAction("Error", "Home");
+                logger.LogError(ex, "Error occurred while creating vaccine.");
+                TempData["ErrorMessage"] = ex.Message;
+                return View(vm);
             }
         }
 
@@ -105,20 +109,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 {
                     return NotFound();
                 }
-
                 var vm = mapper.Map<VaccineFormVM>(vaccine);
-                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
-                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
-
-                vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
-                vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
-
                 return View(vm);
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while editing the vaccine: " + ex.Message;
+                logger.LogError(ex, "Error occurred while editing vaccine.");
+                TempData["ErrorMessage"] = "An error occurred while editing vaccine.";
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -129,32 +126,47 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await unitOfWork.vaccineRepository.GetAsync(vm.Id);
-                if (vaccine == null)
-                {
-                    return NotFound();
-                }
-
                 if (ModelState.IsValid)
                 {
+                    if (await unitOfWork.vaccineRepository.ExistsByNameAsync(vm.Name))
+                    {
+                        ModelState.AddModelError("Name", "This vaccine already exists.");
+                        return View(vm);
+                    }
+
+                    if (vm.ProductionDate < new DateTime(2025, 2, 10) || vm.ProductionDate > DateTime.UtcNow.Date)
+                    {
+                        ModelState.AddModelError("ProductionDate", "Production date must be between 2025/2/10 and today's date.");
+                    }
+
+                    if (vm.ExpiryDate <= vm.ProductionDate)
+                    {
+                        ModelState.AddModelError("ExpiryDate", "Expiry date must be later than production date.");
+                    }
+
+                    if (vm.ExpiryDate > new DateTime(2025, 5, 1))
+                    {
+                        ModelState.AddModelError("ExpiryDate", "Expiry date cannot be later than 2025/5/1.");
+                    }
+                    var vaccine = await unitOfWork.vaccineRepository.GetAsync(vm.Id);
+                    if (vaccine == null)
+                    {
+                        return NotFound();
+                    }
                     mapper.Map(vm, vaccine);
+                    vm.UpdatedAt = DateTime.UtcNow;
                     await unitOfWork.vaccineRepository.UpdateAsync(vaccine);
                     await unitOfWork.vaccineRepository.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Vaccine updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
-
-                var medicalRecords = await unitOfWork.medicalRecordRepository.GetAllAsync();
-                var veterinarians = await unitOfWork.veterinarianRepository.GetAllAsync();
-
-                vm.MedicalRecords = new SelectList(medicalRecords, "Id", "Name");
-                vm.Veterinarians = new SelectList(veterinarians, "Id", "FullName");
                 return View(vm);
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while updating the vaccine: " + ex.Message;
-                return RedirectToAction("Error", "Home");
+                logger.LogError(ex, "Error occurred while updating vaccine.");
+                TempData["ErrorMessage"] = ex.Message;
+                return View(vm);
             }
         }
 
@@ -168,14 +180,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 {
                     return NotFound();
                 }
-
                 var viewModel = mapper.Map<VaccineDetailsVM>(vaccine);
                 return View(viewModel);
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while fetching vaccine details: " + ex.Message;
+                logger.LogError(ex, "Error occurred while fetching vaccine details.");
+                TempData["ErrorMessage"] = "An error occurred while fetching vaccine details.";
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -185,21 +196,14 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         {
             try
             {
-                var vaccine = await unitOfWork.vaccineRepository.GetAsync(id);
-                if (vaccine == null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
                 await unitOfWork.vaccineRepository.DeleteAsync(id);
                 await unitOfWork.vaccineRepository.SaveChangesAsync();
                 return Ok(new { Message = "Vaccine deleted successfully" });
             }
             catch (Exception ex)
             {
-                // Log the exception and return an error message
-                TempData["Error"] = "An error occurred while deleting the vaccine: " + ex.Message;
-                return RedirectToAction("Error", "Home");
+                logger.LogError(ex, "Error occurred while deleting vaccine.");
+                return StatusCode(500, new { Message = "An error occurred while deleting vaccine." });
             }
         }
     }

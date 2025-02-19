@@ -15,5 +15,8 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> UpdateAsync(Vaccine vaccine);
         Task DeleteAsync(int id);
         Task SaveChangesAsync();
+
+        Task<bool> ExistsByNameAsync(string name);
+
     }
 }

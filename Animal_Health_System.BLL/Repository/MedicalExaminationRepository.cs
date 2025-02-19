@@ -1,19 +1,17 @@
-﻿    using Animal_Health_System.BLL.Interface;
-    using Animal_Health_System.DAL.Data;
-    using Animal_Health_System.DAL.Models;
-    using Microsoft.EntityFrameworkCore;
+﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.DAL.Data;
+using Animal_Health_System.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-    namespace Animal_Health_System.BLL.Repository
+namespace Animal_Health_System.BLL.Repository
+{
+    public class MedicalExaminationRepository : IMedicalExaminationRepository
     {
-        public class MedicalExaminationRepository : IMedicalExaminationRepository
-
-        {
         private readonly ApplicationDbContext context;
         private readonly ILogger<MedicalExaminationRepository> logger;
 
@@ -23,7 +21,7 @@ using System;
             this.logger = logger;
         }
 
-        public async Task<int> AddAsync(MedicalExamination  medicalExamination)
+        public async Task<int> AddAsync(MedicalExamination medicalExamination)
         {
             try
             {
@@ -32,7 +30,7 @@ using System;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while adding medicalExamination.");
+                 logger.LogError(ex, "Error occurred while adding medicalExamination.");
                 throw new Exception("Error occurred while adding medicalExamination.", ex);
             }
         }
@@ -41,11 +39,17 @@ using System;
         {
             try
             {
-                return await context.medicalExaminations.Include(m => m.MedicalRecord).Where(a => !a.IsDeleted).ToListAsync();
+                return await context.medicalExaminations
+                    .Include(m => m.MedicalRecord)
+                    .Include(m => m.Medications)
+                    .Include(v => v.Veterinarian)
+                    .Include(a => a.Animal)
+                    .Where(a => !a.IsDeleted)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving medicalExaminations.");
+                 logger.LogError(ex, "Error occurred while retrieving medicalExaminations.");
                 throw new Exception("Error occurred while retrieving medicalExaminations.", ex);
             }
         }
@@ -56,11 +60,14 @@ using System;
             {
                 return await context.medicalExaminations
                     .Include(m => m.MedicalRecord)
+                    .Include(m => m.Medications)
+                    .Include(m => m.Veterinarian)
+                    .Include(m => m.Animal)
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving medicalExamination.");
+                 logger.LogError(ex, "Error occurred while retrieving medicalExamination.");
                 throw new Exception("Error occurred while retrieving medicalExamination.", ex);
             }
         }
@@ -92,22 +99,11 @@ using System;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while deleting medicalExamination.");
+                 logger.LogError(ex, "Error occurred while deleting medicalExamination.");
                 throw new Exception("Error occurred while deleting medicalExamination.", ex);
             }
         }
 
-        public async Task SaveChangesAsync()
-        {
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
-            }
-        }
+       
     }
-    }
+}

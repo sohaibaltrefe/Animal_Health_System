@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,8 +16,9 @@ namespace Animal_Health_System.BLL.Interface
         Task DeleteAsync(int id);
         Task SaveChangesAsync();
         Task<MedicalRecord> GetByAnimalIdAsync(int animalId);
+        Task<IEnumerable<MedicalRecord>> GetByFarmAsync(int farmId);  // Add this method to the interface
 
-        Task<bool> AnyAsync(Expression<Func<MedicalRecord, bool>> predicate);
+        Task<bool> AnyAsync(Func<MedicalRecord, bool> predicate);
 
     }
 }

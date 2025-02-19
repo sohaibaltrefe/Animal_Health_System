@@ -1,0 +1,149 @@
+﻿@model VaccineHistoryFormVM
+
+@section Header {
+        Edit Vaccine History
+}
+
+@section loc {
+        show
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Edit Vaccine History</h3>
+        </div>
+        <form asp-controller="VaccineHistory" asp-action="Edit" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body">
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label asp-for="Name">Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter vaccine history name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Administration Date -->
+                <div class="form-group">
+                    <label asp-for="AdministrationDate">Administration Date</label>
+                    <input asp-for="AdministrationDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="AdministrationDate" class="text-danger"></span>
+                </div>
+
+                <!-- Veterinarian -->
+                <div class="form-group">
+                    <label asp-for="VeterinarianId">Select Veterinarian</label>
+                    <select asp-for="VeterinarianId" class="form-control" asp-items="Model.Veterinarians">
+                        <option value="">Select Veterinarian</option>
+                    </select>
+                    <span asp-validation-for="VeterinarianId" class="text-danger"></span>
+                </div>
+
+                <!-- Vaccine -->
+                <div class="form-group">
+                    <label asp-for="VaccineId">Select Vaccine</label>
+                    <select asp-for="VaccineId" class="form-control" asp-items="Model.Vaccines">
+                        <option value="">Select Vaccine</option>
+                    </select>
+                    <span asp-validation-for="VaccineId" class="text-danger"></span>
+                </div>
+
+                <!-- Farm -->
+                <div class="form-group">
+                    <label asp-for="FarmId">Select Farm</label>
+                    <select asp-for="FarmId" class="form-control" id="FarmId" asp-items="Model.Farms">
+                        <option value="">Select Farm</option>
+                    </select>
+                    <span asp-validation-for="FarmId" class="text-danger"></span>
+                </div>
+
+                <!-- Animal -->
+                <div class="form-group">
+                    <label asp-for="AnimalId">Select Animal</label>
+                    <select asp-for="AnimalId" class="form-control" id="AnimalId">
+                        <option value="">-- Select Animal --</option>
+                    </select>
+                    <span asp-validation-for="AnimalId" class="text-danger"></span>
+                </div>
+
+                <!-- Medical Record -->
+                <div class="form-group">
+                    <label asp-for="MedicalRecordId">Select Medical Record</label>
+                    <select asp-for="MedicalRecordId" class="form-control" id="MedicalRecordId">
+                        <option value="">-- Select Medical Record --</option>
+                    </select>
+                    <span asp-validation-for="MedicalRecordId" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Update</button>
+                    <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section script {
+    <script>
+        $(document).ready(function () {
+            function loadAnimalsByFarm() {
+                var farmId = $("#FarmId").val();
+                if (farmId) {
+                    $.getJSON("/Dashboard/VaccineHistory/GetAnimalsByFarm", { farmId: farmId }, function (data) {
+                        var animalDropdown = $("#AnimalId");
+                        animalDropdown.empty().append('<option value="">-- Select Animal --</option>');
+                        $.each(data, function (index, item) {
+                            animalDropdown.append('<option value="' + item.value + '">' + item.text + '</option>');
+                        });
+
+                        // التأكد من تحديد الحيوان الحالي في حالة التعديل
+                        var selectedAnimal = '@Model.AnimalId';
+                        if (selectedAnimal) {
+                            $("#AnimalId").val(selectedAnimal);
+                        }
+                        $("#AnimalId").change();
+                    });
+                }
+            }
+
+            function loadMedicalRecordsByAnimal() {
+                var animalId = $("#AnimalId").val();
+                if (animalId) {
+                    $.getJSON("/Dashboard/VaccineHistory/GetMedicalRecordByAnimal", { animalId: animalId }, function (data) {
+                        var medicalRecordDropdown = $("#MedicalRecordId");
+                        medicalRecordDropdown.empty().append('<option value="">-- Select Medical Record --</option>');
+                        $.each(data.medicalRecords, function (index, item) {
+                            medicalRecordDropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+
+                        // التأكد من تحديد السجل الطبي الحالي في حالة التعديل
+                        var selectedMedicalRecord = '@Model.MedicalRecordId';
+                        if (selectedMedicalRecord) {
+                            $("#MedicalRecordId").val(selectedMedicalRecord);
+                        }
+                    });
+                }
+            }
+
+            // Event Listeners
+            $("#FarmId").change(loadAnimalsByFarm);
+            $("#AnimalId").change(loadMedicalRecordsByAnimal);
+
+            // تحميل البيانات عند فتح الصفحة (في وضع التعديل)
+            loadAnimalsByFarm();
+            loadMedicalRecordsByAnimal();
+        });
+    </script>
+}

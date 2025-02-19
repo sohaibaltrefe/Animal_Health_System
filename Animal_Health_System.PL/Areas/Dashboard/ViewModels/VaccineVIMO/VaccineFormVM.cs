@@ -1,5 +1,4 @@
-﻿using Animal_Health_System.DAL.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO
@@ -8,38 +7,31 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Vaccine name is required.")]
-        [StringLength(100, ErrorMessage = "Vaccine name can't exceed 100 characters.")]
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Dose is required.")]
-        [StringLength(50, ErrorMessage = "Dose can't exceed 50 characters.")]
+        [Required(ErrorMessage = "Dose is required")]
+        [StringLength(50, ErrorMessage = "Dose cannot be longer than 50 characters")]
         public string Dose { get; set; }
 
-        [Required(ErrorMessage = "Administration date is required.")]
-        public DateTime AdministrationDate { get; set; } = DateTime.Now;
+        [Required(ErrorMessage = "Description is required.")] // 🔹 التحقق من الإدخال
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")] // 🔹 تحديد الطول الأقصى
+        public string Description { get; set; }
+        [Required(ErrorMessage = "Expiry date is required.")] 
+        [DataType(DataType.Date)]
 
-        public bool IsDeleted { get; set; }
+        public DateTime ExpiryDate { get; set; }
 
-        // Foreign keys (nullable) for related entities
-        [Required(ErrorMessage = "Medical Record is required.")]
-        public int? MedicalRecordId { get; set; }
+        [Required(ErrorMessage = "Production date is required.")]
+        [DataType(DataType.Date)]
 
-        [Required(ErrorMessage = "Veterinarian is required.")]
-        public int? VeterinarianId { get; set; }
+        public DateTime ProductionDate { get; set; }
 
-        // Drop-down lists for MedicalRecord and Veterinarian (for selection in form)
-        public IEnumerable<SelectListItem> MedicalRecords { get; set; }
-        public IEnumerable<SelectListItem> Veterinarians { get; set; }
+        [Required(ErrorMessage = "Quantity is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
+        public int Quantity { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime? LastModified { get; set; }
+        public DateTime UpdatedAt { get;  set; }
     }
-
-
-      
-    
 }

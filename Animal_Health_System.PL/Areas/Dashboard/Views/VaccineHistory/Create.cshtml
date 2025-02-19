@@ -1,0 +1,172 @@
+﻿@model VaccineHistoryFormVM
+
+@section Header {
+        Create Vaccine History
+}
+
+@section loc {
+        show
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3 class="card-title">Create Vaccine History</h3>
+        </div>
+        <form asp-controller="VaccineHistory" asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body">
+                <!-- Name -->
+                <div class="form-group">
+                    <label asp-for="Name">Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter vaccine history name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Administration Date -->
+                <div class="form-group">
+                    <label asp-for="AdministrationDate">Administration Date</label>
+                    <input asp-for="AdministrationDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="AdministrationDate" class="text-danger"></span>
+                </div>
+
+                <!-- Veterinarian -->
+                <div class="form-group">
+                    <label asp-for="VeterinarianId">Select Veterinarian</label>
+                    <select asp-for="VeterinarianId" class="form-control">
+                        <option value="">Select Veterinarian</option>
+                        @foreach (var vet in Model.Veterinarians)
+                        {
+                            <option value="@vet.Value">@vet.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="VeterinarianId" class="text-danger"></span>
+                </div>
+
+                <!-- Vaccine -->
+                <div class="form-group">
+                    <label asp-for="VaccineId">Select Vaccine</label>
+                    <select asp-for="VaccineId" class="form-control">
+                        <option value="">Select Vaccine</option>
+                        @foreach (var vaccine in Model.Vaccines)
+                        {
+                            <option value="@vaccine.Value">@vaccine.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="VaccineId" class="text-danger"></span>
+                </div>
+
+                <!-- Farm -->
+                <div class="form-group">
+                    <label asp-for="FarmId">Select Farm</label>
+                    <select asp-for="FarmId" class="form-control" id="FarmId">
+                        <option value="">Select Farm</option>
+                        @foreach (var farm in Model.Farms)
+                        {
+                            <option value="@farm.Value">@farm.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="FarmId" class="text-danger"></span>
+                </div>
+
+                <!-- Animal -->
+                <div class="form-group">
+                    <label asp-for="AnimalId">Animal</label>
+                    <select asp-for="AnimalId" class="form-control" id="AnimalId">
+                        <option value="">-- Select Animal --</option>
+                        @foreach (var animal in Model.Animals)
+                        {
+                            <option value="@animal.Value">@animal.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="AnimalId" class="text-danger"></span>
+                </div>
+
+                <!-- Medical Record -->
+                <div class="form-group">
+                    <label asp-for="MedicalRecordId">Medical Record</label>
+                    <select asp-for="MedicalRecordId" class="form-control" id="MedicalRecordId">
+                        <option value="">-- Select Medical Record --</option>
+                        @foreach (var record in Model.MedicalRecords)
+                        {
+                            <option value="@record.Value">@record.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="MedicalRecordId" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary btn-block">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section script {
+    <script>
+        $(document).ready(function () {
+            // عند تغيير المزرعة
+            $("#FarmId").change(function () {
+                var farmId = $(this).val();
+                if (farmId) {
+                    $.ajax({
+                        url: "/Dashboard/VaccineHistory/GetAnimalsByFarm",
+                        type: "GET",
+                        data: { farmId: farmId },
+                        success: function (data) {
+                            var animalDropdown = $("#AnimalId");
+                            animalDropdown.empty().append('<option value="">-- Select Animal --</option>');
+                            $.each(data, function (index, item) {
+                                animalDropdown.append('<option value="' + item.value + '">' + item.text + '</option>');
+                            });
+                        },
+                        error: function () {
+                            alert("Error loading animals.");
+                        }
+                    });
+                } else {
+                    $("#AnimalId").empty().append('<option value="">-- Select Animal --</option>');
+                }
+            });
+
+            // عند تغيير الحيوان
+            $("#AnimalId").change(function () {
+                var animalId = $(this).val();
+                if (animalId) {
+                    $.ajax({
+                        url: "/Dashboard/VaccineHistory/GetMedicalRecordsByAnimal", // تأكد من وجود هذا الرابط
+                        type: "GET",
+                        data: { animalId: animalId },
+                        success: function (data) {
+                            var medicalRecordDropdown = $("#MedicalRecordId");
+                            medicalRecordDropdown.empty().append('<option value="">-- Select Medical Record --</option>');
+                            $.each(data, function (index, item) {
+                                medicalRecordDropdown.append('<option value="' + item.value + '">' + item.text + '</option>');
+                            });
+                        },
+                        error: function () {
+                            alert("Error loading medical records.");
+                        }
+                    });
+                } else {
+                    $("#MedicalRecordId").empty().append('<option value="">-- Select Medical Record --</option>');
+                }
+            });
+
+            // تحميل الحيوانات والسجلات الطبية عند فتح الصفحة إذا كانت هناك اختيارات مسبقة
+            $("#FarmId").change();
+            $("#AnimalId").change();
+        });
+    </script>
+}

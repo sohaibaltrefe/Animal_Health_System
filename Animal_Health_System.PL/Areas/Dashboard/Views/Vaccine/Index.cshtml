@@ -1,11 +1,14 @@
 ﻿@model IEnumerable<VaccineVM>
 
 @section Header {
-    Vaccine
+        Vaccine
 }
+
 @section loc {
-    show
-}@{
+        show
+}
+
+@{
     var successMessage = TempData["SuccessMessage"];
     var errorMessage = TempData["ErrorMessage"];
 }
@@ -19,7 +22,6 @@
 {
     <div class="alert alert-danger">@errorMessage</div>
 }
-
 
 <div class="col-md-12">
     <div class="card shadow-sm">
@@ -35,7 +37,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Dose</th>
-                        <th>Veterinarian</th>
+                        <th>Expiry Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -45,7 +47,7 @@
                         <tr>
                             <td>@item.Name</td>
                             <td>@item.Dose</td>
-                            <td>@item.VeterinarianName</td>
+                            <td>@item.FormattedDaysUntilExpiry</td>
                             <td>
                                 <a asp-controller="Vaccine" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
                                 <a asp-controller="Vaccine" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
@@ -59,77 +61,61 @@
     </div>
 </div>
 
-
-
-@section script {
-
-
+@section Script  {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const deleteButtons = document.querySelectorAll(".delete-btn");
+            deleteButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const vaccineId = button.getAttribute("data-id");
 
-        const elements = document.querySelectorAll(".delete-btn");
-        elements.forEach(function (button) {
-            button.addEventHashSetener("click", async () => {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: "btn btn-success",
-                        cancelButton: "btn btn-danger"
-                    },
-                    buttonsStyling: false
-                });
-                swalWithBootstrapButtons.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Yes, delete it!",
-                    cancelButtonText: "No, cancel!",
-                    reverseButtons: true
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        const id = button.dataset.id;
-                        const response = await fetch(`/Dashboard/Vaccine/DeleteConfirmed/${id}`, {
-                            method: 'POST', Headers: {
-                                "Content-Type": "application/json"
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                        reverseButtons: true
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                const response = await fetch(`/Dashboard/Vaccine/DeleteConfirmed/${vaccineId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    }
+                                });
+
+                                if (response.ok) {
+                                    // Remove the row from the table
+                                    button.closest("tr").remove();
+
+                                    // Show success message
+                                    Swal.fire({
+                                        toast: true,
+                                        position: "top-end",
+                                        showConfirmButton: false,
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        icon: "success",
+                                        title: "Vaccine deleted successfully"
+                                    });
+                                } else {
+                                    throw new Error("Failed to delete vaccine");
+                                }
+                            } catch (error) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "An error occurred while deleting the vaccine."
+                                });
                             }
-                        });
-                        const data = await response.json();
-                        if (response.ok) {
-                            $(button).closest("tr").remove();
                         }
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
-                            }
-                        });
-                        Toast.fire({
-                            icon: "success",
-                            title: "deleted  is successfully"
-                        });
-                    } else if (
-                        /* Read more about handling dismissals below */
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        swalWithBootstrapButtons.fire({
-                            title: "Cancelled",
-                            text: "Your imaginary file is safe :)",
-                            icon: "error"
-                        });
-                    }
+                    });
                 });
-
-
-
-            })
-        })
-
-
+            });
+        });
     </script>
-
-
 }

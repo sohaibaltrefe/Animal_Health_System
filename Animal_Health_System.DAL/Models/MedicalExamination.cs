@@ -33,8 +33,9 @@ namespace Animal_Health_System.DAL.Models
 
         public Veterinarian Veterinarian { get; set; }
 
-        public ICollection<Medication> Medications { get; set; } = new List<Medication>();  // يجب أن يكون الفحص الطبي مرتبطًا بالأدوية
+        public ICollection<Medication> Medications { get; set; } = new HashSet<Medication>();  // يجب أن يكون الفحص الطبي مرتبطًا بالأدوية
 
-
+        // إضافة العلاقة مع HealthStatusLog
+        public ICollection<HealthStatusLog> HealthStatusLogs { get; set; } = new List<HealthStatusLog>();
     }
 }

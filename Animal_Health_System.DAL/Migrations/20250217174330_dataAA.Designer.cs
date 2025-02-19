@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Animal_Health_System.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241230064321_all")]
-    partial class all
+    [Migration("20250217174330_dataAA")]
+    partial class dataAA
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,24 +33,17 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Age")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Breed")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentHealthStatus")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmId")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<int>("Gender")
@@ -59,35 +52,30 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MedicalRecordId")
+                    b.Property<int>("MedicalRecordId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Species")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasIndex("MedicalRecordId")
-                        .IsUnique()
-                        .HasFilter("[MedicalRecordId] IS NOT NULL");
+                    b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.HasIndex("FarmId", "Name")
-                        .IsUnique()
-                        .HasFilter("[FarmId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("animals");
                 });
@@ -100,10 +88,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
+                    b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -119,24 +107,23 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MedicalRecordiD")
+                    b.Property<int>("MedicalRecordId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicalRecordiD");
+                    b.HasIndex("MedicalRecordId");
 
-                    b.HasIndex("AnimalId", "MedicalRecordiD")
+                    b.HasIndex("AnimalId", "MedicalRecordId")
                         .IsUnique()
-                        .HasDatabaseName("Idx_AnimalHealthHistory_AnimalId_MedicalRecordId")
-                        .HasFilter("[AnimalId] IS NOT NULL AND [MedicalRecordiD] IS NOT NULL");
+                        .HasDatabaseName("Idx_AnimalHealthHistory_AnimalId_MedicalRecordId");
 
                     b.HasIndex("Name", "EventDate")
                         .IsUnique()
@@ -153,16 +140,22 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
+                    b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmStaffId")
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FarmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FarmStaffId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -172,33 +165,28 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OwnerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VeterinarianId")
+                    b.Property<int>("VeterinarianId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FarmStaffId");
+                    b.HasIndex("FarmId");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("FarmStaffId");
 
                     b.HasIndex("VeterinarianId");
 
                     b.HasIndex("AnimalId", "AppointmentDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("AnimalId", "AppointmentDate", "VeterinarianId")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL AND [VeterinarianId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("appointments");
                 });
@@ -211,10 +199,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppointmentId")
+                    b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -232,7 +220,7 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -253,7 +241,7 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
+                    b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
                     b.Property<string>("BirthCondition")
@@ -263,10 +251,10 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmId")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -282,7 +270,7 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int?>("PregnancyId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -292,66 +280,9 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasIndex("PregnancyId");
 
                     b.HasIndex("AnimalId", "BirthDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("births");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.BreedingReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BirthCondition")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MatingDetails")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MatingId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfOffspring")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PregnancyStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReportDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatingId");
-
-                    b.HasIndex("AnimalId", "ReportDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
-
-                    b.ToTable("breedingReports");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Farm", b =>
@@ -362,8 +293,11 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -373,22 +307,18 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("OwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("Name", "OwnerId")
-                        .IsUnique()
-                        .HasFilter("[OwnerId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("farms");
                 });
@@ -401,10 +331,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmId")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<int>("HealthyAnimals")
@@ -426,14 +356,13 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int>("UnderTreatment")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FarmId")
-                        .IsUnique()
-                        .HasFilter("[FarmId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("farmHealthSummaries");
                 });
@@ -449,14 +378,17 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int?>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateHired")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FarmId")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<string>("FullName")
@@ -466,34 +398,31 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VeterinarianId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("salary")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId");
 
-                    b.HasIndex("VeterinarianId");
-
                     b.HasIndex("FarmId", "FullName")
-                        .IsUnique()
-                        .HasFilter("[FarmId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("farmStaff");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthReport", b =>
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmVeterinarian", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -501,16 +430,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FarmStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HealthyAnimals")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -520,31 +443,61 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ReportDate")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ReportSummary")
+                    b.Property<int>("VeterinarianId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FarmId");
+
+                    b.HasIndex("VeterinarianId");
+
+                    b.ToTable("farmVeterinarians");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthStatusLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HealthStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HealthStatusDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SickAnimals")
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MedicalExaminationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalAnimals")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("StatusDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FarmStaffId");
+                    b.HasIndex("AnimalId");
 
-                    b.HasIndex("FarmId", "ReportDate")
-                        .IsUnique()
-                        .HasFilter("[FarmId] IS NOT NULL");
+                    b.HasIndex("MedicalExaminationId");
 
-                    b.ToTable("healthReports");
+                    b.ToTable("healthStatusLogs");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
@@ -555,16 +508,19 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FemaleAnimalId")
+                    b.Property<int>("FarmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FemaleAnimalId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MaleAnimalId")
+                    b.Property<int>("MaleAnimalId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("MatingDate")
@@ -578,16 +534,17 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FarmId");
+
                     b.HasIndex("FemaleAnimalId");
 
                     b.HasIndex("MaleAnimalId", "FemaleAnimalId", "MatingDate")
-                        .IsUnique()
-                        .HasFilter("[MaleAnimalId] IS NOT NULL AND [FemaleAnimalId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("matings");
                 });
@@ -600,10 +557,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
+                    b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Diagnosis")
@@ -617,13 +574,10 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FarmStaffId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MedicalRecordId")
+                    b.Property<int>("MedicalRecordId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -634,23 +588,20 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VeterinarianId")
+                    b.Property<int>("VeterinarianId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmStaffId");
 
                     b.HasIndex("MedicalRecordId");
 
                     b.HasIndex("VeterinarianId");
 
                     b.HasIndex("AnimalId", "ExaminationDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("medicalExaminations");
                 });
@@ -663,7 +614,13 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnimalId")
+                    b.Property<int>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -671,17 +628,20 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PreviousDiseases")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
+                        .IsUnique();
+
+                    b.HasIndex("FarmId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("medicalRecords");
                 });
@@ -694,7 +654,7 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -711,62 +671,15 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MedicalExaminationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MedicationStockId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("PrescriptionId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ProductionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalExaminationId");
-
-                    b.HasIndex("MedicationStockId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("PrescriptionId");
-
-                    b.ToTable("medications");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicationStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AvailableQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -776,7 +689,7 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("medicationStocks");
+                    b.ToTable("medications");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Notification", b =>
@@ -787,13 +700,13 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<int?>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FarmStaffId")
+                    b.Property<int?>("FarmStaffId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -804,32 +717,53 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Recipient")
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RecipientId")
+                    b.Property<int?>("PregnancyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipientType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderType")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("VeterinarianId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
 
                     b.HasIndex("FarmStaffId");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("RecipientId");
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("PregnancyId");
+
+                    b.HasIndex("VeterinarianId");
 
                     b.ToTable("notifications");
                 });
@@ -842,7 +776,7 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -860,7 +794,7 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -885,7 +819,7 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int?>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpectedBirthDate")
@@ -911,7 +845,7 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -923,47 +857,7 @@ namespace Animal_Health_System.DAL.Migrations
                     b.ToTable("pregnancies");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.PregnancyNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("NotificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId", "NotificationDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
-
-                    b.ToTable("pregnancyNotifications");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Prescription", b =>
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.Vaccine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -974,164 +868,36 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Dosage")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Instructions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MedicalExaminationId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalExaminationId", "CreatedAt")
-                        .IsUnique()
-                        .HasFilter("[MedicalExaminationId] IS NOT NULL");
-
-                    b.ToTable("prescriptions");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.ProductionRecord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("FarmStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("QuantityProduced")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FarmStaffId");
-
-                    b.HasIndex("AnimalId", "Date")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL");
-
-                    b.ToTable("productionRecords");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.TreatmentPlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MedicalExaminationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("PlanDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TreatmentDetails")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MedicalExaminationId")
-                        .IsUnique()
-                        .HasFilter("[MedicalExaminationId] IS NOT NULL");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("treatmentPlans");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Vaccine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AdministrationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Dose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("MedicalRecordId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("ProductionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VeterinarianId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicalRecordId");
-
-                    b.HasIndex("VeterinarianId");
-
-                    b.HasIndex("Name", "AdministrationDate")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("vaccines");
@@ -1148,13 +914,10 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<DateTime>("AdministrationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FarmStaffId")
+                    b.Property<int>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -1164,75 +927,34 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VaccineId")
+                    b.Property<int>("VaccineId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VeterinarianId")
+                    b.Property<int>("VeterinarianId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("animalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("medicalRecordId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FarmStaffId");
+                    b.HasIndex("FarmId");
 
                     b.HasIndex("VaccineId");
 
                     b.HasIndex("VeterinarianId");
 
-                    b.HasIndex("AnimalId", "VaccineId", "AdministrationDate")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL AND [VaccineId] IS NOT NULL");
+                    b.HasIndex("animalId");
+
+                    b.HasIndex("medicalRecordId");
 
                     b.ToTable("vaccineHistories");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.VaccineReminder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsNotified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReminderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("VaccineId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VaccineId");
-
-                    b.HasIndex("AnimalId", "VaccineId")
-                        .IsUnique()
-                        .HasFilter("[AnimalId] IS NOT NULL AND [VaccineId] IS NOT NULL");
-
-                    b.ToTable("vaccineReminders");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Veterinarian", b =>
@@ -1243,7 +965,7 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -1265,11 +987,14 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("salary")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -1277,6 +1002,21 @@ namespace Animal_Health_System.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("veterinarians");
+                });
+
+            modelBuilder.Entity("MedicalExaminationMedication", b =>
+                {
+                    b.Property<int>("MedicalExaminationsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicationsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MedicalExaminationsId", "MedicationsId");
+
+                    b.HasIndex("MedicationsId");
+
+                    b.ToTable("MedicalExamination_Medication", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1486,31 +1226,29 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
                         .WithMany("Animals")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "MedicalRecord")
-                        .WithOne("Animal")
-                        .HasForeignKey("Animal_Health_System.DAL.Models.Animal", "MedicalRecordId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Farm");
-
-                    b.Navigation("MedicalRecord");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.AnimalHealthHistory", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany("AnimalHealthHistories")
-                        .HasForeignKey("AnimalId");
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "medicalRecord")
+                    b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "MedicalRecord")
                         .WithMany()
-                        .HasForeignKey("MedicalRecordiD");
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Animal");
 
-                    b.Navigation("medicalRecord");
+                    b.Navigation("MedicalRecord");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Appointment", b =>
@@ -1518,27 +1256,32 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany("Appointments")
                         .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
+                        .WithMany("Appointments")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
                         .WithMany("Appointments")
-                        .HasForeignKey("FarmStaffId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Owner", "Owner")
-                        .WithMany("Appointments")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FarmStaffId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
                         .WithMany("Appointments")
                         .HasForeignKey("VeterinarianId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Animal");
 
-                    b.Navigation("FarmStaff");
+                    b.Navigation("Farm");
 
-                    b.Navigation("Owner");
+                    b.Navigation("FarmStaff");
 
                     b.Navigation("Veterinarian");
                 });
@@ -1548,7 +1291,8 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Appointment", "Appointment")
                         .WithMany("AppointmentHistories")
                         .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Appointment");
                 });
@@ -1558,17 +1302,19 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany("Births")
                         .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
                         .WithMany("Births")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Pregnancy", "Pregnancy")
                         .WithMany("Births")
                         .HasForeignKey("PregnancyId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Animal");
 
@@ -1577,29 +1323,13 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Pregnancy");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.BreedingReport", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany("BreedingReports")
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Mating", "Mating")
-                        .WithMany("BreedingReports")
-                        .HasForeignKey("MatingId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("Mating");
-                });
-
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Farm", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Owner", "Owner")
                         .WithMany("Farms")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
@@ -1607,8 +1337,10 @@ namespace Animal_Health_System.DAL.Migrations
             modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmHealthSummary", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("FarmId");
+                        .WithMany("FarmHealthSummaries")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Farm");
                 });
@@ -1622,42 +1354,69 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
                         .WithMany("FarmStaffs")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farm");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmVeterinarian", b =>
+                {
+                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
+                        .WithMany()
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
-                        .WithMany("FarmStaffs")
+                        .WithMany()
                         .HasForeignKey("VeterinarianId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Farm");
 
                     b.Navigation("Veterinarian");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthReport", b =>
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthStatusLog", b =>
                 {
-                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
+                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany()
-                        .HasForeignKey("FarmId");
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
-                        .WithMany("HealthReports")
-                        .HasForeignKey("FarmStaffId");
+                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
+                        .WithMany()
+                        .HasForeignKey("MedicalExaminationId");
 
-                    b.Navigation("Farm");
+                    b.Navigation("Animal");
 
-                    b.Navigation("FarmStaff");
+                    b.Navigation("MedicalExamination");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
                 {
+                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
+                        .WithMany("Matings")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "FemaleAnimal")
                         .WithMany()
-                        .HasForeignKey("FemaleAnimalId");
+                        .HasForeignKey("FemaleAnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "MaleAnimal")
                         .WithMany()
-                        .HasForeignKey("MaleAnimalId");
+                        .HasForeignKey("MaleAnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farm");
 
                     b.Navigation("FemaleAnimal");
 
@@ -1669,75 +1428,80 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany("MedicalExaminations")
                         .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
-                        .WithMany("MedicalExaminations")
-                        .HasForeignKey("FarmStaffId");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "MedicalRecord")
                         .WithMany("Examinations")
-                        .HasForeignKey("MedicalRecordId");
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
                         .WithMany("MedicalExaminations")
                         .HasForeignKey("VeterinarianId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Animal");
-
-                    b.Navigation("FarmStaff");
 
                     b.Navigation("MedicalRecord");
 
                     b.Navigation("Veterinarian");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Medication", b =>
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalRecord", b =>
                 {
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
-                        .WithMany("Medications")
-                        .HasForeignKey("MedicalExaminationId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("Animal_Health_System.DAL.Models.MedicalRecord", "AnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicationStock", "MedicationStock")
-                        .WithMany("Medications")
-                        .HasForeignKey("MedicationStockId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
+                        .WithMany("medicalRecords")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Prescription", "Prescription")
-                        .WithMany("medications")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.Navigation("Animal");
 
-                    b.Navigation("MedicalExamination");
-
-                    b.Navigation("MedicationStock");
-
-                    b.Navigation("Prescription");
+                    b.Navigation("Farm");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Notification", b =>
                 {
+                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
+                        .WithMany("PregnancyNotifications")
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
                         .WithMany("Notifications")
                         .HasForeignKey("FarmStaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Animal_Health_System.DAL.Models.Owner", "Owner")
                         .WithMany("Notifications")
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Animal_Health_System.DAL.Models.Pregnancy", "Pregnancy")
+                        .WithMany()
+                        .HasForeignKey("PregnancyId");
 
                     b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
                         .WithMany("Notifications")
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("VeterinarianId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Animal");
 
                     b.Navigation("FarmStaff");
 
                     b.Navigation("Owner");
+
+                    b.Navigation("Pregnancy");
 
                     b.Navigation("Veterinarian");
                 });
@@ -1746,112 +1510,67 @@ namespace Animal_Health_System.DAL.Migrations
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
                         .WithMany("Pregnancies")
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Animal");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.PregnancyNotification", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany()
                         .HasForeignKey("AnimalId");
 
                     b.Navigation("Animal");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Prescription", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
-                        .WithMany("Prescriptions")
-                        .HasForeignKey("MedicalExaminationId");
-
-                    b.Navigation("MedicalExamination");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.ProductionRecord", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
-                        .WithMany("ProductionRecords")
-                        .HasForeignKey("FarmStaffId");
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("FarmStaff");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.TreatmentPlan", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
-                        .WithOne("TreatmentPlan")
-                        .HasForeignKey("Animal_Health_System.DAL.Models.TreatmentPlan", "MedicalExaminationId");
-
-                    b.Navigation("MedicalExamination");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Vaccine", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "MedicalRecord")
-                        .WithMany("Vaccines")
-                        .HasForeignKey("MedicalRecordId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
-                        .WithMany()
-                        .HasForeignKey("VeterinarianId");
-
-                    b.Navigation("MedicalRecord");
-
-                    b.Navigation("Veterinarian");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.VaccineHistory", b =>
                 {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany("VaccineHistories")
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "farm")
+                        .WithMany("vaccineHistories")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.FarmStaff", "FarmStaff")
-                        .WithMany("VaccineHistories")
-                        .HasForeignKey("FarmStaffId");
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Vaccine", "Vaccine")
+                    b.HasOne("Animal_Health_System.DAL.Models.Vaccine", "vaccine")
                         .WithMany("VaccineHistories")
                         .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
+                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "veterinarian")
                         .WithMany("VaccineHistories")
                         .HasForeignKey("VeterinarianId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Animal");
+                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "animal")
+                        .WithMany("vaccineHistories")
+                        .HasForeignKey("animalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("FarmStaff");
+                    b.HasOne("Animal_Health_System.DAL.Models.MedicalRecord", "medicalRecord")
+                        .WithMany("vaccineHistories")
+                        .HasForeignKey("medicalRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Vaccine");
+                    b.Navigation("animal");
 
-                    b.Navigation("Veterinarian");
+                    b.Navigation("farm");
+
+                    b.Navigation("medicalRecord");
+
+                    b.Navigation("vaccine");
+
+                    b.Navigation("veterinarian");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.VaccineReminder", b =>
+            modelBuilder.Entity("MedicalExaminationMedication", b =>
                 {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
+                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", null)
                         .WithMany()
-                        .HasForeignKey("AnimalId");
+                        .HasForeignKey("MedicalExaminationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Vaccine", "Vaccine")
+                    b.HasOne("Animal_Health_System.DAL.Models.Medication", null)
                         .WithMany()
-                        .HasForeignKey("VaccineId");
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("Vaccine");
+                        .HasForeignKey("MedicationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1913,15 +1632,18 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.Navigation("Births");
 
-                    b.Navigation("BreedingReports");
-
                     b.Navigation("FarmStaffs");
 
                     b.Navigation("MedicalExaminations");
 
+                    b.Navigation("MedicalRecord")
+                        .IsRequired();
+
                     b.Navigation("Pregnancies");
 
-                    b.Navigation("VaccineHistories");
+                    b.Navigation("PregnancyNotifications");
+
+                    b.Navigation("vaccineHistories");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Appointment", b =>
@@ -1933,60 +1655,37 @@ namespace Animal_Health_System.DAL.Migrations
                 {
                     b.Navigation("Animals");
 
+                    b.Navigation("Appointments");
+
                     b.Navigation("Births");
 
+                    b.Navigation("FarmHealthSummaries");
+
                     b.Navigation("FarmStaffs");
+
+                    b.Navigation("Matings");
+
+                    b.Navigation("medicalRecords");
+
+                    b.Navigation("vaccineHistories");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmStaff", b =>
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("HealthReports");
-
-                    b.Navigation("MedicalExaminations");
-
                     b.Navigation("Notifications");
-
-                    b.Navigation("ProductionRecords");
-
-                    b.Navigation("VaccineHistories");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
-                {
-                    b.Navigation("BreedingReports");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalExamination", b =>
-                {
-                    b.Navigation("Medications");
-
-                    b.Navigation("Prescriptions");
-
-                    b.Navigation("TreatmentPlan")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalRecord", b =>
                 {
-                    b.Navigation("Animal")
-                        .IsRequired();
-
                     b.Navigation("Examinations");
 
-                    b.Navigation("Vaccines");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicationStock", b =>
-                {
-                    b.Navigation("Medications");
+                    b.Navigation("vaccineHistories");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Owner", b =>
                 {
-                    b.Navigation("Appointments");
-
                     b.Navigation("Farms");
 
                     b.Navigation("Notifications");
@@ -1997,11 +1696,6 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Births");
                 });
 
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Prescription", b =>
-                {
-                    b.Navigation("medications");
-                });
-
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Vaccine", b =>
                 {
                     b.Navigation("VaccineHistories");
@@ -2010,8 +1704,6 @@ namespace Animal_Health_System.DAL.Migrations
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Veterinarian", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("FarmStaffs");
 
                     b.Navigation("MedicalExaminations");
 

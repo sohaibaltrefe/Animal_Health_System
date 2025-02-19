@@ -9,8 +9,8 @@ namespace Animal_Health_System.DAL.Models
     public class EntityBase
     {
         public int Id { get; set; }
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get;  set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get;  set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; }
 
         public void SetCreatedAt(DateTime createdAt)

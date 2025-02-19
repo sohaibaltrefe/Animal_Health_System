@@ -16,5 +16,8 @@ namespace Animal_Health_System.BLL.Interface
 
         Task DeleteAsync(int id);
         Task SaveChangesAsync();
+
+        Task<IEnumerable<Animal>> GetAnimalsByFarmIdAsync(int farmId);
+        Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByAnimalIdAsync(int animalId);
     }
 }

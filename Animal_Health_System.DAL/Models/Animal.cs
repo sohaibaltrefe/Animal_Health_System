@@ -56,7 +56,6 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
-        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
 
         public ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List<MedicalExamination>();
 
@@ -66,6 +65,8 @@ namespace Animal_Health_System.DAL.Models
 
 
         public ICollection<Notification> PregnancyNotifications { get; set; } = new List<Notification>();
+
+
 
 
         public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();

@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Animal_Health_System.BLL\Animal_Health_System.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Dashboard\Views\VaccineHistory\" />
+  </ItemGroup>
+
 </Project>

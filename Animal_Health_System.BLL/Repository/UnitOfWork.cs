@@ -64,11 +64,17 @@ namespace Animal_Health_System.BLL.Repository
         }
 
         // Method to save changes to the database
-        public async Task<int> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error occurred while saving changes." + ex.Message, ex);
+            }
         }
-
         // Dispose method for clean-up
         public void Dispose()
         {

@@ -14,6 +14,5 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> AddAsync(MedicalExamination medicalExamination);
         Task<int> UpdateAsync(MedicalExamination medicalExamination);
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
     }
 }

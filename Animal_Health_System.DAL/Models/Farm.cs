@@ -31,7 +31,7 @@ namespace Animal_Health_System.DAL.Models
         public   ICollection<Mating> Matings { get; set; } = new List <Mating>();
 
         public   ICollection<FarmHealthSummary>  FarmHealthSummaries { get; set; } = new List <FarmHealthSummary>();
-        public ICollection<MedicalRecord>  medicalRecords { get; set; } = new List<MedicalRecord>();
+
 
     }
 }

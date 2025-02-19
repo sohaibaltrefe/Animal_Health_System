@@ -30,7 +30,5 @@ namespace Animal_Health_System.DAL.Models
         public int? MedicalExaminationId { get; set; }  // رابط للفحص الطبي الذي قد يغير الحالة
 
         public MedicalExamination MedicalExamination { get; set; }
-
-        
     }
 }

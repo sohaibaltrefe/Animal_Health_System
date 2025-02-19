@@ -6,23 +6,19 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationV
     public class MedicalExaminationDetailsVM
     {
         public int Id { get; set; }
-        public DateTime ExaminationDate { get; set; } 
+        public string Name { get; set; }
+        public DateTime ExaminationDate { get; set; }
         public string Diagnosis { get; set; }
         public string Treatment { get; set; }
-
-        // HashSet of Medications
-        public ICollection<Medication> Medications { get; set; } = new HashSet<Medication>();
-
-        // Foreign Key for Animal
-        public int AnimalId { get; set; }
+        public string ExaminationType { get; set; }
+        public List<Medication> Medications { get; set; } = new List<Medication>();
+        public List<HealthStatusLog> HealthStatusLogs { get; set; } = new List<HealthStatusLog>();
         public Animal Animal { get; set; }
 
-        // Foreign Key for MedicalRecord
-        public int MedicalRecordId { get; set; }
         public MedicalRecord MedicalRecord { get; set; }
 
-        public int? VeterinarianId { get; set; }
 
         public Veterinarian Veterinarian { get; set; }
     }
+
 }

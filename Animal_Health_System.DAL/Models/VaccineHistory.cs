@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public enum VaccinationStatus
-    {
-        Completed,
-        Pending,
-        Postponed
-    }
+    
 
     public class VaccineHistory : EntityBase
     {
@@ -20,31 +15,31 @@ namespace Animal_Health_System.DAL.Models
 
         public string Name { get; set; }
 
-      
+
         public DateTime AdministrationDate { get; set; }
 
-        public VaccinationStatus Status { get; set; }
 
 
-        [ForeignKey(nameof(Veterinarian))]
+        [ForeignKey(nameof(veterinarian))]
         public int VeterinarianId { get; set; }
 
-        [ForeignKey(nameof(Animal))]
-        public int AnimalId { get; set; }
+      
+        [ForeignKey(nameof(medicalRecord))]
+        public int medicalRecordId { get; set; }
 
-        [ForeignKey(nameof(Vaccine))]
+
+       
+
+        [ForeignKey(nameof(vaccine))]
         public int  VaccineId { get; set; }
+        public Veterinarian veterinarian { get; set; }
 
-        [ForeignKey(nameof(FarmStaff))]
+        public Vaccine vaccine { get; set; }
 
-        public int  FarmStaffId { get; set; }
+        public MedicalRecord  medicalRecord { get; set; }
 
-        public Animal Animal  { get; set; }
-        public Veterinarian Veterinarian { get; set; }
 
-        public Vaccine Vaccine  { get; set; }
 
-        public FarmStaff FarmStaff  { get; set; }
     }
 
 

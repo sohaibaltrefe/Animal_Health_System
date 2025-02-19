@@ -1,9 +1,9 @@
 ﻿@model MedicalExaminationDetailsVM
 @section Header {
-    Medical Examination
+        Medical Examination
 }
 @section loc {
-    Details
+        Details
 }
 
 <div class="col-md-12">
@@ -32,14 +32,7 @@
             <div class="form-group row">
                 <label for="MedicalRecordId" class="col-sm-3 col-form-label">Medical Record</label>
                 <div class="col-sm-9">
-                    @if (Model.MedicalRecord != null)
-                    {
-                        <input class="form-control" value="@Model.MedicalRecord.Name" readonly />
-                    }
-                    else
-                    {
-                        <input class="form-control" value="No medical record available" readonly />
-                    }
+                    <input class="form-control" value="@(Model.MedicalRecord?.Name ?? "No medical record available")" readonly />
                 </div>
             </div>
 
@@ -47,18 +40,11 @@
             <div class="form-group row">
                 <label for="AnimalName" class="col-sm-3 col-form-label">Animal</label>
                 <div class="col-sm-9">
-                    @if (Model.Animal != null)
-                    {
-                        <input class="form-control" value="@Model.Animal.Name" readonly />
-                    }
-                    else
-                    {
-                        <input class="form-control" value="No animal information available" readonly />
-                    }
+                    <input class="form-control" value="@(Model.Animal?.Name ?? "No animal information available")" readonly />
                 </div>
             </div>
 
-            <!-- Medications HashSet -->
+            <!-- Medications -->
             <div class="form-group row">
                 <label for="Medications" class="col-sm-3 col-form-label">Medications</label>
                 <div class="col-sm-9">
@@ -77,18 +63,12 @@
                     }
                 </div>
             </div>
+
             <!-- Veterinarian Information -->
             <div class="form-group row">
                 <label for="VeterinarianName" class="col-sm-3 col-form-label">Veterinarian</label>
                 <div class="col-sm-9">
-                    @if (Model.Veterinarian != null)
-                    {
-                        <input class="form-control" value="@Model.Veterinarian.FullName" readonly />
-                    }
-                    else
-                    {
-                        <input class="form-control" value="No veterinarian information available" readonly />
-                    }
+                    <input class="form-control" value="@(Model.Veterinarian?.FullName ?? "No veterinarian information available")" readonly />
                 </div>
             </div>
 

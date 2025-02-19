@@ -15,15 +15,13 @@ namespace Animal_Health_System.DAL.Models
         [ForeignKey(nameof(Animal))]
         public int AnimalId { get; set; }
 
-        [ForeignKey(nameof(Farm))]
-        public int FarmId { get; set; }
+        
 
         public Animal Animal { get; set; }
 
-        public Farm  Farm { get; set; }
 
         public ICollection<MedicalExamination> Examinations { get; set; } = new List<MedicalExamination>();
 
-        public ICollection<Vaccine> Vaccines { get; set; } = new List<Vaccine>();
+        public ICollection<VaccineHistory> vaccineHistories { get; set; } = new List<VaccineHistory>();
     }
 }
