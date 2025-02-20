@@ -13,8 +13,8 @@ namespace Animal_Health_System.BLL.Interface
         Task<Mating> GetAsync(int id);
         Task<int> AddAsync(Mating  mating);
         Task<int> UpdateAsync(Mating  mating);
+        Task<Mating> GetWithRelationsAsync(int id);
 
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
     }
 }

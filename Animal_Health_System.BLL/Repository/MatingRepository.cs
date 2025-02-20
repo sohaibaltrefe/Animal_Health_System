@@ -40,7 +40,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.matings.ToListAsync();
+                return await context.matings.Include(f=>f.Farm).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.matings
+                return await context.matings.Include(f=>f.Farm).ThenInclude(a=>a.Animals)
                     
                     .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
             }
@@ -96,17 +96,13 @@ namespace Animal_Health_System.BLL.Repository
             }
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<Mating> GetWithRelationsAsync(int id)
         {
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
-            }
+            return await context.matings
+                .Include(m => m.MaleAnimal)
+                .Include(m => m.FemaleAnimal)
+                .Include(m => m.Farm)
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
         }
     }
 }

@@ -81,10 +81,16 @@
                 <div class="form-group">
                     <label asp-for="AnimalId">Animal</label>
                     <select asp-for="AnimalId" class="form-control" id="AnimalId">
-                        <option value="">-- Select Animal --</option>
-                        @foreach (var animal in Model.Animals)
+                        @if (Model.Animals != null && Model.Animals.Any())
                         {
-                            <option value="@animal.Value">@animal.Text</option>
+                            @foreach (var animal in Model.Animals)
+                            {
+                                <option value="@animal.Value">@animal.Text</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="">No animals available</option>
                         }
                     </select>
                     <span asp-validation-for="AnimalId" class="text-danger"></span>
@@ -94,14 +100,23 @@
                 <div class="form-group">
                     <label asp-for="MedicalRecordId">Medical Record</label>
                     <select asp-for="MedicalRecordId" class="form-control" id="MedicalRecordId">
-                        <option value="">-- Select Medical Record --</option>
-                        @foreach (var record in Model.MedicalRecords)
+                        @if (Model.Animals != null && Model.Animals.Any())
                         {
-                            <option value="@record.Value">@record.Text</option>
+                            @foreach (var animal in Model.Animals)
+                            {
+                                <option value="@animal.Value">@animal.Text</option>
+                            }
                         }
+                        else
+                        {
+                            <option value="">No animals available</option>
+                        }
+
                     </select>
                     <span asp-validation-for="MedicalRecordId" class="text-danger"></span>
                 </div>
+
+                <div id="medicalRecordMessage" class="alert alert-info" style="display:none;"></div>
 
                 <!-- Submit Button -->
                 <div class="form-group">
@@ -113,60 +128,82 @@
     </div>
 </div>
 
-@section script {
+@section Script {
     <script>
         $(document).ready(function () {
-            // عند تغيير المزرعة
+            // استدعاء تحديث الحيوانات عند تحميل الصفحة
+            updateAnimalsList();
+
+            // استدعاء عند تغيير المزرعة
             $("#FarmId").change(function () {
-                var farmId = $(this).val();
-                if (farmId) {
-                    $.ajax({
-                        url: "/Dashboard/VaccineHistory/GetAnimalsByFarm",
-                        type: "GET",
-                        data: { farmId: farmId },
-                        success: function (data) {
-                            var animalDropdown = $("#AnimalId");
-                            animalDropdown.empty().append('<option value="">-- Select Animal --</option>');
-                            $.each(data, function (index, item) {
-                                animalDropdown.append('<option value="' + item.value + '">' + item.text + '</option>');
-                            });
-                        },
-                        error: function () {
-                            alert("Error loading animals.");
-                        }
-                    });
-                } else {
-                    $("#AnimalId").empty().append('<option value="">-- Select Animal --</option>');
-                }
+                updateAnimalsList();
             });
 
-            // عند تغيير الحيوان
+            // استدعاء عند تغيير الحيوان
             $("#AnimalId").change(function () {
-                var animalId = $(this).val();
-                if (animalId) {
-                    $.ajax({
-                        url: "/Dashboard/VaccineHistory/GetMedicalRecordsByAnimal", // تأكد من وجود هذا الرابط
-                        type: "GET",
-                        data: { animalId: animalId },
-                        success: function (data) {
-                            var medicalRecordDropdown = $("#MedicalRecordId");
-                            medicalRecordDropdown.empty().append('<option value="">-- Select Medical Record --</option>');
-                            $.each(data, function (index, item) {
-                                medicalRecordDropdown.append('<option value="' + item.value + '">' + item.text + '</option>');
-                            });
-                        },
-                        error: function () {
-                            alert("Error loading medical records.");
-                        }
-                    });
-                } else {
-                    $("#MedicalRecordId").empty().append('<option value="">-- Select Medical Record --</option>');
-                }
+                checkMedicalRecord();
             });
-
-            // تحميل الحيوانات والسجلات الطبية عند فتح الصفحة إذا كانت هناك اختيارات مسبقة
-            $("#FarmId").change();
-            $("#AnimalId").change();
         });
+
+        function updateAnimalsList() {
+            var farmId = $("#FarmId").val();
+            if (farmId) {
+                $.ajax({
+                    url: '@Url.Action("GetAnimalsByFarm", "MedicalExamination")',
+                    type: 'GET',
+                    data: { farmId: farmId },
+                    success: function (data) {
+                        var animalSelect = $("#AnimalId");
+                        animalSelect.empty().append('<option value="">Select Animal</option>');
+
+                        if (data && data.length > 0) {
+                            $.each(data, function (index, animal) {
+                                animalSelect.append('<option value="' + animal.value + '">' + animal.text + '</option>');
+                            });
+                        } else {
+                            animalSelect.append('<option value="">No animals found</option>');
+                            console.warn("No animals found for this farm.");
+                        }
+
+                        // إعادة فحص السجل الطبي بعد تحديث القائمة
+                        checkMedicalRecord();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching animals:", status, error);
+                        alert("An error occurred while fetching animals.");
+                    }
+                });
+            } else {
+                $("#AnimalId").empty().append('<option value="">Select Animal</option>');
+            }
+        }
+
+        function checkMedicalRecord() {
+            var animalId = $('#AnimalId').val();
+            if (animalId) {
+                $.get('@Url.Action("CheckMedicalRecord", "MedicalExamination")', { animalId: animalId })
+                    .done(function (response) {
+                        var medicalRecordSelect = $('#MedicalRecordId');
+                        medicalRecordSelect.empty();
+
+                        if (response.hasMedicalRecord) {
+                            medicalRecordSelect.append('<option value="' + response.medicalRecordId + '">' + response.medicalRecordName + '</option>');
+                            medicalRecordSelect.prop('disabled', false);
+                            $('#medicalRecordMessage').text('The animal has a medical record: ' + response.medicalRecordName).show();
+                        } else {
+                            medicalRecordSelect.append('<option value="">No medical record</option>');
+                            medicalRecordSelect.prop('disabled', true);
+                            $('#medicalRecordMessage').text("This animal does not have a medical record.").show();
+                        }
+                    })
+                    .fail(function () {
+                        console.error("Error fetching medical record");
+                    });
+            } else {
+                $('#MedicalRecordId').empty().append('<option value="">Select Medical Record</option>').prop('disabled', true);
+                $('#medicalRecordMessage').hide();
+            }
+        }
+
     </script>
 }

@@ -7,7 +7,8 @@ namespace Animal_Health_System.DAL.Models
     public enum Gender
     {
         Male,
-        Female
+        Female,
+        mosele
     }
 
     public class Animal : EntityBase

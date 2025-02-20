@@ -31,245 +31,216 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            try
-            {
-                var vaccineHistories = await unitOfWork.vaccineHistoryRepository.GetAllAsync();
-                var vaccineHistoryVMs = mapper.Map<IEnumerable<VaccineHistoryVM>>(vaccineHistories);
-                return View(vaccineHistoryVMs);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error loading vaccine history data.");
-                return View("Error", new ErrorViewModel { Message = "Error loading vaccine history data." });
-            }
+            var vaccineHistorys = await unitOfWork.vaccineHistoryRepository.GetAllAsync();
+            var vaccineHistoryVm = mapper.Map<IEnumerable<VaccineHistoryVM>>(vaccineHistorys);
+            return View(vaccineHistoryVm);
         }
 
-        // GET: Create
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(id);
+            if (vaccineHistory == null)
+                return NotFound();
+
+            var viewModel = mapper.Map<VaccineHistoryDetailsVM>(vaccineHistory);
+            return View(viewModel);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var vm = new VaccineHistoryFormVM();
-            await PopulateDropdowns(vm);
-            return View(vm);
+            try
+            {
+                var vm = new VaccineHistoryFormVM
+                {
+                    Veterinarians = new SelectList(await unitOfWork.veterinarianRepository.GetAllAsync(), "Id", "FullName"),
+                    Farms = new SelectList(await unitOfWork.farmRepository.GetAllAsync(), "Id", "Name"),
+                    Vaccines = new SelectList(await unitOfWork.vaccineRepository.GetAllAsync(), "Id", "Name"),
+                    Animals = new List<SelectListItem>(), // Initialize Animals as an empty list
+                    MedicalRecords = new List<SelectListItem>() // Initialize MedicalRecords as an empty list
+                };
+
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error loading Create page.");
+                TempData["Error"] = "An error occurred while loading the page.";
+                return RedirectToAction("Index");
+            }
         }
 
-        // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VaccineHistoryFormVM vm)
         {
-            if (!ModelState.IsValid)
+            if ( ModelState.IsValid)
             {
-                await PopulateDropdowns(vm);  // تأكد من إعادة ملء الـ dropdowns في حالة فشل التحقق من صحة البيانات
+                // إعادة تهيئة القوائم المنسدلة بعد فشل التحقق من الصحة
+                vm.Veterinarians = new SelectList(await unitOfWork.veterinarianRepository.GetAllAsync(), "Id", "FullName", vm.VeterinarianId);
+                vm.Farms = new SelectList(await unitOfWork.farmRepository.GetAllAsync(), "Id", "Name", vm.FarmId);
+                vm.Vaccines = new SelectList(await unitOfWork.vaccineRepository.GetAllAsync(), "Id", "Name", vm.VaccineId);
+                TempData["Error"] = "Please fill all required fields.";
                 return View(vm);
             }
 
             try
             {
                 var vaccineHistory = mapper.Map<VaccineHistory>(vm);
-                vaccineHistory.AdministrationDate = vm.AdministrationDate.GetValueOrDefault(vaccineHistory.AdministrationDate);
-
                 await unitOfWork.vaccineHistoryRepository.AddAsync(vaccineHistory);
-                await unitOfWork.vaccineHistoryRepository.SaveChangesAsync();
+                await unitOfWork.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Vaccine history added successfully.";
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = "Vaccine history added successfully.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while creating vaccine history.");
-                TempData["ErrorMessage"] = "An error occurred while creating vaccine history.";
-                await PopulateDropdowns(vm);  // إعادة ملء الـ dropdowns في حالة الخطأ
+                logger.LogError(ex, "Error creating vaccine history.");
+                // إعادة تهيئة القوائم المنسدلة في حال حدوث خطأ
+                vm.Veterinarians = new SelectList(await unitOfWork.veterinarianRepository.GetAllAsync(), "Id", "FullName", vm.VeterinarianId);
+                vm.Farms = new SelectList(await unitOfWork.farmRepository.GetAllAsync(), "Id", "Name", vm.FarmId);
+                vm.Vaccines = new SelectList(await unitOfWork.vaccineRepository.GetAllAsync(), "Id", "Name", vm.VaccineId);
+                TempData["Error"] = "An error occurred while saving the vaccine history. Please try again.";
                 return View(vm);
             }
         }
 
-
-        // GET: Edit
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            logger.LogInformation($"Edit action called with ID: {id}");
+
             var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(id);
             if (vaccineHistory == null)
             {
-                TempData["ErrorMessage"] = "Vaccine history not found.";
-                return RedirectToAction(nameof(Index));
+                TempData["Error"] = "Vaccine history not found.";
+                return RedirectToAction("Index");
             }
 
             var vm = mapper.Map<VaccineHistoryFormVM>(vaccineHistory);
-            await PopulateDropdowns(vm);
+            vm.Veterinarians = (await unitOfWork.veterinarianRepository.GetAllAsync())
+                                    .Select(v => new SelectListItem { Text = v.FullName, Value = v.Id.ToString() })
+                                    .ToList();
+            vm.Farms = (await unitOfWork.farmRepository.GetAllAsync())
+                           .Select(f => new SelectListItem { Text = f.Name, Value = f.Id.ToString() })
+                           .ToList();
+            vm.Vaccines = (await unitOfWork.vaccineRepository.GetAllAsync())
+                                .Select(v => new SelectListItem { Text = v.Name, Value = v.Id.ToString() })
+                                .ToList();
+            vm.Animals = (await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId ?? 0))
+                                .Select(a => new SelectListItem { Text = a.Name, Value = a.Id.ToString() })
+                                .ToList();
+            vm.MedicalRecords = (await unitOfWork.medicalRecordRepository.GetByFarmAsync(vm.FarmId ?? 0))
+                         .Select(mr => new SelectListItem { Text = mr.Name.ToString(), Value = mr.Id.ToString() })
+                         .ToList();
+
             return View(vm);
         }
 
-        // POST: Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(VaccineHistoryFormVM vm)
         {
-            if (!ModelState.IsValid)
+            if ( ModelState.IsValid)
             {
-                await PopulateDropdowns(vm);
+                vm.Veterinarians = (await unitOfWork.veterinarianRepository.GetAllAsync())
+                                    .Select(v => new SelectListItem { Text = v.FullName, Value = v.Id.ToString() })
+                                    .ToList();
+                vm.Farms = (await unitOfWork.farmRepository.GetAllAsync())
+                               .Select(f => new SelectListItem { Text = f.Name, Value = f.Id.ToString() })
+                               .ToList();
+                vm.Vaccines = (await unitOfWork.vaccineRepository.GetAllAsync())
+                                    .Select(v => new SelectListItem { Text = v.Name, Value = v.Id.ToString() })
+                                    .ToList();
+                vm.Animals = (await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId ?? 0))
+                                    .Select(a => new SelectListItem { Text = a.Name, Value = a.Id.ToString() })
+                                    .ToList();
+                vm.MedicalRecords = (await unitOfWork.medicalRecordRepository.GetByFarmAsync(vm.FarmId ?? 0))
+                                    .Select(mr => new SelectListItem { Text = mr.Name, Value = mr.Id.ToString() })
+                                    .ToList();
+                TempData["Error"] = "Please fill all required fields.";
                 return View(vm);
             }
 
             try
             {
-                var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(vm.Id);
-                if (vaccineHistory == null)
-                {
-                    TempData["ErrorMessage"] = "Vaccine history not found.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                mapper.Map(vm, vaccineHistory);
-                vaccineHistory.AdministrationDate = vm.AdministrationDate.GetValueOrDefault(vaccineHistory.AdministrationDate);
-
+                var vaccineHistory = mapper.Map<VaccineHistory>(vm);
                 await unitOfWork.vaccineHistoryRepository.UpdateAsync(vaccineHistory);
-                TempData["SuccessMessage"] = "Vaccine history updated successfully.";
-                return RedirectToAction(nameof(Index));
+                await unitOfWork.SaveChangesAsync();
+
+                TempData["Success"] = "Vaccine history updated successfully.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while updating vaccine history.");
-                TempData["ErrorMessage"] = "An error occurred while updating vaccine history.";
-                await PopulateDropdowns(vm);
+                logger.LogError(ex, $"Error updating vaccine history with ID {vm.Id}.");
+                vm.Veterinarians = (await unitOfWork.veterinarianRepository.GetAllAsync())
+                                    .Select(v => new SelectListItem { Text = v.FullName, Value = v.Id.ToString() })
+                                    .ToList();
+                vm.Farms = (await unitOfWork.farmRepository.GetAllAsync())
+                               .Select(f => new SelectListItem { Text = f.Name, Value = f.Id.ToString() })
+                               .ToList();
+                vm.Vaccines = (await unitOfWork.vaccineRepository.GetAllAsync())
+                                    .Select(v => new SelectListItem { Text = v.Name, Value = v.Id.ToString() })
+                                    .ToList();
+                vm.Animals = (await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId ?? 0))
+                                    .Select(a => new SelectListItem { Text = a.Name, Value = a.Id.ToString() })
+                                    .ToList();
+                vm.MedicalRecords = (await unitOfWork.medicalRecordRepository.GetByFarmAsync(vm.FarmId ?? 0))
+                     .Select(mr => new SelectListItem { Text = mr.Name, Value = mr.Id.ToString() })
+                     .ToList();
+
+                TempData["Error"] = "An error occurred while updating the vaccine history. Please try again.";
                 return View(vm);
             }
         }
 
-        // GET: Details
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            try
-            {
-                var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(id);
-                if (vaccineHistory == null)
-                {
-                    TempData["ErrorMessage"] = "Vaccine history not found.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var vaccineHistoryDetailsVM = mapper.Map<VaccineHistoryDetailsVM>(vaccineHistory);
-                return View(vaccineHistoryDetailsVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while retrieving vaccine history details.");
-                TempData["ErrorMessage"] = "An error occurred while fetching vaccine history details.";
-                return RedirectToAction(nameof(Index));
-            }
-        }
-
-        // POST: DeleteConfirmed
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
+            var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(id);
+            if (vaccineHistory == null)
             {
-                var vaccineHistory = await unitOfWork.vaccineHistoryRepository.GetAsync(id);
-                if (vaccineHistory == null)
-                {
-                    TempData["ErrorMessage"] = "Vaccine history not found.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                await unitOfWork.vaccineHistoryRepository.DeleteAsync(id);
-                TempData["SuccessMessage"] = "Vaccine history deleted successfully.";
+                TempData["Error"] = "Vaccine History not found.";
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
+
+            if (vaccineHistory.IsDeleted)
             {
-                logger.LogError(ex, "An error occurred while deleting the vaccine history.");
-                TempData["ErrorMessage"] = "An error occurred while deleting the vaccine history.";
-                return RedirectToAction(nameof(Index));
+                return BadRequest("The Vaccine History is already deleted.");
             }
+
+            await unitOfWork.vaccineHistoryRepository.DeleteAsync(id);
+            await unitOfWork.SaveChangesAsync();
+
+            TempData["Success"] = "Vaccine History deleted successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // Helper method to populate dropdown lists
-        private async Task PopulateDropdowns(VaccineHistoryFormVM vm)
-        {
-            try
-            {
-                // التأكد من استرجاع البيانات من المستودع وإضافتها إلى القوائم
-                vm.Veterinarians = (await unitOfWork.veterinarianRepository.GetAllAsync())
-                    .Select(v => new SelectListItem { Value = v.Id.ToString(), Text = v.FullName }).ToList();
-
-                vm.Farms = (await unitOfWork.farmRepository.GetAllAsync())
-                    .Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
-
-                vm.Vaccines = (await unitOfWork.vaccineRepository.GetAllAsync())
-                    .Select(v => new SelectListItem { Value = v.Id.ToString(), Text = v.Name }).ToList();
-
-                if (vm.FarmId > 0)
-                {
-                    // إذا كانت المزرعة محددة، استرجاع الحيوانات الخاصة بها
-                    vm.Animals = (await unitOfWork.vaccineHistoryRepository.GetAnimalsByFarmIdAsync(vm.FarmId))
-                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList();
-                }
-                else
-                {
-                    vm.Animals = new List<SelectListItem>(); // قائمة فارغة إذا لم يتم تحديد مزرعة
-                }
-
-                if (vm.AnimalId > 0)
-                {
-                    // إذا كان الحيوان محددًا، استرجاع السجلات الطبية الخاصة به
-                    vm.MedicalRecords = (await unitOfWork.vaccineHistoryRepository.GetMedicalRecordsByAnimalIdAsync(vm.AnimalId))
-                        .Select(mr => new SelectListItem { Value = mr.Id.ToString(), Text = mr.Name }).ToList();
-                }
-                else
-                {
-                    vm.MedicalRecords = new List<SelectListItem>(); // قائمة فارغة إذا لم يتم تحديد حيوان
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while populating dropdowns.");
-                throw;
-            }
-        }
-    
-        // GET: GetAnimalsByFarm (AJAX)
         [HttpGet]
-        public async Task<IActionResult> GetAnimalsByFarm(int farmId)
+        public async Task<JsonResult> GetAnimalsByFarm(int farmId)
         {
-            try
-            {
-                if (farmId > 0)
-                {
-                    var animals = await unitOfWork.vaccineHistoryRepository.GetAnimalsByFarmIdAsync(farmId);
-                    var animalList = animals.Select(a => new { value = a.Id, text = a.Name }).ToList();
-                    return Json(animalList);
-                }
-                return Json(new List<object>());
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while getting animals by farm.");
-                return Json(new List<object>());
-            }
+            var animals = await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(farmId);
+            Console.WriteLine("Animals: " + animals.Count());  // ضع هنا لتتأكد من أن البيانات تأتي
+            return Json(new SelectList(animals, "Id", "Name"));
         }
 
-        // GET: GetMedicalRecordsByAnimal (AJAX)
+
         [HttpGet]
-        public async Task<IActionResult> GetMedicalRecordsByAnimal(int animalId)
+        public async Task<JsonResult> GetMedicalRecordsByFarm(int farmId)
         {
-            try
-            {
-                if (animalId > 0)
-                {
-                    var medicalRecords = await unitOfWork.vaccineHistoryRepository.GetMedicalRecordsByAnimalIdAsync(animalId);
-                    var medicalRecordList = medicalRecords.Select(mr => new { value = mr.Id, text = mr.Name }).ToList();
-                    return Json(medicalRecordList);
-                }
-                return Json(new { success = false, message = "Invalid animalId" });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while getting medical records by animal.");
-                return Json(new { success = false, message = "An error occurred" });
-            }
+            var records = await unitOfWork.medicalRecordRepository.GetByFarmAsync(farmId);
+            return Json(new SelectList(records, "Id", "RecordNumber"));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckMedicalRecord(int animalId)
+        {
+            var medicalRecord = await unitOfWork.medicalRecordRepository.GetByAnimalIdAsync(animalId);
+            return Json(medicalRecord != null
+                ? new { hasMedicalRecord = true, medicalRecordId = medicalRecord.Id, medicalRecordName = medicalRecord.Name }
+                : new { hasMedicalRecord = false });
         }
     }
 }
