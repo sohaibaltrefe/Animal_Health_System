@@ -23,5 +23,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO
 
         public int FemaleAnimalId { get; set; }
         public Animal FemaleAnimal { get; set; }
+
+        public bool Ispregnancyevent { get; set; }
+
     }
 }

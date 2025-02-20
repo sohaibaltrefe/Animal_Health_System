@@ -32,7 +32,10 @@ namespace Animal_Health_System.DAL.Models
         public int  FemaleAnimalId { get; set; }
         public Animal FemaleAnimal { get; set; }
 
-        // التقارير المرتبطة بالتزاوج
+        public bool Ispregnancyevent { get; set; }
+
+        public ICollection<Pregnancy> Pregnancies { get; set; } = new List<Pregnancy>();
+
     }
 
 }

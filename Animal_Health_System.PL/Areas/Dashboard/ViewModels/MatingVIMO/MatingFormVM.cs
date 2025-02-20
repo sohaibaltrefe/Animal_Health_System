@@ -33,5 +33,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO
 
         public List<SelectListItem> FemaleAnimals { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> MaleAnimals { get; set; } = new List<SelectListItem>();
+
+
+        public bool Ispregnancyevent { get; set; }
+
     }
 }

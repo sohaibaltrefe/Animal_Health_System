@@ -58,6 +58,10 @@
                     <textarea asp-for="Notes" class="form-control" id="Notes" readonly></textarea>
                 </div>
             </div>
+            <div class="col-md-6 form-group">
+                <label for="Ispregnancyevent">Is Pregnancy Event</label>
+                <input type="text" class="form-control" value="@(Model.Ispregnancyevent ? "Yes" : "No")" readonly />
+            </div>
 
             <div class="form-group mt-4">
                 <a asp-controller="Mating" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">

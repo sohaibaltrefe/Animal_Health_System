@@ -4,6 +4,7 @@ using Animal_Health_System.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Animal_Health_System.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250220193600_aaac")]
+    partial class aaac
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,9 +832,6 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<DateTime>("MatingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MatingId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -847,8 +847,6 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MatingId");
 
                     b.HasIndex("AnimalId", "MatingDate")
                         .IsUnique()
@@ -1494,15 +1492,7 @@ namespace Animal_Health_System.DAL.Migrations
                         .WithMany("Pregnancies")
                         .HasForeignKey("AnimalId");
 
-                    b.HasOne("Animal_Health_System.DAL.Models.Mating", "Mating")
-                        .WithMany("Pregnancies")
-                        .HasForeignKey("MatingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Animal");
-
-                    b.Navigation("Mating");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.VaccineHistory", b =>
@@ -1643,11 +1633,6 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("Notifications");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
-                {
-                    b.Navigation("Pregnancies");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalExamination", b =>

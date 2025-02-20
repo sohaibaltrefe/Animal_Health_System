@@ -190,6 +190,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
                 mapper.Map(vm, mating);
                 await unitOfWork.matingRepository.UpdateAsync(mating);
+
                 TempData["SuccessMessage"] = "Mating updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
