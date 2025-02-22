@@ -62,12 +62,12 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Pregnancy> Pregnancies { get; set; } = new List<Pregnancy>();
 
-        public ICollection<Birth> Births { get; set; } = new List<Birth>();
 
 
         public ICollection<Notification> PregnancyNotifications { get; set; } = new List<Notification>();
 
 
+        public ICollection<Birth>  births { get; set; } = new List<Birth>();
 
 
         public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();

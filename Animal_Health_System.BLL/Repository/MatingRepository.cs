@@ -104,5 +104,17 @@ namespace Animal_Health_System.BLL.Repository
                 .Include(m => m.Farm)
                 .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
         }
+        public async Task<Mating> FindAsync(Func<Mating, bool> predicate)
+        {
+            try
+            {
+                return await Task.Run(() => context.matings.AsQueryable().FirstOrDefault(predicate));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while finding mating.");
+                throw new Exception("Error occurred while finding mating.", ex);
+            }
+        }
     }
 }

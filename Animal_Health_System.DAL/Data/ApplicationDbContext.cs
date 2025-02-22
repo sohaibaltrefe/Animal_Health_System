@@ -86,11 +86,7 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey(b => b.PregnancyId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Birth
 
             // Birth -> Animal (Many-to-One)
-            modelBuilder.Entity<Birth>()
-                .HasOne(b => b.Animal )  // Birth has one Animal
-                .WithMany(a => a.Births) // Animal has many Births
-                .HasForeignKey(b => b.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Birth
-
+            
            
             // FarmStaff -> Farm (Many-to-One)
             modelBuilder.Entity<FarmStaff>()
@@ -252,10 +248,6 @@ namespace Animal_Health_System.DAL.Data
 
             modelBuilder.Entity<AppointmentHistory>()
                 .HasIndex(a => a.Name)
-                .IsUnique();
-
-            modelBuilder.Entity<Birth>()
-                .HasIndex(b => new { b.AnimalId, b.BirthDate })
                 .IsUnique();
 
           

@@ -3,6 +3,8 @@ using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalHealthHistoryVIMO
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.BirthVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmHealthSummaryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO;
@@ -10,6 +12,7 @@ using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalRecordVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.PregnancyVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
@@ -162,6 +165,49 @@ CreateMap<MedicalRecord, MedicalRecordDetailsVM>()
                 .ForMember(dest => dest.FemaleAnimal, opt => opt.MapFrom(src => src.FemaleAnimal))
                 .ForMember(dest => dest.Farm, opt => opt.MapFrom(src => src.Farm))
                 .ReverseMap();
+
+            //************  Pregnancy  ***************
+
+            CreateMap<Pregnancy, PregnancyVM>()
+     .ForMember(dest => dest.PregnancyDurationText, opt => opt.MapFrom(src => Pregnancy.CalculatePregnancyDuration(src)))
+     .ForMember(dest => dest.TimeToBirthText, opt => opt.MapFrom(src => Pregnancy.CalculateTimeToBirth(src.ExpectedBirthDate)))
+     .ReverseMap();
+
+            // PregnancyFormVM -> Pregnancy (For Create/Update)
+            CreateMap<PregnancyFormVM, Pregnancy>()
+                .ForMember(dest => dest.ExpectedBirthDate, opt => opt.MapFrom(src => src.ExpectedBirthDate))
+                .ForMember(dest => dest.MatingDate, opt => opt.MapFrom(src => src.MatingDate));
+
+            // Pregnancy -> PregnancyFormVM (For editing)
+            CreateMap<Pregnancy, PregnancyFormVM>()
+                .ForMember(dest => dest.ExpectedBirthDate, opt => opt.MapFrom(src => src.ExpectedBirthDate))
+                .ForMember(dest => dest.MatingDate, opt => opt.MapFrom(src => src.MatingDate));
+
+            // Pregnancy -> PregnancyDetailsVM (For details)
+            CreateMap<Pregnancy, PregnancyDetailsVM>()
+            .ForMember(dest => dest.PregnancyDurationText, opt => opt.MapFrom(src => Pregnancy.CalculatePregnancyDuration(src)))
+            .ForMember(dest => dest.TimeToBirthText, opt => opt.MapFrom(src => Pregnancy.CalculateTimeToBirth(src.ExpectedBirthDate)))
+            .ForMember(dest => dest.Births, opt => opt.MapFrom(src => src.Births));
+
+            //************  FarmHealthSummary  ***************
+
+            CreateMap<FarmHealthSummary, FarmHealthSummaryVM>().ReverseMap();
+            CreateMap<FarmHealthSummary, FarmHealthSummaryFormVM>().ReverseMap();
+            CreateMap<FarmHealthSummary, FarmHealthSummaryDetailsVM>().ReverseMap();
+
+            //************  Birth  ***************
+
+            CreateMap<Birth, BirthVM>().ReverseMap();
+            CreateMap<Birth, BirthFormVM>()
+      .ForMember(dest => dest.Pregnancy, opt => opt.Ignore()) // Ignore Pregnancy during mapping
+      .ForMember(dest => dest.Animal, opt => opt.Ignore())   // Ignore Animal during mapping
+      .ReverseMap() // Configure reverse mapping (BirthFormVM -> Birth)
+      .ForMember(dest => dest.Pregnancy, opt => opt.Ignore()) // Ignore Pregnancy during reverse mapping
+      .ForMember(dest => dest.Animal, opt => opt.Ignore());   // Ignore Animal during reverse mapping
+
+            CreateMap<Birth, BirthDetailsVM>().ReverseMap();
+
+
         }
     }
 }

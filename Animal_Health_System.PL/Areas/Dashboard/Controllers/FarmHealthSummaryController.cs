@@ -53,6 +53,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             var farmHealthSummary = mapper.Map<FarmHealthSummary>(vm);
             // Calculate and set the age
             await unitOfWork.farmHealthSummaryRepository.AddAsync(farmHealthSummary);
+            await unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -94,6 +95,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 
 
             await unitOfWork.farmHealthSummaryRepository.UpdateAsync(farmHealthSummary);
+            await unitOfWork.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
 
 

@@ -36,26 +36,41 @@ namespace Animal_Health_System.BLL.Repository
             }
         }
 
-        public async Task<IEnumerable<Birth>> GetAllAsync()
+        public async Task<IEnumerable<Birth>> GetAllAsync(string includeProperties = "")
         {
             try
             {
-                return await context.births.ToListAsync();
+                IQueryable<Birth> query = context.births.Where(b => !b.IsDeleted);
+
+                // تضمين العلاقات عند الحاجة
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+
+                return await query.ToListAsync();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while retrieving birth.");
-                throw new Exception("Error occurred while retrieving birth.", ex);
+                logger.LogError(ex, "Error occurred while retrieving births.");
+                throw new Exception("Error occurred while retrieving births.", ex);
             }
         }
 
-        public async Task<Birth> GetAsync(int id)
+
+        public async Task<Birth> GetAsync(int id, string includeProperties = "")
         {
             try
             {
-                return await context.births
-                   
-                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+                IQueryable<Birth> query = context.births.Where(b => b.Id == id && !b.IsDeleted);
+
+                // تضمين العلاقات عند الحاجة
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+
+                return await query.FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -96,17 +111,21 @@ namespace Animal_Health_System.BLL.Repository
             }
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<Birth> GetAsyncByPregnancyId(int pregnancyId)
         {
             try
             {
-                await context.SaveChangesAsync();
+                // استرجاع السجل بناءً على PregnancyId
+                return await context.births
+                    .Where(b => b.PregnancyId == pregnancyId && !b.IsDeleted)
+                    .FirstOrDefaultAsync(); // يمكن استبدالها بـ FirstOrDefaultAsync أو أي دالة تحتاجها
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
+                logger.LogError(ex, "Error occurred while retrieving birth by PregnancyId.");
+                throw new Exception("Error occurred while retrieving birth by PregnancyId.", ex);
             }
         }
+
     }
 }

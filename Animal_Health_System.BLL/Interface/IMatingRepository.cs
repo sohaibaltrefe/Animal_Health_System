@@ -14,6 +14,7 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> AddAsync(Mating  mating);
         Task<int> UpdateAsync(Mating  mating);
         Task<Mating> GetWithRelationsAsync(int id);
+        Task<Mating> FindAsync(Func<Mating, bool> predicate);
 
         Task DeleteAsync(int id);
     }

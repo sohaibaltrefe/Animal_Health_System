@@ -11,9 +11,11 @@ namespace Animal_Health_System.DAL.Models
     {
         public int Id { get; set; }
 
-        public string Name { get; set; } 
+        public string Name { get; set; }
 
-        public int? PregnancyId { get; set; }
+        [ForeignKey(nameof(Pregnancy))]
+
+        public int PregnancyId { get; set; }
         public   Pregnancy Pregnancy { get; set; }
 
         public DateTime BirthDate { get; set; }
@@ -21,16 +23,12 @@ namespace Animal_Health_System.DAL.Models
         public int NumberOfOffspring { get; set; }
 
         public string BirthCondition { get; set; }
-
         [ForeignKey(nameof(Animal))]
         public int AnimalId { get; set; }
+        public Animal Animal { get; set; }
 
-        [ForeignKey(nameof(Farm))]
-        public int FarmId { get; set; }
 
-        public   Animal Animal { get; set; } 
 
-        public   Farm Farm { get; set; }
     }
 
 }

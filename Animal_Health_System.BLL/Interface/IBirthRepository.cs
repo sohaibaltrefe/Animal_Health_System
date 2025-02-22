@@ -9,11 +9,12 @@ namespace Animal_Health_System.BLL.Interface
 {
     public interface IBirthRepository
     {
-        Task<IEnumerable<Birth>> GetAllAsync();
-        Task<Birth> GetAsync(int id);
+        Task<IEnumerable<Birth>> GetAllAsync(string includeProperties = "");
+        Task<Birth> GetAsync(int id, string includeProperties = "");
         Task<int> AddAsync(Birth  birth);
         Task<int> UpdateAsync(Birth  birth);
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
+        Task<Birth> GetAsyncByPregnancyId(int pregnancyId);  // إضافة هذه الدالة
+
     }
 }

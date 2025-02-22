@@ -2,6 +2,7 @@
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO;
+using Animal_Health_System.PL.Areas.Dashboard.ViewModels.PregnancyVIMO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -77,7 +78,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MatingFormVM vm)
         {
-            if ( ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var farms = await unitOfWork.farmRepository.GetAllAsync();
                 vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
@@ -89,6 +90,8 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 var mating = mapper.Map<Mating>(vm);
                 await unitOfWork.matingRepository.AddAsync(mating);
+                await unitOfWork.SaveChangesAsync();
+
                 TempData["SuccessMessage"] = "Mating added successfully.";
                 return RedirectToAction(nameof(Index));
             }
@@ -116,7 +119,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 var animals = await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(mating.FarmId);
 
                 var vm = mapper.Map<MatingFormVM>(mating);
-                vm.FarmId = mating.FarmId; // تعيين قيمة FarmId عند تحميل النموذج
+                vm.FarmId = mating.FarmId;
                 vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
 
                 // تصنيف الحيوانات حسب الجنس
@@ -139,7 +142,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MatingFormVM vm)
@@ -150,31 +152,33 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 ModelState.AddModelError("FarmId", "Farm is required.");
             }
 
-            if ( ModelState.IsValid)
+            // إعادة تحميل بيانات المزارع
+            var farms = await unitOfWork.farmRepository.GetAllAsync();
+            vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+
+            // إعادة تحميل الحيوانات بناءً على المزرعة المحددة
+            if (vm.FarmId.HasValue && vm.FarmId.Value > 0)
             {
-                var farms = await unitOfWork.farmRepository.GetAllAsync();
-                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
+                var animals = await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId.Value);
+                vm.MaleAnimals = animals
+                    .Where(a => a.Gender == Gender.Male)
+                    .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
+                    .ToList();
 
-                // إعادة تحميل الحيوانات بناءً على المزرعة المحددة
-                if (vm.FarmId > 0)
-                {
-                    var animals = await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId);
-                    vm.MaleAnimals = animals
-                        .Where(a => a.Gender == Gender.Male)
-                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
-                        .ToList();
+                vm.FemaleAnimals = animals
+                    .Where(a => a.Gender == Gender.Female)
+                    .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
+                    .ToList();
+            }
+            else
+            {
+                vm.MaleAnimals = new List<SelectListItem>();
+                vm.FemaleAnimals = new List<SelectListItem>();
+            }
 
-                    vm.FemaleAnimals = animals
-                        .Where(a => a.Gender == Gender.Female)
-                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
-                        .ToList();
-                }
-                else
-                {
-                    vm.MaleAnimals = new List<SelectListItem>();
-                    vm.FemaleAnimals = new List<SelectListItem>();
-                }
-
+            // إذا كان هناك أخطاء في الإدخال، لا تكمل العملية وأعد النموذج مع الرسالة
+            if (!ModelState.IsValid)
+            {
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return View(vm);
             }
@@ -188,8 +192,38 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
+                // تحديث بيانات التزاوج بناءً على الفورم
                 mapper.Map(vm, mating);
                 await unitOfWork.matingRepository.UpdateAsync(mating);
+
+                // التحقق من إضافة الحمل بناءً على خيار "IsPregnancyEvent"
+                if (vm.Ispregnancyevent)
+                {
+                    // البحث عن حمل سابق لهذا التزاوج
+                    var existingPregnancy = await unitOfWork.pregnancyRepository.FindAsync(p => p.MatingId == mating.Id);
+
+                    if (existingPregnancy == null)
+                    {
+                        // إضافة حمل جديد
+                        var pregnancy = new Pregnancy
+                        {
+                            Name = $"Pregnancy for {mating.Name}",
+                            MatingDate = mating.MatingDate,
+                            ExpectedBirthDate = mating.MatingDate.AddMonths(9),
+                            ActualBirthDate = new DateTime(2026, 1, 1),
+                            HasComplications = false,
+                            Status = PregnancyStatus.Pregnant,
+                            Notes = "sasasas",
+                            AnimalId = mating.FemaleAnimalId,  // ربط الحمل بالحيوان الأنثى
+                            MatingId = mating.Id,
+                        };
+
+                        // إضافة الحمل إلى قاعدة البيانات
+                        await unitOfWork.pregnancyRepository.AddAsync(pregnancy);
+                    }
+                    await unitOfWork.SaveChangesAsync();
+
+                }
 
                 TempData["SuccessMessage"] = "Mating updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -197,29 +231,13 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating the mating.");
-
-                // إعادة تحميل نفس البيانات في حالة الخطأ
-                var farms = await unitOfWork.farmRepository.GetAllAsync();
-                vm.Farms = farms.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.Name }).ToList();
-
-                if (vm.FarmId > 0)
-                {
-                    var animals = await unitOfWork.animalRepository.GetAnimalsByFarmIdAsync(vm.FarmId);
-                    vm.MaleAnimals = animals
-                        .Where(a => a.Gender == Gender.Male)
-                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
-                        .ToList();
-
-                    vm.FemaleAnimals = animals
-                        .Where(a => a.Gender == Gender.Female)
-                        .Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name })
-                        .ToList();
-                }
-
-                TempData["ErrorMessage"] = "An error occurred while updating the mating.";
+                TempData["ErrorMessage"] = "An error occurred while updating the mating: " + ex.Message;
                 return View(vm);
             }
         }
+
+
+
 
 
         [HttpGet]
@@ -269,7 +287,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
         }
 
         // Filter animals based on selected farm
-         [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAnimalsByFarm(int farmId)
         {
             try
@@ -294,7 +312,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return Json(new { males = new List<object>(), females = new List<object>() });
             }
         }
-
+            
 
 
 

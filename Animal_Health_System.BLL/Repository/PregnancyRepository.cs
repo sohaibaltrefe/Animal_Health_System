@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace Animal_Health_System.BLL.Repository
         {
             try
             {
-                return await context.pregnancies.ToListAsync();
+                return await context.pregnancies.Include(a=>a.Animal).Include(m=>m.Mating).Where(a => !a.IsDeleted).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -94,17 +95,16 @@ namespace Animal_Health_System.BLL.Repository
                 throw new Exception("Error occurred while deleting pregnancies.", ex);
             }
         }
-
-        public async Task SaveChangesAsync()
+        public async Task<Pregnancy> FindAsync(Expression<Func<Pregnancy, bool>> predicate)
         {
             try
             {
-                await context.SaveChangesAsync();
+                return await context.pregnancies.FirstOrDefaultAsync(predicate);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
+                logger.LogError(ex, "Error occurred while searching for pregnancy.");
+                throw new Exception("Error occurred while searching for pregnancy.", ex);
             }
         }
     }

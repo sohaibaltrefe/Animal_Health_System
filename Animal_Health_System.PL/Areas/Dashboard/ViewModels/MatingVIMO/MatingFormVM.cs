@@ -20,10 +20,10 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO
         [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters")]
         public string Notes { get; set; }
 
-        [Required(ErrorMessage = "Farm is required")]
-        public int FarmId { get; set; } // فقط FarmId لتمثيل المزرعة
+        [Required(ErrorMessage = "Farm is required.")]
+        public int? FarmId { get; set; }
 
-        public List<SelectListItem> Farms { get; set; } // استخدام List<SelectListItem> لعرض المزرعة في الـ View
+        public List<SelectListItem> Farms { get; set; } = new List<SelectListItem>();// استخدام List<SelectListItem> لعرض المزرعة في الـ View
 
         [Required(ErrorMessage = "Male animal is required")]
         public int MaleAnimalId { get; set; }

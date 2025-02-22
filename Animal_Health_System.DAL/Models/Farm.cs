@@ -24,7 +24,6 @@ namespace Animal_Health_System.DAL.Models
 
         public   ICollection<Animal> Animals { get; set; } = new List <Animal>();
 
-        public   ICollection<Birth> Births { get; set; } = new List <Birth>();
 
         public   ICollection<FarmStaff> FarmStaffs { get; set; } = new List <FarmStaff>();
         public   ICollection<Appointment>  Appointments { get; set; } = new List <Appointment>();
