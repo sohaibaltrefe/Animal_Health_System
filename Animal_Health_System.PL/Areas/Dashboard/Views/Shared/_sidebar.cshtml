@@ -1,6 +1,10 @@
-﻿<aside class="main-sidebar sidebar-dark-primary elevation-4">
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="#" class="brand-link">
         <img src="~/Dashboard/dist/img/logo.webp" alt="Animal careLogo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Animal care</span>
     </a>
@@ -17,7 +21,22 @@
 
             </div>
             <div class="info">
-                <a href="#" class="d-block"> user name </a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var user = await UserManager.GetUserAsync(User);
+
+                    <li class="nav-item d-flex align-items-center">
+                        <span class="nav-link text-primary fw-bold">
+                            Welcome, @(user?.FullName)
+                        </span>
+                    </li>
+
+                    <li class="nav-item d-flex align-items-center">
+                        <span class="nav-link text-primary fw-bold" style="display: block;">
+                            The Role Is: @(user?.Role)
+                        </span>
+                    </li>
+                }
             </div>
         </div>
 

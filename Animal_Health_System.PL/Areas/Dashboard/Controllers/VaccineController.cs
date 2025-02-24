@@ -2,6 +2,7 @@
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     [Area("Dashboard")]
     public class VaccineController : Controller
     {

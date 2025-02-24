@@ -15,6 +15,7 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> UpdateAsync(FarmStaff  farmStaff);
 
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
+        Task<Farm> GetDefaultFarmForStaffAsync();
+
     }
 }

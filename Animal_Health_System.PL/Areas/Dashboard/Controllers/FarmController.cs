@@ -94,7 +94,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
             {
                 Value = o.Id.ToString(),
                 Text = o.FullName,
-                Selected = (o.Id == farm.OwnerId)
+                Selected = (o.Id == farm.Id)
             }).ToList();
             return View(vm);
         }
@@ -113,7 +113,7 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     {
                         Value = o.Id.ToString(),
                         Text = o.FullName,
-                        Selected = (o.Id == vm.OwnerId)
+                        Selected = (o.Id == vm.Id)
                     }).ToList();
                 return View(vm);
             }

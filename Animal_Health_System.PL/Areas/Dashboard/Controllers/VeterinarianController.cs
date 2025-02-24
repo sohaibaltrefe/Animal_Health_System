@@ -4,11 +4,13 @@ using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
+    [Authorize(Roles ="Admin")]
     [Area("Dashboard")]
     public class VeterinarianController : Controller
     {

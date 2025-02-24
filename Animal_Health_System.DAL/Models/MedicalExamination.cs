@@ -36,6 +36,5 @@ namespace Animal_Health_System.DAL.Models
         public ICollection<Medication> Medications { get; set; } = new HashSet<Medication>();  // يجب أن يكون الفحص الطبي مرتبطًا بالأدوية
 
         // إضافة العلاقة مع HealthStatusLog
-        public ICollection<HealthStatusLog> HealthStatusLogs { get; set; } = new List<HealthStatusLog>();
     }
 }

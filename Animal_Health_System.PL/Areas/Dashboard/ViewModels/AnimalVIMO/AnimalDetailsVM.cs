@@ -14,7 +14,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO
         public string Breed { get; set; }
         public decimal Weight { get; set; }
         public string Age { get; set; }
-        public HealthStatus CurrentHealthStatus { get; set; }
         public Gender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int FarmId { get; set; }

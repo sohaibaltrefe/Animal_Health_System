@@ -10,9 +10,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
+    [Authorize]
     [Area("Dashboard")]
     public class AnimalController : Controller
     {

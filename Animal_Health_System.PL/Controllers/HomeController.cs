@@ -1,9 +1,12 @@
-using Animal_Health_System.PL.Models;
+using Animal_Health_System.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Animal_Health_System.PL.Controllers
 {
+    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

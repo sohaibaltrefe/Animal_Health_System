@@ -17,7 +17,7 @@ namespace Animal_Health_System.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -127,6 +127,153 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasDatabaseName("Idx_AnimalHealthHistory_Name_EventDate");
 
                     b.ToTable("animalHealthHistories");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "e02a0899-0db9-4df2-8a9a-4e8ea9109804",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "23d86d68-d08e-4207-96f7-0bef2b197d2e",
+                            Email = "admin@medc.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@MEDC.COM",
+                            NormalizedUserName = "ADMIN@MEDC.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEERGBt3usCm5dKAcxXbI6pmC8C9VrXxJui/OhaqRKUs384S126j0/L8zdx0nGvkC9g==",
+                            PhoneNumberConfirmed = false,
+                            Role = "Admin",
+                            SecurityStamp = "f4579bb6-fd89-4345-8511-55c0b4f8e52d",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@medc.com"
+                        },
+                        new
+                        {
+                            Id = "a0f98e59-b764-49c4-b318-8c578ee9f1b2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "2830a24d-8624-4848-beb0-ec6802f51a0a",
+                            Email = "owner@medc.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "OWNER@MEDC.COM",
+                            NormalizedUserName = "OWNER@MEDC.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPHXR0mepcDgPtiUnE094GqFxlJs5lbBqwCfm/O+7UeFTdp4Q5D+8E4BnZK/Ogg8VA==",
+                            PhoneNumberConfirmed = false,
+                            Role = "Owner",
+                            SecurityStamp = "7a7f42e1-81e6-495e-9275-a365a3ec49c5",
+                            TwoFactorEnabled = false,
+                            UserName = "owner@medc.com"
+                        },
+                        new
+                        {
+                            Id = "6c742aa7-9293-41cc-ba62-03f1de2e81a9",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "688b5258-4de3-4960-bc0b-e643f49e919e",
+                            Email = "veterinarian@medc.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "VETERINARIAN@MEDC.COM",
+                            NormalizedUserName = "VETERINARIAN@MEDC.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPgQ5H9gI5MRwsV9t/pPYru+TOa00TjzJ3rYvFMvI8jfjA2XdpQwf+kjBAqvtLFzTw==",
+                            PhoneNumberConfirmed = false,
+                            Role = "Veterinarian",
+                            SecurityStamp = "59055c33-5d41-4375-9668-0246e0cb15ae",
+                            TwoFactorEnabled = false,
+                            UserName = "veterinarian@medc.com"
+                        },
+                        new
+                        {
+                            Id = "e7b2b8f0-bb06-4ff7-a867-25adc5feb4bd",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "7d1a6b95-21fb-4f24-a227-09be25746e46",
+                            Email = "farmstaff@medc.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "FARMSTAFF@MEDC.COM",
+                            NormalizedUserName = "FARMSTAFF@MEDC.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFZmKuH1eF0V6QJjgyWfTeDmbPPzhGUfgcz2cFFH/CBSFCE1lNqGrecuKyhhypXczA==",
+                            PhoneNumberConfirmed = false,
+                            Role = "FarmStaff",
+                            SecurityStamp = "ba97b1df-d248-4407-b0f6-1e298a461185",
+                            TwoFactorEnabled = false,
+                            UserName = "farmstaff@medc.com"
+                        });
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Appointment", b =>
@@ -369,6 +516,10 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Property<int?>("AnimalId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -407,88 +558,13 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.HasIndex("AnimalId");
 
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
                     b.HasIndex("FarmId", "FullName")
                         .IsUnique();
 
                     b.ToTable("farmStaff");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmVeterinarian", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FarmId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VeterinarianId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FarmId");
-
-                    b.HasIndex("VeterinarianId");
-
-                    b.ToTable("farmVeterinarians");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthStatusLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HealthStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("HealthStatusDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MedicalExaminationId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StatusDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId");
-
-                    b.HasIndex("MedicalExaminationId");
-
-                    b.ToTable("healthStatusLogs");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
@@ -765,6 +841,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -788,10 +868,26 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
                     b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("owners");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ApplicationUserId = "a0f98e59-b764-49c4-b318-8c578ee9f1b2",
+                            CreatedAt = new DateTime(2025, 2, 24, 21, 19, 51, 399, DateTimeKind.Utc).AddTicks(4718),
+                            Email = "owner@medc.com",
+                            FullName = "John Doe",
+                            IsDeleted = false,
+                            PhoneNumber = "123-456-7890",
+                            UpdatedAt = new DateTime(2025, 2, 24, 21, 19, 51, 399, DateTimeKind.Utc).AddTicks(4727)
+                        });
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Pregnancy", b =>
@@ -949,6 +1045,10 @@ namespace Animal_Health_System.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -982,10 +1082,29 @@ namespace Animal_Health_System.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
                     b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("veterinarians");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ApplicationUserId = "6c742aa7-9293-41cc-ba62-03f1de2e81a9",
+                            CreatedAt = new DateTime(2025, 2, 24, 21, 19, 51, 480, DateTimeKind.Utc).AddTicks(9198),
+                            Email = "veterinarian@medc.com",
+                            FullName = "Dr. Smith",
+                            IsDeleted = false,
+                            PhoneNumber = "123-456-7890",
+                            Specialty = "Small Animal",
+                            UpdatedAt = new DateTime(2025, 2, 24, 21, 19, 51, 480, DateTimeKind.Utc).AddTicks(9204),
+                            YearsOfExperience = 5,
+                            salary = 50000m
+                        });
                 });
 
             modelBuilder.Entity("MedicalExaminationMedication", b =>
@@ -1028,6 +1147,32 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "6718366f-9a2c-4ff9-a636-9e921ed4b59e",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "39e20152-d287-40b6-8d0b-91d16a2f9e24",
+                            Name = "Owner",
+                            NormalizedName = "OWNER"
+                        },
+                        new
+                        {
+                            Id = "7a93bdf8-3cd5-4091-8e9c-d39a8ad8a82d",
+                            Name = "Veterinarian",
+                            NormalizedName = "VETERINARIAN"
+                        },
+                        new
+                        {
+                            Id = "4f5ab0c9-ab78-4fde-b965-1e784090b03e",
+                            Name = "FarmStaff",
+                            NormalizedName = "FARMSTAFF"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1053,71 +1198,6 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -1148,12 +1228,10 @@ namespace Animal_Health_System.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -1182,6 +1260,23 @@ namespace Animal_Health_System.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "a0f98e59-b764-49c4-b318-8c578ee9f1b2",
+                            RoleId = "39e20152-d287-40b6-8d0b-91d16a2f9e24"
+                        },
+                        new
+                        {
+                            UserId = "6c742aa7-9293-41cc-ba62-03f1de2e81a9",
+                            RoleId = "7a93bdf8-3cd5-4091-8e9c-d39a8ad8a82d"
+                        },
+                        new
+                        {
+                            UserId = "e7b2b8f0-bb06-4ff7-a867-25adc5feb4bd",
+                            RoleId = "4f5ab0c9-ab78-4fde-b965-1e784090b03e"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1190,12 +1285,10 @@ namespace Animal_Health_System.DAL.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -1328,49 +1421,21 @@ namespace Animal_Health_System.DAL.Migrations
                         .WithMany("FarmStaffs")
                         .HasForeignKey("AnimalId");
 
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("FarmStaff")
+                        .HasForeignKey("Animal_Health_System.DAL.Models.FarmStaff", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
                         .WithMany("FarmStaffs")
                         .HasForeignKey("FarmId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Farm");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.FarmVeterinarian", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Animal_Health_System.DAL.Models.Veterinarian", "Veterinarian")
-                        .WithMany()
-                        .HasForeignKey("VeterinarianId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Farm");
-
-                    b.Navigation("Veterinarian");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.HealthStatusLog", b =>
-                {
-                    b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", "MedicalExamination")
-                        .WithMany("HealthStatusLogs")
-                        .HasForeignKey("MedicalExaminationId");
-
-                    b.Navigation("Animal");
-
-                    b.Navigation("MedicalExamination");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
@@ -1475,6 +1540,17 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("Veterinarian");
                 });
 
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.Owner", b =>
+                {
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Owner")
+                        .HasForeignKey("Animal_Health_System.DAL.Models.Owner", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Pregnancy", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.Animal", "Animal")
@@ -1519,6 +1595,17 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("veterinarian");
                 });
 
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.Veterinarian", b =>
+                {
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Veterinarian")
+                        .HasForeignKey("Animal_Health_System.DAL.Models.Veterinarian", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("MedicalExaminationMedication", b =>
                 {
                     b.HasOne("Animal_Health_System.DAL.Models.MedicalExamination", null)
@@ -1545,7 +1632,7 @@ namespace Animal_Health_System.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1554,7 +1641,7 @@ namespace Animal_Health_System.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1569,7 +1656,7 @@ namespace Animal_Health_System.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1578,7 +1665,7 @@ namespace Animal_Health_System.DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Animal_Health_System.DAL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1603,6 +1690,15 @@ namespace Animal_Health_System.DAL.Migrations
                     b.Navigation("PregnancyNotifications");
 
                     b.Navigation("births");
+                });
+
+            modelBuilder.Entity("Animal_Health_System.DAL.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("FarmStaff");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Veterinarian");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Appointment", b =>
@@ -1633,11 +1729,6 @@ namespace Animal_Health_System.DAL.Migrations
             modelBuilder.Entity("Animal_Health_System.DAL.Models.Mating", b =>
                 {
                     b.Navigation("Pregnancies");
-                });
-
-            modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalExamination", b =>
-                {
-                    b.Navigation("HealthStatusLogs");
                 });
 
             modelBuilder.Entity("Animal_Health_System.DAL.Models.MedicalRecord", b =>

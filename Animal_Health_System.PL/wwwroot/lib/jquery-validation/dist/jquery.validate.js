@@ -121,21 +121,21 @@ $.extend( $.fn, {
 
 	// https://jqueryvalidation.org/valid/
 	valid: function() {
-		var valid, validator, errorHashSet;
+		var valid, validator, errorList;
 
 		if ( $( this[ 0 ] ).is( "form" ) ) {
 			valid = this.validate().form();
 		} else {
-			errorHashSet = [];
+			errorList = [];
 			valid = true;
 			validator = $( this[ 0 ].form ).validate();
 			this.each( function() {
 				valid = validator.element( this ) && valid;
 				if ( !valid ) {
-					errorHashSet = errorHashSet.concat( validator.errorHashSet );
+					errorList = errorList.concat( validator.errorList );
 				}
 			} );
-			validator.errorHashSet = errorHashSet;
+			validator.errorList = errorList;
 		}
 		return valid;
 	},
@@ -535,7 +535,7 @@ $.extend( $.validator, {
 
 				// Add items to error list and map
 				$.extend( this.errorMap, errors );
-				this.errorHashSet = $.map( this.errorMap, function( message, name ) {
+				this.errorList = $.map( this.errorMap, function( message, name ) {
 					return {
 						message: message,
 						element: validator.findByName( name )[ 0 ]
@@ -543,12 +543,12 @@ $.extend( $.validator, {
 				} );
 
 				// Remove items from success list
-				this.successHashSet = $.grep( this.successHashSet, function( element ) {
+				this.successList = $.grep( this.successList, function( element ) {
 					return !( element.name in errors );
 				} );
 			}
 			if ( this.settings.showErrors ) {
-				this.settings.showErrors.call( this, this.errorMap, this.errorHashSet );
+				this.settings.showErrors.call( this, this.errorMap, this.errorList );
 			} else {
 				this.defaultShowErrors();
 			}
@@ -619,13 +619,13 @@ $.extend( $.validator, {
 		},
 
 		size: function() {
-			return this.errorHashSet.length;
+			return this.errorList.length;
 		},
 
 		focusInvalid: function() {
 			if ( this.settings.focusInvalid ) {
 				try {
-					$( this.findLastActive() || this.errorHashSet.length && this.errorHashSet[ 0 ].element || [] )
+					$( this.findLastActive() || this.errorList.length && this.errorList[ 0 ].element || [] )
 					.filter( ":visible" )
 					.trigger( "focus" )
 
@@ -640,7 +640,7 @@ $.extend( $.validator, {
 
 		findLastActive: function() {
 			var lastActive = this.lastActive;
-			return lastActive && $.grep( this.errorHashSet, function( n ) {
+			return lastActive && $.grep( this.errorList, function( n ) {
 				return n.element.name === lastActive.name;
 			} ).length === 1 && lastActive;
 		},
@@ -693,8 +693,8 @@ $.extend( $.validator, {
 		},
 
 		resetInternals: function() {
-			this.successHashSet = [];
-			this.errorHashSet = [];
+			this.successList = [];
+			this.errorList = [];
 			this.errorMap = {};
 			this.toShow = $( [] );
 			this.toHide = $( [] );
@@ -829,7 +829,7 @@ $.extend( $.validator, {
 				return;
 			}
 			if ( this.objectLength( rules ) ) {
-				this.successHashSet.push( element );
+				this.successList.push( element );
 			}
 			return true;
 		},
@@ -894,7 +894,7 @@ $.extend( $.validator, {
 		formatAndAdd: function( element, rule ) {
 			var message = this.defaultMessage( element, rule );
 
-			this.errorHashSet.push( {
+			this.errorList.push( {
 				message: message,
 				element: element,
 				method: rule.method
@@ -913,19 +913,19 @@ $.extend( $.validator, {
 
 		defaultShowErrors: function() {
 			var i, elements, error;
-			for ( i = 0; this.errorHashSet[ i ]; i++ ) {
-				error = this.errorHashSet[ i ];
+			for ( i = 0; this.errorList[ i ]; i++ ) {
+				error = this.errorList[ i ];
 				if ( this.settings.highlight ) {
 					this.settings.highlight.call( this, error.element, this.settings.errorClass, this.settings.validClass );
 				}
 				this.showLabel( error.element, error.message );
 			}
-			if ( this.errorHashSet.length ) {
+			if ( this.errorList.length ) {
 				this.toShow = this.toShow.add( this.containers );
 			}
 			if ( this.settings.success ) {
-				for ( i = 0; this.successHashSet[ i ]; i++ ) {
-					this.showLabel( this.successHashSet[ i ] );
+				for ( i = 0; this.successList[ i ]; i++ ) {
+					this.showLabel( this.successList[ i ] );
 				}
 			}
 			if ( this.settings.unhighlight ) {
@@ -943,7 +943,7 @@ $.extend( $.validator, {
 		},
 
 		invalidElements: function() {
-			return $( this.errorHashSet ).map( function() {
+			return $( this.errorList ).map( function() {
 				return this.element;
 			} );
 		},
@@ -1602,7 +1602,7 @@ $.extend( $.validator, {
 						validator.resetInternals();
 						validator.toHide = validator.errorsFor( element );
 						validator.formSubmitted = submitted;
-						validator.successHashSet.push( element );
+						validator.successList.push( element );
 						validator.invalid[ element.name ] = false;
 						validator.showErrors();
 					} else {

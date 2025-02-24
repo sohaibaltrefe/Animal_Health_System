@@ -16,8 +16,6 @@ namespace Animal_Health_System.BLL.Interface
         public IFarmHealthSummaryRepository farmHealthSummaryRepository { get; }
         public IFarmRepository farmRepository { get; }   
         public IFarmStaffRepository farmStaffRepository { get; }
-        public IFarmVeterinarianRepository farmVeterinarianRepository { get; }
-        public IHealthStatusLogRepository healthStatusLogRepository { get; }
         public IMatingRepository matingRepository { get; }
         public IMedicalExaminationRepository medicalExaminationRepository { get; }
         public IMedicalRecordRepository medicalRecordRepository { get; }

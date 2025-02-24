@@ -55,7 +55,7 @@ namespace Animal_Health_System.BLL.Repository
             {
                 return await context.farmStaff
                     .Include(f => f.Farm)
-                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+                    .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);  // تحويل id إلى string قبل المقارنة
             }
             catch (Exception ex)
             {
@@ -97,18 +97,20 @@ namespace Animal_Health_System.BLL.Repository
             }
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<Farm> GetDefaultFarmForStaffAsync()
         {
             try
             {
-                await context.SaveChangesAsync();
+                // افتراض أن هناك خاصية `IsDefault` أو مشابهة في الـ Farm لتحديد المزرعة الافتراضية.
+                return await context.farms.FirstOrDefaultAsync(f => f.IsDeleted == true); // أو حسب منطقك
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
+                logger.LogError(ex, "Error occurred while retrieving the default farm for staff.");
+                throw;
             }
         }
+
     }
 }
     

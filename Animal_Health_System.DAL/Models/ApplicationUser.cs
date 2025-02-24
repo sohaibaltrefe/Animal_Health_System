@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 
 namespace Animal_Health_System.DAL.Models
 {
-    public enum Role
-    {
-        Owner,
-        
-    }
-    class ApplicationUser:IdentityUser
+
+  public  class ApplicationUser:IdentityUser
     {
         [MaxLength(100)]
         public string? FullName { get; set; }
         [MaxLength(50)]
         public string? Address { get; set; }
+
+        public string Role { get; set; }
+
+        public Owner? Owner { get; set; }
+        public FarmStaff? FarmStaff { get; set; }
+        public Veterinarian? Veterinarian { get; set; }
     }
 }

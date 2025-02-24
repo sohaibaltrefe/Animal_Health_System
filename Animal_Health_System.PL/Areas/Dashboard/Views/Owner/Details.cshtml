@@ -93,7 +93,7 @@
 
     <!-- Action Buttons -->
     <div class="form-group mt-4">
-        <a asp-controller="Veterinarian" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+        <a asp-controller="Owner" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="fas fa-edit"></i> Edit
         </a>
         <a asp-action="Index" class="btn btn-secondary">
@@ -142,7 +142,7 @@
                     }
 
                     // ✅ إرسال الطلب مع التوكن
-                    const response = await fetch(`/Dashboard/Veterinarian/DeleteConfirmed`, {
+                    const response = await fetch(`/Dashboard/Owner/DeleteConfirmed`, {
                         method: 'POST',
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",

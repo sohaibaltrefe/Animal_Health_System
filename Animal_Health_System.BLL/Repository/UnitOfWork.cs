@@ -19,8 +19,6 @@ namespace Animal_Health_System.BLL.Repository
         public IFarmHealthSummaryRepository farmHealthSummaryRepository { get; }
         public IFarmRepository farmRepository { get; }
         public IFarmStaffRepository farmStaffRepository { get; }
-        public IFarmVeterinarianRepository farmVeterinarianRepository { get; }
-        public IHealthStatusLogRepository healthStatusLogRepository { get; }
 
         public IMatingRepository matingRepository { get; }
         public IMedicalExaminationRepository medicalExaminationRepository { get; }
@@ -47,9 +45,7 @@ namespace Animal_Health_System.BLL.Repository
             farmHealthSummaryRepository = new FarmHealthSummaryRepository(context, loggerFactory.CreateLogger<FarmHealthSummaryRepository>());
             farmRepository = new FarmRepository(context, loggerFactory.CreateLogger<FarmRepository>());
             farmStaffRepository = new FarmStaffRepository(context, loggerFactory.CreateLogger<FarmStaffRepository>());
-            farmVeterinarianRepository = new FarmVeterinarianRepository(context, loggerFactory.CreateLogger<FarmVeterinarianRepository>());
-            healthStatusLogRepository = new HealthStatusLogRepository(context, loggerFactory.CreateLogger<HealthStatusLogRepository>());
-
+          
             matingRepository = new MatingRepository(context, loggerFactory.CreateLogger<MatingRepository>());
             medicalExaminationRepository = new MedicalExaminationRepository(context, loggerFactory.CreateLogger<MedicalExaminationRepository>());
             medicalRecordRepository = new MedicalRecordRepository(context, loggerFactory.CreateLogger<MedicalRecordRepository>());

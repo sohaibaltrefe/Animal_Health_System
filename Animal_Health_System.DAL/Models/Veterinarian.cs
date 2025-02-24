@@ -19,20 +19,21 @@ namespace Animal_Health_System.DAL.Models
 
         public string Email { get; set; }
 
-        public int YearsOfExperience { get; set; } 
+        public int YearsOfExperience { get; set; }
 
 
         public decimal salary { get; set; }
 
-       
-        public   ICollection<Appointment> Appointments { get; set; } = new List <Appointment>();
 
-        public   ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List <MedicalExamination>();
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
-        public   ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
+        public ICollection<MedicalExamination> MedicalExaminations { get; set; } = new List<MedicalExamination>();
 
-        public   ICollection<Notification> Notifications { get; set; } = new List <Notification>();
+        public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List<VaccineHistory>();
 
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

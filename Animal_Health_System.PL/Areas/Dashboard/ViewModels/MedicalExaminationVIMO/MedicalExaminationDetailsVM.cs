@@ -12,7 +12,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicalExaminationV
         public string Treatment { get; set; }
         public string ExaminationType { get; set; }
         public List<Medication> Medications { get; set; } = new List<Medication>();
-        public List<HealthStatusLog> HealthStatusLogs { get; set; } = new List<HealthStatusLog>();
         public Animal Animal { get; set; }
 
         public MedicalRecord MedicalRecord { get; set; }
