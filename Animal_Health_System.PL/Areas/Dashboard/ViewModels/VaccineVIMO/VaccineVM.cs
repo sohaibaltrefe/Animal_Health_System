@@ -16,7 +16,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO
         public DateTime ExpiryDate { get; set; }
 
 
-        public int Quantity { get; set; }
         public string FormattedDaysUntilExpiry
         {
             get

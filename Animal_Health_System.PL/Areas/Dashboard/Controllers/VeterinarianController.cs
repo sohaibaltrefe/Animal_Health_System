@@ -1,16 +1,18 @@
 ﻿using Animal_Health_System.BLL.Interface;
+using Animal_Health_System.BLL.Repository;
 using Animal_Health_System.DAL.Data;
 using Animal_Health_System.DAL.Models;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.VeterinarianVIMO;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize]
     [Area("Dashboard")]
     public class VeterinarianController : Controller
     {
@@ -107,9 +109,26 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     {
                         return NotFound();
                     }
+
+                    // تحديث الـ Veterinarian
                     mapper.Map(vm, veterinarian);
                     await unitOfWork.veterinarianRepository.UpdateAsync(veterinarian);
-                    TempData["SuccessMessage"] = "Veterinarian updated successfully.";
+
+                    // الحصول على الـ User المرتبط بالـ Veterinarian باستخدام UserManager من خلال UnitOfWork
+                    var user = await unitOfWork.UserManager.FindByIdAsync(veterinarian.ApplicationUserId.ToString());
+                    if (user != null)
+                    {
+                        user.FullName = vm.FullName; // تحديث الاسم الكامل في الـ User
+                        var result = await unitOfWork.UserManager.UpdateAsync(user);
+
+                        if (!result.Succeeded)
+                        {
+                            TempData["ErrorMessage"] = "An error occurred while updating the user.";
+                            return View(vm);
+                        }
+                    }
+
+                    TempData["SuccessMessage"] = "Veterinarian and User updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
                 return View(vm);
@@ -121,6 +140,9 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                 return View(vm);
             }
         }
+
+
+
 
 
         [HttpGet]

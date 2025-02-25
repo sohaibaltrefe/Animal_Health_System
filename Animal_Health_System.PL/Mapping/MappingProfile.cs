@@ -1,10 +1,6 @@
 ﻿using Animal_Health_System.DAL.Models;
-using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalHealthHistoryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AnimalVIMO;
-using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentHistoryVIMO;
-using Animal_Health_System.PL.Areas.Dashboard.ViewModels.AppointmentVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.BirthVIMO;
-using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmHealthSummaryVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmStaffVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO;
 using Animal_Health_System.PL.Areas.Dashboard.ViewModels.MatingVIMO;
@@ -31,20 +27,7 @@ namespace Animal_Health_System.PL.Mapping
             CreateMap<Animal, AnimalVM>().ReverseMap();
             CreateMap<AnimalFormVM, Animal>().ReverseMap();
             CreateMap<Animal, AnimalDetailsVM>().ReverseMap();
-            // ************ AnimalHealthHistory ***********
-            CreateMap<AnimalHealthHistory, AnimalHealthHistoryVM>()
-           .ForMember(dest => dest.AnimalName, opt => opt.MapFrom(src => src.Animal.Name))
-           .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => src.EventType.ToString()));
-
-            CreateMap<AnimalHealthHistory, AnimalHealthHistoryDetailsVM>()
-                .ForMember(dest => dest.AnimalName, opt => opt.MapFrom(src => src.Animal.Name))
-                .ForMember(dest => dest.MedicalRecordName, opt => opt.MapFrom(src => src.MedicalRecord .Name));
-
-            CreateMap<AnimalHealthHistoryFormVM, AnimalHealthHistory>()
-                .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => src.EventType));
-
-            CreateMap<AnimalHealthHistory, AnimalHealthHistoryFormVM>()
-                .ForMember(dest => dest.EventType, opt => opt.MapFrom(src => src.EventType));
+          
 
             //************  Farm  ***************
             CreateMap<Farm, FarmVM>()
@@ -56,15 +39,7 @@ namespace Animal_Health_System.PL.Mapping
                 .ReverseMap();
 
             CreateMap<FarmFormVM, Farm>().ReverseMap();
-            //************  Appointment  ***************
-            CreateMap<Appointment, AppointmentVM>().ReverseMap();
-            CreateMap<AppointmentVM, Appointment>().ReverseMap();
-            CreateMap<Appointment, AppointmentVM>().ReverseMap();
-
-            //************  AppointmentHistory  ***************
-            CreateMap<AppointmentHistory, AppointmentHistoryVM>().ReverseMap();
-            CreateMap<AppointmentHistoryVM, AppointmentHistory>().ReverseMap();
-            CreateMap<AppointmentHistory, AppointmentHistoryVM>().ReverseMap();
+           
 
             //************  FarmStaff  ***************
 
@@ -189,11 +164,6 @@ CreateMap<MedicalRecord, MedicalRecordDetailsVM>()
             .ForMember(dest => dest.TimeToBirthText, opt => opt.MapFrom(src => Pregnancy.CalculateTimeToBirth(src.ExpectedBirthDate)))
             .ForMember(dest => dest.Births, opt => opt.MapFrom(src => src.Births));
 
-            //************  FarmHealthSummary  ***************
-
-            CreateMap<FarmHealthSummary, FarmHealthSummaryVM>().ReverseMap();
-            CreateMap<FarmHealthSummary, FarmHealthSummaryFormVM>().ReverseMap();
-            CreateMap<FarmHealthSummary, FarmHealthSummaryDetailsVM>().ReverseMap();
 
             //************  Birth  ***************
 

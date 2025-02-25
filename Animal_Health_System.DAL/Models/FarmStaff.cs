@@ -58,8 +58,6 @@ namespace Animal_Health_System.DAL.Models
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     }
 

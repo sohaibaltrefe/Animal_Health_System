@@ -99,18 +99,6 @@ namespace Animal_Health_System.BLL.Repository
                 throw new Exception($"Error deleting veterinarian with ID {id}.", ex);
             }
         }
-
-        public async Task SaveChangesAsync()
-        {
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while saving changes.");
-                throw new Exception("Error occurred while saving changes.", ex);
-            }
-        }
+       
     }
 }

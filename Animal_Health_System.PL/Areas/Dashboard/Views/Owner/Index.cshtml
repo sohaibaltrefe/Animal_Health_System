@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<OwnerVM>
 
 @section Header {
-    Owner
+        Owner
 }
 
 @section loc {
-    Show All
+        Show All
 }
 
 @{
@@ -71,7 +71,15 @@
 
 @section script {
     <script>
-        document.querySelectorAll('.delete-btn').forEach(button => {
+               new DataTable('table', {
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy', 'excel', 'pdf'
+                    ]
+                }
+            }
+        });      document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', async () => {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {

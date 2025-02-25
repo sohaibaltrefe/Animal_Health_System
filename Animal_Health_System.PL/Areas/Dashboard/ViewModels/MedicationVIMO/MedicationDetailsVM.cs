@@ -11,7 +11,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationVIMO
         public DateTime ExpiryDate { get; set; }
         public DateTime ProductionDate { get; set; }
         public bool IsDeleted { get; set; }
-        public int Quantity { get; set; }
 
 
         // خاصية لحساب الأيام المتبقية حتى انتهاء الصلاحية

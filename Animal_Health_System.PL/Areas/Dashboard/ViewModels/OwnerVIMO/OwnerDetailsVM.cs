@@ -13,7 +13,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.OwnerVIMO
         public DateTime UpdatedAt { get; set; }
         public ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
-        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 
 

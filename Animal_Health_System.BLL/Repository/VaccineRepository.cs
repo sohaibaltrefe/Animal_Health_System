@@ -27,8 +27,8 @@ namespace Animal_Health_System.BLL.Repository
             {
                
 
-                logger.LogInformation("Adding vaccine: {Name}, {Dose}, {ProductionDate}, {ExpiryDate}, {Quantity}",
-                    vaccine.Name, vaccine.Dose, vaccine.ProductionDate, vaccine.ExpiryDate, vaccine.Quantity);
+                logger.LogInformation("Adding vaccine: {Name}, {Dose}, {ProductionDate}, {ExpiryDate}",
+                    vaccine.Name, vaccine.Dose, vaccine.ProductionDate, vaccine.ExpiryDate);
                 vaccine.UpdatedAt = DateTime.UtcNow;
 
                 await context.vaccines.AddAsync(vaccine);

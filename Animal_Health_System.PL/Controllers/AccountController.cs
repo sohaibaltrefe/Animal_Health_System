@@ -155,6 +155,7 @@ using System.Security.Claims;
                         var veterinarian = new Veterinarian
                         {
                             FullName = user.FullName,
+                            Specialty="def",
                             PhoneNumber ="0000000000",
                             Email = user.Email,
                             ApplicationUserId = user.Id,
@@ -180,23 +181,23 @@ using System.Security.Claims;
                     }
                     else if (user.Role == "FarmStaff")
                     {
-                        var farm = await unitOfWork.farmStaffRepository.GetDefaultFarmForStaffAsync();
-                        if (farm != null)
-                        {
+                       
                             var farmStaff = new FarmStaff
                             {
                                 FullName = user.FullName,
                                 JobTitle = "Default Job Title",
                                 PhoneNumber = "0000000000",
                                 Email = user.Email,
-                                FarmId = farm.Id,
+                                FarmId =1,
                                 ApplicationUserId = user.Id,
-                                DateHired = DateTime.Now
+                                DateHired = DateTime.Now,
+                                salary=0
+
                             };
 
                             await unitOfWork.farmStaffRepository.AddAsync(farmStaff);
                             await unitOfWork.SaveChangesAsync();
-                        }
+                       
                     }
 
                     // Redirect to Login page after successful email confirmation
@@ -207,7 +208,7 @@ using System.Security.Claims;
         }
 
 
-
+        [HttpGet]
         public IActionResult Login()
             {
                 return View();
@@ -218,7 +219,7 @@ using System.Security.Claims;
             if (ModelState.IsValid)
             {
                 var user = await userManager.FindByEmailAsync(model.Email);
-                if (user is not null)
+                if (user != null)
                 {
                     var check = await userManager.CheckPasswordAsync(user, model.Password);
                     if (check)
@@ -226,59 +227,114 @@ using System.Security.Claims;
                         var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                         if (result.Succeeded)
                         {
-                            // تمرير معرف المستخدم إلى صفحة التفاصيل
-                            return RedirectToAction("Index", "Owner", new { area = "Dashboard" });
+                            if (user.Role == "Admin")
+                            {
+                                return RedirectToAction("Index", "Animal", new { area = "Dashboard" });
+                            }
+                            else if (user.Role == "Owner")
+                            {
+                                return RedirectToAction("Index", "Owner", new { area = "Dashboard" });
+                            }
+                            else if (user.Role == "Veterinarian")
+                            {
+                                return RedirectToAction("Index", "Veterinarian", new { area = "Dashboard" });
+                            }
+                            else if (user.Role == "FarmStaff")
+                            {
+                                return RedirectToAction("Index", "FarmStaff", new { area = "Dashboard" });
+                            }
                         }
                     }
+                    else
+                    {
+                        // إذا كانت كلمة المرور خاطئة، إضافة رسالة خطأ
+                        ModelState.AddModelError(string.Empty, "Incorrect password. Please try again.");
+                    }
+                }
+                else
+                {
+                    // إذا كان البريد الإلكتروني غير موجود
+                    ModelState.AddModelError(string.Empty, "No user found with this email. Please check your email and try again.");
                 }
             }
             return View(model);
         }
 
+
         public IActionResult ForgotPassword()
-            {
-                return View();
-            }
-            public async Task<IActionResult> SendPasswordUrl(ForgotPasswordVM model)
-            {
-
-                var user = await userManager.FindByEmailAsync(model.Email);
-                if (user is not null)
-                {
-                    var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetPasswordUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token = token }, protocol: HttpContext.Request.Scheme);
-                    var email = new DAL.Models.Email()
-                    {
-                        Subject = "Reset Email",
-                        Recivers = model.Email,
-                        Body = resetPasswordUrl,
-                    };
-                    EmailSettings.SendEmail(email);
-                }
-
-
-
-                return View(model);
-            }
-            public IActionResult ResetPassword(string email, string token)
-            {
-                return View();
-            }
-            [HttpPost]
-            public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
-            {
-                var user = await userManager.FindByEmailAsync(model.Email);
-                if (user is not null)
-                {
-                    var result = await userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction(nameof(Login));
-                    }
-                }
-
-                return View(model);
-            }
-
+        {
+            return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SendPasswordUrl(ForgotPasswordVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ForgotPassword", model); // إعادة النموذج مع الأخطاء
+            }
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                ModelState.AddModelError(string.Empty, "No account found with this email.");
+                return View("ForgotPassword", model);
+            }
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPasswordUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, token = token }, protocol: HttpContext.Request.Scheme);
+
+            var email = new DAL.Models.Email()
+            {
+                Subject = "Reset Password",
+                Recivers = model.Email,
+                Body = $"Click the link to reset your password: {resetPasswordUrl}",
+            };
+
+            EmailSettings.SendEmail(email);
+
+           
+
+            TempData["SuccessMessage"] = "Password reset link has been sent to your email.";
+            return RedirectToAction(nameof(ForgotPassword));
+        }
+
+        public IActionResult ResetPassword(string email, string token)
+        {
+            return View(new ResetPasswordVM { Email = email, Token = token });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid request or user not found.");
+                return View(model);
+            }
+
+            var result = await userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // إضافة جميع الأخطاء إلى ModelState لعرضها في الصفحة
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
+        }
+
+
     }
+}

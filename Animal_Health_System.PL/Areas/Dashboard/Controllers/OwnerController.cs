@@ -113,18 +113,35 @@ namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
                     return RedirectToAction("Index");
                 }
 
+                // تحديث بيانات الـ Owner
                 mapper.Map(ownerVM, owner);
                 await unitOfWork.ownerRepository.UpdateAsync(owner);
 
-                TempData["SuccessMessage"] = "Owner updated successfully!";
+                // تحديث المستخدم المرتبط بالـ Owner باستخدام UserManager
+                var user = await unitOfWork.UserManager.FindByIdAsync(owner.ApplicationUserId.ToString());
+                if (user != null)
+                {
+                    user.FullName = ownerVM.FullName; // تحديث الاسم الكامل في الـ User
+                    var result = await unitOfWork.UserManager.UpdateAsync(user);
+
+                    if (!result.Succeeded)
+                    {
+                        TempData["ErrorMessage"] = "An error occurred while updating the user.";
+                        return View(ownerVM);
+                    }
+                }
+
+                TempData["SuccessMessage"] = "Owner and User updated successfully!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error occurred while updating the owner.");
+                TempData["ErrorMessage"] = "An error occurred while updating the owner. Please try again later.";
                 return View(ownerVM);
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)

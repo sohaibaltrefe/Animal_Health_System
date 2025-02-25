@@ -31,19 +31,14 @@ namespace Animal_Health_System.PL
         
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
-            builder.Services.AddScoped<IAnimalHealthHistoryRepository, AnimalHealthHistoryRepository>();
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
-            builder.Services.AddScoped<IAppointmentHistoryRepository, AppointmentHistoryRepository>();
-            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IBirthRepository, BirthRepository>();
-            builder.Services.AddScoped<IFarmHealthSummaryRepository, FarmHealthSummaryRepository>();
             builder.Services.AddScoped<IFarmRepository, FarmRepository>();
             builder.Services.AddScoped<IFarmStaffRepository, FarmStaffRepository>();
             builder.Services.AddScoped<IMatingRepository, MatingRepository>();
             builder.Services.AddScoped<IMedicalExaminationRepository, MedicalExaminationRepository>();
             builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
             builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
-            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
             builder.Services.AddScoped<IPregnancyRepository, PregnancyRepository>();
             builder.Services.AddScoped<IVaccineHistoryRepository, VaccineHistoryRepository>();

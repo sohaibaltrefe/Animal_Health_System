@@ -23,7 +23,6 @@ namespace Animal_Health_System.DAL.Models
 
         public ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
-        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
 
     }

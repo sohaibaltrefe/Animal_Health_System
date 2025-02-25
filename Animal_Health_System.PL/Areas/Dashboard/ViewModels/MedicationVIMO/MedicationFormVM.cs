@@ -24,9 +24,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.MedicationVIMO
         [Required(ErrorMessage = "Production date is required.")]
         public DateTime ProductionDate { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "Quantity must be a positive number.")]
-        public int Quantity { get; set; }
-
    
     }
 

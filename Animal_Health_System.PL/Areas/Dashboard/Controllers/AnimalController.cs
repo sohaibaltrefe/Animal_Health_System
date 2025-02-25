@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Animal_Health_System.PL.Areas.Dashboard.Controllers
 {
     [Authorize]
+    [Authorize]
     [Area("Dashboard")]
     public class AnimalController : Controller
     {

@@ -74,22 +74,6 @@
     </div>
 
     <!-- Notifications -->
-    <div class="form-group">
-        <label>Notifications</label>
-        <ul>
-                    @if (Model.Notifications.Any())
-                    {
-                        @foreach (var notification in Model.Notifications)
-                        {
-                    <li>@notification.Message</li>
-                        }
-                    }
-                    else
-                    {
-                <li>No notifications available</li>
-                    }
-        </ul>
-    </div>
 
     <!-- Action Buttons -->
     <div class="form-group mt-4">

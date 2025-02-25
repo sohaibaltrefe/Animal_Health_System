@@ -12,7 +12,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.VaccineVIMO
         public string Description { get; set; }
         public DateTime ProductionDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-        public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

@@ -23,7 +23,6 @@ namespace Animal_Health_System.DAL.Models
 
         public DateTime ProductionDate { get; set; }
 
-        public int Quantity { get; set; }
 
         public ICollection<VaccineHistory> VaccineHistories { get; set; } = new List <VaccineHistory>();
 

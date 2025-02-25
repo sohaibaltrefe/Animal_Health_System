@@ -14,6 +14,5 @@ namespace Animal_Health_System.BLL.Interface
         Task<int> AddAsync(Veterinarian veterinarian);
         Task<int> UpdateAsync(Veterinarian veterinarian);
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
     }
 }

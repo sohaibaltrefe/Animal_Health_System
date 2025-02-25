@@ -14,20 +14,15 @@ namespace Animal_Health_System.DAL.Data
         {
         }
         public DbSet<Animal> animals { get; set; }
-        public DbSet<AnimalHealthHistory> animalHealthHistories { get; set; }
 
-        public DbSet<Appointment> appointments { get; set; }
-        public DbSet<AppointmentHistory> appointmentHistories { get; set; }
 
         public DbSet<Birth> births { get; set; }
         public DbSet<Farm> farms { get; set; }
-        public DbSet<FarmHealthSummary> farmHealthSummaries { get; set; }
 
         public DbSet<Mating> matings { get; set; }
         public DbSet<MedicalExamination> medicalExaminations { get; set; }
         public DbSet<MedicalRecord> medicalRecords { get; set; }
         public DbSet<Medication> medications { get; set; }
-        public DbSet<Notification> notifications { get; set; }
         public DbSet<Owner> owners { get; set; }
         public DbSet<Pregnancy> pregnancies { get; set; }
         public DbSet<Vaccine> vaccines { get; set; }
@@ -51,35 +46,7 @@ namespace Animal_Health_System.DAL.Data
 
 
             // AnimalHealthHistory -> Animal (Many-to-One)
-            modelBuilder.Entity<AnimalHealthHistory>()
-                .HasOne(ahh => ahh.Animal)  // AnimalHealthHistory has one Animal
-                .WithMany(a => a.AnimalHealthHistories) // Animal has many AnimalHealthHistories
-                .HasForeignKey(ahh => ahh.AnimalId).OnDelete(DeleteBehavior.Restrict); // Foreign key in AnimalHealthHistory
-
-            // Appointment -> Animal (Many-to-One)
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Animal)  // Appointment has one Animal
-                .WithMany(an => an.Appointments) // Animal has many Appointments
-                .HasForeignKey(a => a.AnimalId).OnDelete(DeleteBehavior.Restrict);// Foreign key in Appointment
-
-            // Appointment -> Farm (Many-to-One)
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Farm) // Appointment has one Farm
-                .WithMany(f => f.Appointments) // Farm has many Appointments
-                .HasForeignKey(a => a.FarmId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
-
-            // Appointment -> Veterinarian (Many-to-One)
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Veterinarian)  // Appointment has one Veterinarian
-                .WithMany(v => v.Appointments) // Veterinarian has many Appointments
-                .HasForeignKey(a => a.VeterinarianId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
-
-            // Appointment -> FarmStaff (Many-to-One)
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.FarmStaff)  // Appointment has one FarmStaff
-                .WithMany(fs => fs.Appointments) // FarmStaff has many Appointments
-                .HasForeignKey(a => a.FarmStaffId).OnDelete(DeleteBehavior.Restrict); // Foreign key in Appointment
-
+          
             // Birth -> Pregnancy (Many-to-One)
             modelBuilder.Entity<Birth>()
                 .HasOne(b => b.Pregnancy)  // Birth has one Pregnancy
@@ -143,10 +110,6 @@ namespace Animal_Health_System.DAL.Data
     .OnDelete(DeleteBehavior.Restrict);
 
 
-            modelBuilder.Entity<AppointmentHistory>()
-                .HasOne(ah => ah.Appointment)
-                .WithMany(a => a.AppointmentHistories)
-                .HasForeignKey(ah => ah.AppointmentId).OnDelete(DeleteBehavior.Restrict);
 
 
 
@@ -170,10 +133,7 @@ namespace Animal_Health_System.DAL.Data
         .OnDelete(DeleteBehavior.Restrict);
 
             // PregnancyNotification -> Animal (Many-to-One)
-            modelBuilder.Entity<Notification>()
-                .HasOne(pn => pn.Animal)
-                .WithMany(a => a.PregnancyNotifications)
-                .HasForeignKey(pn => pn.AnimalId).OnDelete(DeleteBehavior.Restrict);
+         
 
             // Owner -> Farm (One-to-Many)
             modelBuilder.Entity<Owner>()
@@ -182,28 +142,11 @@ namespace Animal_Health_System.DAL.Data
                 .HasForeignKey(f => f.OwnerId).OnDelete(DeleteBehavior.Restrict);
 
             // Owner -> Notification (One-to-Many)
-            modelBuilder.Entity<Owner>()
-                .HasMany(o => o.Notifications)
-                .WithOne(n => n.Owner)
-                .HasForeignKey(n => n.OwnerId).OnDelete(DeleteBehavior.Restrict);
-
-            // Notification -> FarmStaff (Many-to-One)
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.FarmStaff)
-                .WithMany(fs => fs.Notifications)
-                .HasForeignKey(n => n.FarmStaffId).OnDelete(DeleteBehavior.Restrict);
+        
+           
 
             // Notification -> Veterinarian (Many-to-One)
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.Veterinarian)
-                .WithMany(v => v.Notifications)
-                .HasForeignKey(n => n.VeterinarianId).OnDelete(DeleteBehavior.Restrict);
-
-            // Notification -> Owner (Many-to-One)
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.Owner)
-                .WithMany(o => o.Notifications)
-                .HasForeignKey(n => n.OwnerId).OnDelete(DeleteBehavior.Restrict);
+         
 
 
 
@@ -214,12 +157,7 @@ namespace Animal_Health_System.DAL.Data
       .UsingEntity(j => j.ToTable("MedicalExamination_Medication"));
 
             // FarmHealthSummary -> Farm (Many-to-One)
-            modelBuilder.Entity<FarmHealthSummary>()
-                .HasOne(fhs => fhs.Farm)
-                .WithMany(f => f.FarmHealthSummaries)
-                .HasForeignKey(fhs => fhs.FarmId)
-               .OnDelete(DeleteBehavior.Restrict);
-
+         
             modelBuilder.Entity<Mating>()
         .HasOne(m => m.MaleAnimal)
         .WithMany()
@@ -236,16 +174,6 @@ namespace Animal_Health_System.DAL.Data
             //------------unique  --------------
 
 
-            modelBuilder.Entity<AnimalHealthHistory>()
-     .HasIndex(a => new { a.Name, a.EventDate })
-     .IsUnique()
-     .HasDatabaseName("Idx_AnimalHealthHistory_Name_EventDate");
-
-            modelBuilder.Entity<AnimalHealthHistory>()
-                .HasIndex(a => new { a.AnimalId, a.MedicalRecordId })
-                .IsUnique()
-                .HasDatabaseName("Idx_AnimalHealthHistory_AnimalId_MedicalRecordId");
-
             modelBuilder.Entity<Animal>()
                 .HasIndex(a => a.Name)
                 .IsUnique();
@@ -254,25 +182,10 @@ namespace Animal_Health_System.DAL.Data
                 .HasIndex(a => new { a.FarmId, a.Name })
                 .IsUnique();
 
-            modelBuilder.Entity<Appointment>()
-                .HasIndex(a => new { a.AnimalId, a.AppointmentDate })
-                .IsUnique();
-
-            modelBuilder.Entity<Appointment>()
-                .HasIndex(a => new { a.AnimalId, a.AppointmentDate, a.VeterinarianId })
-                .IsUnique();
-
-            modelBuilder.Entity<AppointmentHistory>()
-                .HasIndex(a => a.Name)
-                .IsUnique();
-
+          
 
             modelBuilder.Entity<Farm>()
                 .HasIndex(f => new { f.Name, f.OwnerId })
-                .IsUnique();
-
-            modelBuilder.Entity<FarmHealthSummary>()
-                .HasIndex(fhs => fhs.FarmId)
                 .IsUnique();
 
             modelBuilder.Entity<FarmStaff>()
@@ -303,9 +216,7 @@ namespace Animal_Health_System.DAL.Data
                .HasIndex(m => m.Name)
                .IsUnique();
 
-            modelBuilder.Entity<Notification>()
-                .HasIndex(n => n.Name)
-                .IsUnique();
+         
 
             modelBuilder.Entity<Owner>()
                 .HasIndex(o => o.Email)
@@ -329,17 +240,13 @@ namespace Animal_Health_System.DAL.Data
                 .HasIndex(v => v.Email)
                 .IsUnique();
             // ----------soft delet ----------
-            modelBuilder.Entity<AnimalHealthHistory>()
-          .HasQueryFilter(d => !d.IsDeleted);
-
+           
             modelBuilder.Entity<Animal>()
                 .HasQueryFilter(d => !d.IsDeleted);
 
-            modelBuilder.Entity<Appointment>()
-                .HasQueryFilter(d => !d.IsDeleted);
+         
 
-            modelBuilder.Entity<AppointmentHistory>()
-                .HasQueryFilter(d => !d.IsDeleted);
+          
 
             modelBuilder.Entity<Birth>()
                 .HasQueryFilter(d => !d.IsDeleted);
@@ -349,8 +256,7 @@ namespace Animal_Health_System.DAL.Data
             modelBuilder.Entity<Farm>()
                 .HasQueryFilter(d => !d.IsDeleted);
 
-            modelBuilder.Entity<FarmHealthSummary>()
-                .HasQueryFilter(d => !d.IsDeleted);
+            
 
             modelBuilder.Entity<FarmStaff>()
                 .HasQueryFilter(d => !d.IsDeleted);
@@ -371,8 +277,7 @@ namespace Animal_Health_System.DAL.Data
 
 
 
-            modelBuilder.Entity<Notification>()
-                .HasQueryFilter(n => !n.IsDeleted);
+         
 
             modelBuilder.Entity<Owner>()
                 .HasQueryFilter(o => !o.IsDeleted);

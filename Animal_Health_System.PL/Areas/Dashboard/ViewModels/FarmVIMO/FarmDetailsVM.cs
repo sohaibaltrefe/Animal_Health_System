@@ -20,7 +20,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO
         public ICollection<FarmStaff> FarmStaffs { get; set; } = new List<FarmStaff>();
 
         // Appointments related to the farm
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
         // Breeding reports related to the farm
 
@@ -28,7 +27,6 @@ namespace Animal_Health_System.PL.Areas.Dashboard.ViewModels.FarmVIMO
         public ICollection<Mating> Matings { get; set; } = new List<Mating>();
 
         // Farm health summary related to the farm
-        public ICollection<FarmHealthSummary> FarmHealthSummaries { get; set; } = new List<FarmHealthSummary>();
 
         // Add IsDeleted field if it's not included already
         public bool IsDeleted { get; set; }  // To display active or deleted status
